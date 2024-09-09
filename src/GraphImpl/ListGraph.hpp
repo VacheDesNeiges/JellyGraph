@@ -1,4 +1,6 @@
 #pragma once
+#include "GraphAlgorithms.hpp"
+#include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
 #include "NameIndexMap.hpp"
 #include <utility>
@@ -7,7 +9,9 @@
 namespace jGraph
 {
 
-class ListGraph : public GraphPrimitives
+class ListGraph : public GraphAlgorithms,
+                  public GraphMeasures,
+                  public virtual GraphPrimitives
 {
   public:
     ListGraph() = default;

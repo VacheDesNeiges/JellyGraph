@@ -17,12 +17,16 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
 add_library(jellyGraph SHARED
     src/GraphImpl/ListGraph.cpp
     src/GraphImpl/MatrixGraph.cpp
+    src/Measures/GraphMeasures.cpp
 )
 
 target_include_directories(jellyGraph
     PUBLIC ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/src/GraphImpl
     ${PROJECT_SOURCE_DIR}/src/Utils
+    ${PROJECT_SOURCE_DIR}/src/Measures
+    ${PROJECT_SOURCE_DIR}/src/Algorithms
+
 )
 
 install(TARGETS jellyGraph
@@ -38,6 +42,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/
 add_executable(test
     tests/main.cpp
     tests/testGraphPrimitives.cpp
+    tests/testGraphMeasures.cpp
 )
 
 find_package(GTest REQUIRED)

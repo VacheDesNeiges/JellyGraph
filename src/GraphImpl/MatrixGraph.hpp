@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GraphAlgorithms.hpp"
+#include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
 #include "Utils/NameIndexMap.hpp"
 #include <linux/limits.h>
@@ -9,7 +11,9 @@
 namespace jGraph
 {
 
-class MatrixGraph : public GraphPrimitives
+class MatrixGraph : public GraphAlgorithms,
+                    public GraphMeasures,
+                    public virtual GraphPrimitives
 {
   public:
     MatrixGraph() = default;
