@@ -9,6 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
+      - name: CI
       - uses: actions/checkout@v4
 
       - name: apt update
@@ -22,10 +23,11 @@ jobs:
       - name: Install gtests
         run: |
           sudo apt-get install libgtest-dev
+          
       - name: Build
         run: |
           ./build.sh
-      - name: Validate Jsons
+
       - name: Test
         run: |
           ./test
