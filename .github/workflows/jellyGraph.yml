@@ -1,0 +1,31 @@
+name: Build and Test
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: apt update
+        run: |
+          sudo apt-get update
+
+      - name: Install ninja
+        run: |
+          sudo apt-get install -y ninja-build
+
+      - name: Install gtests
+        run: |
+          sudo apt-get install libgtest-dev
+      - name: Build
+        run: |
+          ./build.sh
+      - name: Validate Jsons
+      - name: Test
+        run: |
+          ./test
