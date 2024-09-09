@@ -1,0 +1,28 @@
+Checks: "
+-*,
+abseil-*,
+bugprone-*,
+cert-*,
+clang-analyzer-*,
+concurrency-*,
+cppcoreguidelines-*,
+fuschia-*,
+llvm-*,
+misc-*,
+modernize-*,
+performance-*,
+portability-*,
+readability-*,
+-readability-braces-around-statements,
+-readability-convert-member-functions-to-static,
+-modernize-use-trailing-return-type,
+-modernize-use-nodiscard,
+"
+
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+FormatStyle:     none
+
+CheckOptions:
+    - { key: readability-identifier-length.MinimumVariableNameLength, value: '2' }
+    - { key: readability-identifier-length.MinimumParameterNameLength, value: '2' }
