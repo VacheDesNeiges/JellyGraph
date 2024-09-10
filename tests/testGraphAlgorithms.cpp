@@ -1,12 +1,7 @@
-#include "GraphAlgorithms.hpp"
 #include "ListGraph.hpp"
 #include "MatrixGraph.hpp"
 #include "gtest/gtest.h"
 #include <cassert>
-#include <type_traits>
-
-template <typename T>
-concept hasGraphAlgorithms = std::is_base_of_v<jGraph::GraphAlgorithms<T>, T>;
 
 template <typename T>
 

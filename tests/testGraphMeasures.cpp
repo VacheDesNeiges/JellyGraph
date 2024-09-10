@@ -1,11 +1,6 @@
-#include "GraphMeasures.hpp"
 #include "ListGraph.hpp"
 #include "MatrixGraph.hpp"
 #include "gtest/gtest.h"
-#include <type_traits>
-
-template <typename T>
-concept hasGraphMeasures = std::is_base_of_v<jGraph::GraphMeasures<T>, T>;
 
 template <typename T>
 

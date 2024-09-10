@@ -1,13 +1,8 @@
-#include "GraphPrimitives.hpp"
 #include "ListGraph.hpp"
 #include "MatrixGraph.hpp"
 
 #include "gtest/gtest.h"
-#include <type_traits>
 #include <utility>
-
-template <typename T>
-concept hasGraphPrimitives = std::is_base_of_v<jGraph::GraphPrimitives<T>, T>;
 
 template <typename T>
 
