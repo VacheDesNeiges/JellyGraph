@@ -30,7 +30,7 @@ template <typename T>
 
 std::vector<std::vector<T>> GraphAlgorithms<T>::components() const
 {
-    std::vector<std::vector<unsigned>> result;
+    std::vector<std::vector<T>> result;
     const auto components = internal_components();
     result.reserve(components.size());
     for (const auto &component : components)

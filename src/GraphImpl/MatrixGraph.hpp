@@ -116,12 +116,16 @@ template <typename T>
 
 void MatrixGraph<T>::removeEdge(std::pair<T, T> edge)
 {
-    assert(edge.first < edgeMatrix.size() && edge.second < edgeMatrix.size());
-    if (edgeMatrix.at(edge.first).at(edge.second))
+    const unsigned first =
+        this->getNodeMap().convertNodeNameToIndex(edge.first);
+    const unsigned second =
+        this->getNodeMap().convertNodeNameToIndex(edge.second);
+
+    if (edgeMatrix.at(first).at(second))
         edgeNumber--;
 
-    edgeMatrix[edge.first][edge.second] = false;
-    edgeMatrix[edge.second][edge.first] = false;
+    edgeMatrix[first][second] = false;
+    edgeMatrix[second][first] = false;
 }
 
 template <typename T>
