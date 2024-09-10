@@ -2,7 +2,6 @@
 #include "MatrixGraph.hpp"
 
 #include "gtest/gtest.h"
-#include <utility>
 
 template <typename T>
 
@@ -15,8 +14,10 @@ class GraphPrimitivesTests : public ::testing::Test
     T numGraph{numNode};
 };
 
-using GraphImplementations = ::testing::Types<jGraph::MatrixGraph<unsigned>,
-                                              jGraph::ListGraph<unsigned>>;
+using GraphImplementations =
+    ::testing::Types<jGraph::MatrixGraph<unsigned>,
+                     jGraph::MatrixGraph<long long>,
+                     jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long>>;
 
 TYPED_TEST_SUITE(GraphPrimitivesTests, GraphImplementations);
 
@@ -118,10 +119,13 @@ TYPED_TEST(GraphPrimitivesTests, getEdges)
     const auto vec = this->graph.getEdges();
 
     ASSERT_EQ(vec.size(), 3);
-    ASSERT_TRUE(std::ranges::find(vec, std::make_pair(2U, 4U)) != vec.end());
-    ASSERT_TRUE(std::ranges::find(vec, std::make_pair(1U, 4U)) != vec.end());
-    ASSERT_TRUE(std::ranges::find(vec, std::make_pair(1U, 3U)) != vec.end());
-    ASSERT_FALSE(std::ranges::find(vec, std::make_pair(3U, 1U)) != vec.end());
+
+    using NodeType = typename decltype(vec)::value_type;
+
+    ASSERT_TRUE(std::ranges::find(vec, NodeType{2, 4}) != vec.end());
+    ASSERT_TRUE(std::ranges::find(vec, NodeType{1, 4}) != vec.end());
+    ASSERT_TRUE(std::ranges::find(vec, NodeType{1, 3}) != vec.end());
+    ASSERT_FALSE(std::ranges::find(vec, NodeType{3, 1}) != vec.end());
 }
 
 TYPED_TEST(GraphPrimitivesTests, getNeighbors)

@@ -30,7 +30,7 @@ class MatrixGraph : public GraphAlgorithms<T>,
 
     std::vector<T> getNodes() const override;
     std::vector<std::pair<T, T>> getEdges() const override;
-    std::vector<T> getNeighbors(unsigned key) const override;
+    std::vector<T> getNeighbors(T key) const override;
 
     bool hasEdge(std::pair<T, T> edge) const override;
 
@@ -185,7 +185,7 @@ std::vector<std::pair<T, T>> MatrixGraph<T>::getEdges() const
 
 template <typename T>
 
-std::vector<T> MatrixGraph<T>::getNeighbors(unsigned key) const
+std::vector<T> MatrixGraph<T>::getNeighbors(T key) const
 {
     const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(key);
     return this->getNodeMap().convertIndexToNodeName(

@@ -20,40 +20,39 @@ class GraphPrimitives
     GraphPrimitives &operator=(const GraphPrimitives &) = delete;
     GraphPrimitives &operator=(GraphPrimitives &&) = delete;
 
-    virtual void addNode(unsigned) = 0;
-    virtual void removeNode(unsigned) = 0;
-    virtual void addEdge(std::pair<unsigned, unsigned>) = 0;
-    virtual void removeEdge(std::pair<unsigned, unsigned>) = 0;
+    virtual void addNode(T) = 0;
+    virtual void removeNode(T) = 0;
+    virtual void addEdge(std::pair<T, T>) = 0;
+    virtual void removeEdge(std::pair<T, T>) = 0;
 
     virtual unsigned getNumberOfNodes() const = 0;
     virtual unsigned getNumberOfEdges() const = 0;
 
-    virtual std::vector<unsigned> getNodes() const = 0;
-    virtual std::vector<std::pair<unsigned, unsigned>> getEdges() const = 0;
-    virtual std::vector<unsigned> getNeighbors(unsigned) const = 0;
+    virtual std::vector<T> getNodes() const = 0;
+    virtual std::vector<std::pair<T, T>> getEdges() const = 0;
+    virtual std::vector<T> getNeighbors(T) const = 0;
 
-    virtual bool hasEdge(std::pair<unsigned, unsigned>) const = 0;
+    virtual bool hasEdge(std::pair<T, T>) const = 0;
 
   protected:
-    jGraph::internals::NameIndexMap<unsigned> &getNodeMap();
-    const jGraph::internals::NameIndexMap<unsigned> &getNodeMap() const;
+    jGraph::internals::NameIndexMap<T> &getNodeMap();
+    const jGraph::internals::NameIndexMap<T> &getNodeMap() const;
     virtual std::vector<unsigned> internal_getNodes() const = 0;
     virtual std::vector<unsigned> internal_getNeighbors(unsigned) const = 0;
 
   private:
-    jGraph::internals::NameIndexMap<unsigned> nodeMap;
+    jGraph::internals::NameIndexMap<T> nodeMap;
 };
 
 template <typename T>
 
-jGraph::internals::NameIndexMap<unsigned> &GraphPrimitives<T>::getNodeMap()
+jGraph::internals::NameIndexMap<T> &GraphPrimitives<T>::getNodeMap()
 {
     return nodeMap;
 }
 
 template <typename T>
-const jGraph::internals::NameIndexMap<unsigned> &GraphPrimitives<
-    T>::getNodeMap() const
+const jGraph::internals::NameIndexMap<T> &GraphPrimitives<T>::getNodeMap() const
 {
     return nodeMap;
 }
