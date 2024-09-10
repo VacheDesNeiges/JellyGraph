@@ -18,7 +18,6 @@ concept ValidKeyType = std::copyable<T> && requires(T keyType) {
 
 template <typename T>
     requires ValidKeyType<T>
-
 class NameIndexMap
 {
 

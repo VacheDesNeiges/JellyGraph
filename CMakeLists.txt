@@ -12,7 +12,8 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -pedantic \
     -Wshadow \
     -Wconversion \
-    -O3"
+    -O3 \
+    -march=native"
 )
 
 add_library(jellyGraph INTERFACE)

@@ -47,7 +47,6 @@ class MatrixGraph : public GraphAlgorithms<T>,
 };
 
 template <typename T>
-
 MatrixGraph<T>::MatrixGraph(unsigned numNodes)
 {
     this->getNodeMap().reserve(numNodes);
@@ -65,7 +64,6 @@ MatrixGraph<T>::MatrixGraph(unsigned numNodes)
 }
 
 template <typename T>
-
 void MatrixGraph<T>::addNode(T nodeName)
 {
     if (this->getNodeMap().addByName(nodeName))
@@ -79,7 +77,6 @@ void MatrixGraph<T>::addNode(T nodeName)
 }
 
 template <typename T>
-
 void MatrixGraph<T>::removeNode(T nodeName)
 {
     if (this->getNodeMap().contains(nodeName))
@@ -95,7 +92,6 @@ void MatrixGraph<T>::removeNode(T nodeName)
 }
 
 template <typename T>
-
 void MatrixGraph<T>::addEdge(std::pair<T, T> edge)
 {
     const auto [first, second] = edge;
@@ -117,7 +113,6 @@ void MatrixGraph<T>::addEdge(std::pair<T, T> edge)
 }
 
 template <typename T>
-
 void MatrixGraph<T>::removeEdge(std::pair<T, T> edge)
 {
     const unsigned first =
@@ -133,28 +128,24 @@ void MatrixGraph<T>::removeEdge(std::pair<T, T> edge)
 }
 
 template <typename T>
-
 bool MatrixGraph<T>::hasEdge(std::pair<T, T> edge) const
 {
     return edgeMatrix.at(edge.first).at(edge.second);
 }
 
 template <typename T>
-
 unsigned MatrixGraph<T>::getNumberOfNodes() const
 {
     return static_cast<unsigned>(edgeMatrix.size());
 }
 
 template <typename T>
-
 std::vector<T> MatrixGraph<T>::getNodes() const
 {
     return this->getNodeMap().convertIndexToNodeName(internal_getNodes());
 }
 
 template <typename T>
-
 std::vector<unsigned> MatrixGraph<T>::internal_getNodes() const
 {
     std::vector<unsigned> result;
@@ -167,7 +158,6 @@ std::vector<unsigned> MatrixGraph<T>::internal_getNodes() const
 }
 
 template <typename T>
-
 std::vector<std::pair<T, T>> MatrixGraph<T>::getEdges() const
 {
     std::vector<std::pair<T, T>> result;
@@ -192,7 +182,6 @@ std::vector<std::pair<T, T>> MatrixGraph<T>::getEdges() const
 }
 
 template <typename T>
-
 std::vector<T> MatrixGraph<T>::getNeighbors(T key) const
 {
     const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(key);
@@ -201,7 +190,6 @@ std::vector<T> MatrixGraph<T>::getNeighbors(T key) const
 }
 
 template <typename T>
-
 std::vector<unsigned> MatrixGraph<T>::internal_getNeighbors(
     unsigned index) const
 {
@@ -218,7 +206,6 @@ std::vector<unsigned> MatrixGraph<T>::internal_getNeighbors(
 }
 
 template <typename T>
-
 unsigned MatrixGraph<T>::getNumberOfEdges() const
 {
     return edgeNumber;

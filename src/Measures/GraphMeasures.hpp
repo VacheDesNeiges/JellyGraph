@@ -5,7 +5,6 @@ namespace jGraph
 {
 
 template <typename T>
-
 class GraphMeasures : public virtual GraphPrimitives<T>
 {
   public:
@@ -13,7 +12,6 @@ class GraphMeasures : public virtual GraphPrimitives<T>
 };
 
 template <typename T>
-
 float GraphMeasures<T>::averageNeighborDegree() const
 {
     float result = 0;

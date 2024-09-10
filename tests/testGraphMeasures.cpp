@@ -3,7 +3,6 @@
 #include "gtest/gtest.h"
 
 template <typename T>
-
 class GraphMeasuresTests : public ::testing::Test
 {
   public:

@@ -8,7 +8,6 @@ namespace jGraph
 {
 
 template <typename T>
-
 class GraphPrimitives
 {
   public:
@@ -19,6 +18,8 @@ class GraphPrimitives
     GraphPrimitives(GraphPrimitives &&) = delete;
     GraphPrimitives &operator=(const GraphPrimitives &) = delete;
     GraphPrimitives &operator=(GraphPrimitives &&) = delete;
+
+    virtual void clear() = 0;
 
     virtual void addNode(T) = 0;
     virtual void removeNode(T) = 0;
@@ -45,7 +46,6 @@ class GraphPrimitives
 };
 
 template <typename T>
-
 jGraph::internals::NameIndexMap<T> &GraphPrimitives<T>::getNodeMap()
 {
     return nodeMap;

@@ -4,7 +4,6 @@
 #include <cassert>
 
 template <typename T>
-
 class GraphAlgorithmsTests : public ::testing::Test
 {
   public:

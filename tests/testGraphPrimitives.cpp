@@ -4,7 +4,6 @@
 #include "gtest/gtest.h"
 
 template <typename T>
-
 class GraphPrimitivesTests : public ::testing::Test
 {
   public:

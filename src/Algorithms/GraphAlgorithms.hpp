@@ -7,7 +7,6 @@ namespace jGraph
 {
 
 template <typename T>
-
 class GraphAlgorithms : public virtual GraphPrimitives<T>
 {
   public:
@@ -20,14 +19,12 @@ class GraphAlgorithms : public virtual GraphPrimitives<T>
 };
 
 template <typename T>
-
 bool GraphAlgorithms<T>::isConnected() const
 {
     return components().size() == 1;
 }
 
 template <typename T>
-
 std::vector<std::vector<T>> GraphAlgorithms<T>::components() const
 {
     std::vector<std::vector<T>> result;
@@ -42,7 +39,6 @@ std::vector<std::vector<T>> GraphAlgorithms<T>::components() const
 }
 
 template <typename T>
-
 std::vector<std::vector<unsigned>> GraphAlgorithms<T>::internal_components()
     const
 {

@@ -10,7 +10,6 @@ namespace jGraph
 {
 
 template <typename T>
-
 class ListGraph : public GraphAlgorithms<T>,
                   public GraphMeasures<T>,
                   public virtual GraphPrimitives<T>
@@ -18,6 +17,8 @@ class ListGraph : public GraphAlgorithms<T>,
   public:
     ListGraph() = default;
     ListGraph(unsigned numNodes);
+
+    void clear() override;
 
     void addNode(T nodeName) override;
     void removeNode(T nodeName) override;
@@ -42,7 +43,6 @@ class ListGraph : public GraphAlgorithms<T>,
 };
 
 template <typename T>
-
 ListGraph<T>::ListGraph(unsigned numNodes)
 {
 
@@ -56,7 +56,6 @@ ListGraph<T>::ListGraph(unsigned numNodes)
 }
 
 template <typename T>
-
 void ListGraph<T>::addNode(T nodeName)
 {
     if (this->getNodeMap().addByName(nodeName))
@@ -66,21 +65,18 @@ void ListGraph<T>::addNode(T nodeName)
 }
 
 template <typename T>
-
 unsigned ListGraph<T>::getNumberOfNodes() const
 {
     return static_cast<unsigned>(nodes.size());
 }
 
 template <typename T>
-
 unsigned ListGraph<T>::getNumberOfEdges() const
 {
     return edgeNumber;
 }
 
 template <typename T>
-
 void ListGraph<T>::removeNode(T nodeName)
 {
     if (this->getNodeMap().contains(nodeName))
@@ -103,7 +99,6 @@ void ListGraph<T>::removeNode(T nodeName)
 }
 
 template <typename T>
-
 void ListGraph<T>::addEdge(std::pair<T, T> edge)
 {
     const auto [first, second] = edge;
@@ -126,7 +121,6 @@ void ListGraph<T>::addEdge(std::pair<T, T> edge)
 }
 
 template <typename T>
-
 void ListGraph<T>::removeEdge(std::pair<T, T> edge)
 {
     const auto [first, second] = edge;
@@ -142,14 +136,12 @@ void ListGraph<T>::removeEdge(std::pair<T, T> edge)
 }
 
 template <typename T>
-
 std::vector<T> ListGraph<T>::getNodes() const
 {
     return this->getNodeMap().convertIndexToNodeName(internal_getNodes());
 }
 
 template <typename T>
-
 std::vector<unsigned> ListGraph<T>::internal_getNodes() const
 {
     std::vector<unsigned> result;
@@ -162,7 +154,6 @@ std::vector<unsigned> ListGraph<T>::internal_getNodes() const
 }
 
 template <typename T>
-
 std::vector<std::pair<T, T>> ListGraph<T>::getEdges() const
 {
     std::vector<std::pair<T, T>> result;
@@ -185,7 +176,6 @@ std::vector<std::pair<T, T>> ListGraph<T>::getEdges() const
 }
 
 template <typename T>
-
 std::vector<T> ListGraph<T>::getNeighbors(T key) const
 {
     return this->getNodeMap().convertIndexToNodeName(
@@ -193,18 +183,22 @@ std::vector<T> ListGraph<T>::getNeighbors(T key) const
 }
 
 template <typename T>
-
 std::vector<unsigned> ListGraph<T>::internal_getNeighbors(unsigned index) const
 {
     return nodes.at(index);
 }
 
 template <typename T>
-
 bool ListGraph<T>::hasEdge(std::pair<T, T> edge) const
 {
     return std::ranges::find(nodes.at(edge.first), edge.second) !=
            nodes.at(edge.first).end();
+}
+
+template <typename T>
+void ListGraph<T>::clear()
+{
+    nodes.clear();
 }
 
 } // namespace jGraph
