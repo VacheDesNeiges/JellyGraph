@@ -20,19 +20,19 @@ class MatrixGraph : public GraphAlgorithms<T>,
     MatrixGraph() = default;
     MatrixGraph(unsigned numNodes);
 
-    void addNode(unsigned nodeName) override;
-    void removeNode(unsigned nodeName) override;
-    void addEdge(std::pair<unsigned, unsigned> edge) override;
-    void removeEdge(std::pair<unsigned, unsigned> edge) override;
+    void addNode(T nodeName) override;
+    void removeNode(T nodeName) override;
+    void addEdge(std::pair<T, T> edge) override;
+    void removeEdge(std::pair<T, T> edge) override;
 
     unsigned getNumberOfNodes() const override;
     unsigned getNumberOfEdges() const override;
 
-    std::vector<unsigned> getNodes() const override;
-    std::vector<std::pair<unsigned, unsigned>> getEdges() const override;
-    std::vector<unsigned> getNeighbors(unsigned key) const override;
+    std::vector<T> getNodes() const override;
+    std::vector<std::pair<T, T>> getEdges() const override;
+    std::vector<T> getNeighbors(unsigned key) const override;
 
-    bool hasEdge(std::pair<unsigned, unsigned> edge) const override;
+    bool hasEdge(std::pair<T, T> edge) const override;
 
   private:
     unsigned edgeNumber = 0;
@@ -62,7 +62,7 @@ MatrixGraph<T>::MatrixGraph(unsigned numNodes)
 
 template <typename T>
 
-void MatrixGraph<T>::addNode(unsigned nodeName)
+void MatrixGraph<T>::addNode(T nodeName)
 {
     if (this->getNodeMap().addByName(nodeName))
     {
@@ -76,7 +76,7 @@ void MatrixGraph<T>::addNode(unsigned nodeName)
 
 template <typename T>
 
-void MatrixGraph<T>::removeNode(unsigned nodeName)
+void MatrixGraph<T>::removeNode(T nodeName)
 {
     if (this->getNodeMap().contains(nodeName))
     {
@@ -92,7 +92,7 @@ void MatrixGraph<T>::removeNode(unsigned nodeName)
 
 template <typename T>
 
-void MatrixGraph<T>::addEdge(std::pair<unsigned, unsigned> edge)
+void MatrixGraph<T>::addEdge(std::pair<T, T> edge)
 {
     const auto [first, second] = edge;
     if (!this->getNodeMap().contains(first))
@@ -114,7 +114,7 @@ void MatrixGraph<T>::addEdge(std::pair<unsigned, unsigned> edge)
 
 template <typename T>
 
-void MatrixGraph<T>::removeEdge(std::pair<unsigned, unsigned> edge)
+void MatrixGraph<T>::removeEdge(std::pair<T, T> edge)
 {
     assert(edge.first < edgeMatrix.size() && edge.second < edgeMatrix.size());
     if (edgeMatrix.at(edge.first).at(edge.second))
@@ -126,7 +126,7 @@ void MatrixGraph<T>::removeEdge(std::pair<unsigned, unsigned> edge)
 
 template <typename T>
 
-bool MatrixGraph<T>::hasEdge(std::pair<unsigned, unsigned> edge) const
+bool MatrixGraph<T>::hasEdge(std::pair<T, T> edge) const
 {
     return edgeMatrix.at(edge.first).at(edge.second);
 }
@@ -140,7 +140,7 @@ unsigned MatrixGraph<T>::getNumberOfNodes() const
 
 template <typename T>
 
-std::vector<unsigned> MatrixGraph<T>::getNodes() const
+std::vector<T> MatrixGraph<T>::getNodes() const
 {
     return this->getNodeMap().convertIndexToNodeName(internal_getNodes());
 }
@@ -160,9 +160,9 @@ std::vector<unsigned> MatrixGraph<T>::internal_getNodes() const
 
 template <typename T>
 
-std::vector<std::pair<unsigned, unsigned>> MatrixGraph<T>::getEdges() const
+std::vector<std::pair<T, T>> MatrixGraph<T>::getEdges() const
 {
-    std::vector<std::pair<unsigned, unsigned>> result;
+    std::vector<std::pair<T, T>> result;
     result.reserve(edgeNumber);
 
     for (unsigned i = 0; i < edgeMatrix.size(); i++)
@@ -185,7 +185,7 @@ std::vector<std::pair<unsigned, unsigned>> MatrixGraph<T>::getEdges() const
 
 template <typename T>
 
-std::vector<unsigned> MatrixGraph<T>::getNeighbors(unsigned key) const
+std::vector<T> MatrixGraph<T>::getNeighbors(unsigned key) const
 {
     const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(key);
     return this->getNodeMap().convertIndexToNodeName(
