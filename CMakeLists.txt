@@ -14,16 +14,10 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -Wconversion"
 )
 
-add_library(jellyGraph SHARED
-    src/GraphImpl/GraphPrimitives.cpp
-    src/GraphImpl/ListGraph.cpp
-    src/GraphImpl/MatrixGraph.cpp
-    src/Measures/GraphMeasures.cpp
-    src/Algorithms/GraphAlgorithms.cpp
-)
+add_library(jellyGraph INTERFACE)
 
 target_include_directories(jellyGraph
-    PUBLIC ${PROJECT_SOURCE_DIR}/src
+    INTERFACE ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/src/GraphImpl
     ${PROJECT_SOURCE_DIR}/src/Utils
     ${PROJECT_SOURCE_DIR}/src/Measures
@@ -31,9 +25,7 @@ target_include_directories(jellyGraph
 
 )
 
-install(TARGETS jellyGraph
-    LIBRARY DESTINATION lib
-)
+install(TARGETS jellyGraph)
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/
     DESTINATION include/jellyGraph

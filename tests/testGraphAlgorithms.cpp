@@ -6,10 +6,9 @@
 #include <type_traits>
 
 template <typename T>
-concept hasGraphAlgorithms = std::is_base_of_v<jGraph::GraphAlgorithms, T>;
+concept hasGraphAlgorithms = std::is_base_of_v<jGraph::GraphAlgorithms<T>, T>;
 
 template <typename T>
-    requires hasGraphAlgorithms<T>
 
 class GraphAlgorithmsTests : public ::testing::Test
 {
@@ -17,8 +16,8 @@ class GraphAlgorithmsTests : public ::testing::Test
     T graph;
 };
 
-using GraphImplementations =
-    ::testing::Types<jGraph::MatrixGraph, jGraph::ListGraph>;
+using GraphImplementations = ::testing::Types<jGraph::MatrixGraph<unsigned>,
+                                              jGraph::ListGraph<unsigned>>;
 
 TYPED_TEST_SUITE(GraphAlgorithmsTests, GraphImplementations);
 

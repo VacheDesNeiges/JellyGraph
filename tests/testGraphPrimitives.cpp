@@ -7,10 +7,10 @@
 #include <utility>
 
 template <typename T>
-concept hasGraphPrimitives = std::is_base_of_v<jGraph::GraphPrimitives, T>;
+concept hasGraphPrimitives = std::is_base_of_v<jGraph::GraphPrimitives<T>, T>;
 
 template <typename T>
-    requires hasGraphPrimitives<T>
+
 class GraphPrimitivesTests : public ::testing::Test
 {
   public:
@@ -20,8 +20,8 @@ class GraphPrimitivesTests : public ::testing::Test
     T numGraph{numNode};
 };
 
-using GraphImplementations =
-    ::testing::Types<jGraph::MatrixGraph, jGraph::ListGraph>;
+using GraphImplementations = ::testing::Types<jGraph::MatrixGraph<unsigned>,
+                                              jGraph::ListGraph<unsigned>>;
 
 TYPED_TEST_SUITE(GraphPrimitivesTests, GraphImplementations);
 

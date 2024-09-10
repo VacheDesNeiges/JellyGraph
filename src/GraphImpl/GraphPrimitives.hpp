@@ -7,6 +7,8 @@
 namespace jGraph
 {
 
+template <typename T>
+
 class GraphPrimitives
 {
   public:
@@ -41,5 +43,19 @@ class GraphPrimitives
   private:
     jGraph::internals::NameIndexMap<unsigned> nodeMap;
 };
+
+template <typename T>
+
+jGraph::internals::NameIndexMap<unsigned> &GraphPrimitives<T>::getNodeMap()
+{
+    return nodeMap;
+}
+
+template <typename T>
+const jGraph::internals::NameIndexMap<unsigned> &GraphPrimitives<
+    T>::getNodeMap() const
+{
+    return nodeMap;
+}
 
 } // namespace jGraph

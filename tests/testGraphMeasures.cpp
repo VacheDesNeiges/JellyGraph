@@ -5,10 +5,9 @@
 #include <type_traits>
 
 template <typename T>
-concept hasGraphMeasures = std::is_base_of_v<jGraph::GraphMeasures, T>;
+concept hasGraphMeasures = std::is_base_of_v<jGraph::GraphMeasures<T>, T>;
 
 template <typename T>
-    requires hasGraphMeasures<T>
 
 class GraphMeasuresTests : public ::testing::Test
 {
@@ -16,8 +15,8 @@ class GraphMeasuresTests : public ::testing::Test
     T graph;
 };
 
-using GraphImplementations =
-    ::testing::Types<jGraph::MatrixGraph, jGraph::ListGraph>;
+using GraphImplementations = ::testing::Types<jGraph::MatrixGraph<unsigned>,
+                                              jGraph::ListGraph<unsigned>>;
 
 TYPED_TEST_SUITE(GraphMeasuresTests, GraphImplementations);
 
