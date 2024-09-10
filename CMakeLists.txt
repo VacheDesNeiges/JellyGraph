@@ -15,9 +15,11 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
 )
 
 add_library(jellyGraph SHARED
+    src/GraphImpl/GraphPrimitives.cpp
     src/GraphImpl/ListGraph.cpp
     src/GraphImpl/MatrixGraph.cpp
     src/Measures/GraphMeasures.cpp
+    src/Algorithms/GraphAlgorithms.cpp
 )
 
 target_include_directories(jellyGraph
@@ -43,6 +45,7 @@ add_executable(test
     tests/main.cpp
     tests/testGraphPrimitives.cpp
     tests/testGraphMeasures.cpp
+    tests/testGraphAlgorithms.cpp
 )
 
 find_package(GTest REQUIRED)

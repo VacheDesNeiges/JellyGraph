@@ -8,10 +8,10 @@ namespace jGraph
 
 MatrixGraph::MatrixGraph(unsigned numNodes)
 {
-    nameIndexMap.reserve(numNodes);
+    getNodeMap().reserve(numNodes);
     for (unsigned i = 0; i < numNodes; i++)
     {
-        nameIndexMap.addByName(i);
+        getNodeMap().addByName(i);
     }
 
     edgeMatrix.reserve(numNodes);
@@ -24,7 +24,7 @@ MatrixGraph::MatrixGraph(unsigned numNodes)
 
 void MatrixGraph::addNode(unsigned nodeName)
 {
-    if (nameIndexMap.addByName(nodeName))
+    if (getNodeMap().addByName(nodeName))
     {
         for (auto &row : edgeMatrix)
         {
@@ -36,9 +36,9 @@ void MatrixGraph::addNode(unsigned nodeName)
 
 void MatrixGraph::removeNode(unsigned nodeName)
 {
-    if (nameIndexMap.contains(nodeName))
+    if (getNodeMap().contains(nodeName))
     {
-        const auto indexToDelete = nameIndexMap.getByName(nodeName);
+        const auto indexToDelete = getNodeMap().getByName(nodeName);
         edgeMatrix.erase(edgeMatrix.begin() + indexToDelete);
         for (auto &vec : edgeMatrix)
         {
@@ -50,14 +50,14 @@ void MatrixGraph::removeNode(unsigned nodeName)
 void MatrixGraph::addEdge(std::pair<unsigned, unsigned> edge)
 {
     const auto [first, second] = edge;
-    if (!nameIndexMap.contains(first))
+    if (!getNodeMap().contains(first))
         addNode(first);
 
-    if (!nameIndexMap.contains(second))
+    if (!getNodeMap().contains(second))
         addNode(second);
 
-    const auto firstIndex = nameIndexMap.getByName(first);
-    const auto secondIndex = nameIndexMap.getByName(second);
+    const auto firstIndex = getNodeMap().getByName(first);
+    const auto secondIndex = getNodeMap().getByName(second);
 
     if (!edgeMatrix.at(firstIndex).at(secondIndex))
     {
@@ -89,7 +89,7 @@ unsigned MatrixGraph::getNumberOfNodes() const
 
 std::vector<unsigned> MatrixGraph::getNodes() const
 {
-    return nameIndexMap.getByIndex(getNodesAsIndexes());
+    return getNodeMap().getByIndex(getNodesAsIndexes());
 }
 
 std::vector<unsigned> MatrixGraph::getNodesAsIndexes() const
@@ -114,10 +114,10 @@ std::vector<std::pair<unsigned, unsigned>> MatrixGraph::getEdges() const
         {
 
             if (edgeMatrix.at(i).at(j) &&
-                nameIndexMap.getByIndex(i) < nameIndexMap.getByIndex(j))
+                getNodeMap().getByIndex(i) < getNodeMap().getByIndex(j))
             {
-                result.emplace_back(nameIndexMap.getByIndex(i),
-                                    nameIndexMap.getByIndex(j));
+                result.emplace_back(getNodeMap().getByIndex(i),
+                                    getNodeMap().getByIndex(j));
             }
         }
     }
@@ -126,8 +126,8 @@ std::vector<std::pair<unsigned, unsigned>> MatrixGraph::getEdges() const
 
 std::vector<unsigned> MatrixGraph::getNeighbors(unsigned key) const
 {
-    return nameIndexMap.getByIndex(
-        getNeighborsAsIndexes(nameIndexMap.getByName(key)));
+    return getNodeMap().getByIndex(
+        getNeighborsAsIndexes(getNodeMap().getByName(key)));
 }
 
 std::vector<unsigned> MatrixGraph::getNeighborsAsIndexes(unsigned index) const

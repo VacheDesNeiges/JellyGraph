@@ -10,17 +10,17 @@ namespace jGraph
 ListGraph::ListGraph(unsigned numNodes)
 {
     nodes.reserve(numNodes);
-    nameIndexMap.reserve(numNodes);
+    getNodeMap().reserve(numNodes);
     for (unsigned i = 0; i < numNodes; i++)
     {
-        nameIndexMap.addByName(i);
+        getNodeMap().addByName(i);
         nodes.emplace_back();
     }
 }
 
 void ListGraph::addNode(unsigned nodeName)
 {
-    if (nameIndexMap.addByName(nodeName))
+    if (getNodeMap().addByName(nodeName))
     {
         nodes.emplace_back();
     }
@@ -38,9 +38,9 @@ unsigned ListGraph::getNumberOfEdges() const
 
 void ListGraph::removeNode(unsigned nodeName)
 {
-    if (nameIndexMap.contains(nodeName))
+    if (getNodeMap().contains(nodeName))
     {
-        const auto index = nameIndexMap.getByName(nodeName);
+        const auto index = getNodeMap().getByName(nodeName);
         nodes.erase(nodes.begin() + index);
 
         for (auto &node : nodes)
@@ -60,14 +60,14 @@ void ListGraph::removeNode(unsigned nodeName)
 void ListGraph::addEdge(std::pair<unsigned, unsigned> edge)
 {
     const auto [first, second] = edge;
-    if (!nameIndexMap.contains(first))
+    if (!getNodeMap().contains(first))
         addNode(first);
 
-    if (!nameIndexMap.contains(second))
+    if (!getNodeMap().contains(second))
         addNode(second);
 
-    const auto firstIndex = nameIndexMap.getByName(first);
-    const auto secondIndex = nameIndexMap.getByName(second);
+    const auto firstIndex = getNodeMap().getByName(first);
+    const auto secondIndex = getNodeMap().getByName(second);
 
     if (std::ranges::find(nodes.at(firstIndex), secondIndex) ==
         nodes.at(firstIndex).end())
@@ -94,7 +94,7 @@ void ListGraph::removeEdge(std::pair<unsigned, unsigned> edge)
 
 std::vector<unsigned> ListGraph::getNodes() const
 {
-    return nameIndexMap.getByIndex(getNodesAsIndexes());
+    return getNodeMap().getByIndex(getNodesAsIndexes());
 }
 
 std::vector<unsigned> ListGraph::getNodesAsIndexes() const
@@ -117,8 +117,8 @@ std::vector<std::pair<unsigned, unsigned>> ListGraph::getEdges() const
     {
         for (unsigned j = 0; j < nodes.at(i).size(); j++)
         {
-            const auto firstIndex = nameIndexMap.getByIndex(i);
-            const auto secondIndex = nameIndexMap.getByIndex(nodes.at(i).at(j));
+            const auto firstIndex = getNodeMap().getByIndex(i);
+            const auto secondIndex = getNodeMap().getByIndex(nodes.at(i).at(j));
             if (firstIndex < secondIndex)
                 result.emplace_back(firstIndex, secondIndex);
         }
@@ -129,8 +129,8 @@ std::vector<std::pair<unsigned, unsigned>> ListGraph::getEdges() const
 
 std::vector<unsigned> ListGraph::getNeighbors(unsigned key) const
 {
-    return nameIndexMap.getByIndex(
-        getNeighborsAsIndexes(nameIndexMap.getByName(key)));
+    return getNodeMap().getByIndex(
+        getNeighborsAsIndexes(getNodeMap().getByName(key)));
 }
 
 std::vector<unsigned> ListGraph::getNeighborsAsIndexes(unsigned index) const

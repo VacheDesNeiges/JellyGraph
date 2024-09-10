@@ -1,5 +1,6 @@
 #pragma once
 
+#include "NameIndexMap.hpp"
 #include <utility>
 #include <vector>
 
@@ -28,7 +29,12 @@ class GraphPrimitives
 
     virtual bool hasEdge(std::pair<unsigned, unsigned>) const = 0;
 
-  private:
+  protected:
+    jGraph::internals::NameIndexMap<unsigned> &getNodeMap();
+    const jGraph::internals::NameIndexMap<unsigned> &getNodeMap() const;
     virtual std::vector<unsigned> getNodesAsIndexes() const = 0;
     virtual std::vector<unsigned> getNeighborsAsIndexes(unsigned) const = 0;
+
+  private:
+    jGraph::internals::NameIndexMap<unsigned> nodeMap;
 };

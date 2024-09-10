@@ -3,7 +3,6 @@
 #include "GraphAlgorithms.hpp"
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
-#include "Utils/NameIndexMap.hpp"
 #include <linux/limits.h>
 #include <utility>
 #include <vector>
@@ -34,7 +33,6 @@ class MatrixGraph : public GraphAlgorithms,
     bool hasEdge(std::pair<unsigned, unsigned> edge) const override;
 
   private:
-    jGraph::internals::NameIndexMap<unsigned> nameIndexMap;
     unsigned edgeNumber = 0;
     std::vector<std::vector<bool>> edgeMatrix;
 

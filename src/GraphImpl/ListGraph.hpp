@@ -2,7 +2,6 @@
 #include "GraphAlgorithms.hpp"
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
-#include "NameIndexMap.hpp"
 #include <utility>
 #include <vector>
 
@@ -32,7 +31,6 @@ class ListGraph : public GraphAlgorithms,
     bool hasEdge(std::pair<unsigned, unsigned> edge) const override;
 
   private:
-    jGraph::internals::NameIndexMap<unsigned> nameIndexMap;
     unsigned edgeNumber = 0;
     std::vector<std::vector<unsigned>> nodes;
 
