@@ -7,7 +7,7 @@
 #include <utility>
 
 template <typename T>
-concept hasGraphPrimitives = std::is_base_of_v<GraphPrimitives, T>;
+concept hasGraphPrimitives = std::is_base_of_v<jGraph::GraphPrimitives, T>;
 
 template <typename T>
     requires hasGraphPrimitives<T>

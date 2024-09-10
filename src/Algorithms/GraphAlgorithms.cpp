@@ -2,6 +2,9 @@
 #include <stack>
 #include <vector>
 
+namespace jGraph
+{
+
 bool GraphAlgorithms::isConnected() const
 {
     return components().size() == 1;
@@ -57,3 +60,5 @@ std::vector<std::vector<unsigned>> GraphAlgorithms::internal_components() const
     }
     return components;
 }
+
+} // namespace jGraph

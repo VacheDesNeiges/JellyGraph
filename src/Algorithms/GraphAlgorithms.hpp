@@ -2,6 +2,9 @@
 #include "GraphPrimitives.hpp"
 #include <vector>
 
+namespace jGraph
+{
+
 class GraphAlgorithms : public virtual GraphPrimitives
 {
   public:
@@ -12,3 +15,5 @@ class GraphAlgorithms : public virtual GraphPrimitives
   private:
     std::vector<std::vector<unsigned>> internal_components() const;
 };
+
+}; // namespace jGraph

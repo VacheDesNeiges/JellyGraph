@@ -4,6 +4,9 @@
 #include <utility>
 #include <vector>
 
+namespace jGraph
+{
+
 class GraphPrimitives
 {
   public:
@@ -38,3 +41,5 @@ class GraphPrimitives
   private:
     jGraph::internals::NameIndexMap<unsigned> nodeMap;
 };
+
+} // namespace jGraph

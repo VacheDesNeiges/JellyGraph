@@ -1,5 +1,8 @@
 #include "GraphMeasures.hpp"
 
+namespace jGraph
+{
+
 float GraphMeasures::averageNeighborDegree() const
 {
     float result = 0;
@@ -14,3 +17,5 @@ float GraphMeasures::averageNeighborDegree() const
 
     return result;
 }
+
+} // namespace jGraph

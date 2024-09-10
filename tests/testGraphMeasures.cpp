@@ -5,7 +5,7 @@
 #include <type_traits>
 
 template <typename T>
-concept hasGraphMeasures = std::is_base_of_v<GraphMeasures, T>;
+concept hasGraphMeasures = std::is_base_of_v<jGraph::GraphMeasures, T>;
 
 template <typename T>
     requires hasGraphMeasures<T>

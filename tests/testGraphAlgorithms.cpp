@@ -6,7 +6,7 @@
 #include <type_traits>
 
 template <typename T>
-concept hasGraphAlgorithms = std::is_base_of_v<GraphAlgorithms, T>;
+concept hasGraphAlgorithms = std::is_base_of_v<jGraph::GraphAlgorithms, T>;
 
 template <typename T>
     requires hasGraphAlgorithms<T>
