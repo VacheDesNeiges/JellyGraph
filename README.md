@@ -1,2 +1,2 @@
 # JellyGraph
-A header only Graph Library
+A Graph Library

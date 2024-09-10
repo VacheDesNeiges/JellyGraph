@@ -4,6 +4,7 @@
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
 #include <cassert>
+#include <cstdint>
 #include <linux/limits.h>
 #include <utility>
 #include <vector>
@@ -36,7 +37,10 @@ class MatrixGraph : public GraphAlgorithms<T>,
 
   private:
     unsigned edgeNumber = 0;
-    std::vector<std::vector<bool>> edgeMatrix;
+
+    std::vector<std::vector<uint8_t>> edgeMatrix;
+    static constexpr uint8_t NOT_EDGE = 0;
+    static constexpr uint8_t EDGE = 1;
 
     std::vector<unsigned> internal_getNodes() const override;
     std::vector<unsigned> internal_getNeighbors(unsigned index) const override;
@@ -104,11 +108,11 @@ void MatrixGraph<T>::addEdge(std::pair<T, T> edge)
     const auto firstIndex = this->getNodeMap().convertNodeNameToIndex(first);
     const auto secondIndex = this->getNodeMap().convertNodeNameToIndex(second);
 
-    if (!edgeMatrix.at(firstIndex).at(secondIndex))
+    if (edgeMatrix.at(firstIndex).at(secondIndex) == NOT_EDGE)
     {
         edgeNumber++;
-        edgeMatrix[firstIndex][secondIndex] = true;
-        edgeMatrix[secondIndex][firstIndex] = true;
+        edgeMatrix[firstIndex][secondIndex] = EDGE;
+        edgeMatrix[secondIndex][firstIndex] = EDGE;
     }
 }
 
@@ -121,11 +125,11 @@ void MatrixGraph<T>::removeEdge(std::pair<T, T> edge)
     const unsigned second =
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-    if (edgeMatrix.at(first).at(second))
+    if (edgeMatrix.at(first).at(second) == EDGE)
         edgeNumber--;
 
-    edgeMatrix[first][second] = false;
-    edgeMatrix[second][first] = false;
+    edgeMatrix[first][second] = NOT_EDGE;
+    edgeMatrix[second][first] = NOT_EDGE;
 }
 
 template <typename T>
@@ -174,7 +178,7 @@ std::vector<std::pair<T, T>> MatrixGraph<T>::getEdges() const
         for (unsigned j = 0; j < edgeMatrix.size(); j++)
         {
 
-            if (edgeMatrix.at(i).at(j) &&
+            if ((edgeMatrix.at(i).at(j) == EDGE) &&
                 this->getNodeMap().convertIndexToNodeName(i) <
                     this->getNodeMap().convertIndexToNodeName(j))
             {
@@ -206,7 +210,7 @@ std::vector<unsigned> MatrixGraph<T>::internal_getNeighbors(
 
     for (unsigned i = 0; i < edgeMatrix.size(); i++)
     {
-        if (edgeMatrix.at(index).at(i))
+        if (edgeMatrix.at(index).at(i) == EDGE)
             result.emplace_back(i);
     }
     result.shrink_to_fit();
