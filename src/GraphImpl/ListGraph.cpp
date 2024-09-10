@@ -40,7 +40,7 @@ void ListGraph::removeNode(unsigned nodeName)
 {
     if (getNodeMap().contains(nodeName))
     {
-        const auto index = getNodeMap().getByName(nodeName);
+        const auto index = getNodeMap().convertNodeNameToIndex(nodeName);
         nodes.erase(nodes.begin() + index);
 
         for (auto &node : nodes)
@@ -66,8 +66,8 @@ void ListGraph::addEdge(std::pair<unsigned, unsigned> edge)
     if (!getNodeMap().contains(second))
         addNode(second);
 
-    const auto firstIndex = getNodeMap().getByName(first);
-    const auto secondIndex = getNodeMap().getByName(second);
+    const auto firstIndex = getNodeMap().convertNodeNameToIndex(first);
+    const auto secondIndex = getNodeMap().convertNodeNameToIndex(second);
 
     if (std::ranges::find(nodes.at(firstIndex), secondIndex) ==
         nodes.at(firstIndex).end())
@@ -94,10 +94,10 @@ void ListGraph::removeEdge(std::pair<unsigned, unsigned> edge)
 
 std::vector<unsigned> ListGraph::getNodes() const
 {
-    return getNodeMap().getByIndex(getNodesAsIndexes());
+    return getNodeMap().convertIndexToNodeName(internal_getNodes());
 }
 
-std::vector<unsigned> ListGraph::getNodesAsIndexes() const
+std::vector<unsigned> ListGraph::internal_getNodes() const
 {
     std::vector<unsigned> result;
     result.reserve(getNumberOfNodes());
@@ -117,8 +117,9 @@ std::vector<std::pair<unsigned, unsigned>> ListGraph::getEdges() const
     {
         for (unsigned j = 0; j < nodes.at(i).size(); j++)
         {
-            const auto firstIndex = getNodeMap().getByIndex(i);
-            const auto secondIndex = getNodeMap().getByIndex(nodes.at(i).at(j));
+            const auto firstIndex = getNodeMap().convertIndexToNodeName(i);
+            const auto secondIndex =
+                getNodeMap().convertIndexToNodeName(nodes.at(i).at(j));
             if (firstIndex < secondIndex)
                 result.emplace_back(firstIndex, secondIndex);
         }
@@ -129,11 +130,11 @@ std::vector<std::pair<unsigned, unsigned>> ListGraph::getEdges() const
 
 std::vector<unsigned> ListGraph::getNeighbors(unsigned key) const
 {
-    return getNodeMap().getByIndex(
-        getNeighborsAsIndexes(getNodeMap().getByName(key)));
+    return getNodeMap().convertIndexToNodeName(
+        internal_getNeighbors(getNodeMap().convertNodeNameToIndex(key)));
 }
 
-std::vector<unsigned> ListGraph::getNeighborsAsIndexes(unsigned index) const
+std::vector<unsigned> ListGraph::internal_getNeighbors(unsigned index) const
 {
     return nodes.at(index);
 }

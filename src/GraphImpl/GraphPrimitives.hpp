@@ -32,8 +32,8 @@ class GraphPrimitives
   protected:
     jGraph::internals::NameIndexMap<unsigned> &getNodeMap();
     const jGraph::internals::NameIndexMap<unsigned> &getNodeMap() const;
-    virtual std::vector<unsigned> getNodesAsIndexes() const = 0;
-    virtual std::vector<unsigned> getNeighborsAsIndexes(unsigned) const = 0;
+    virtual std::vector<unsigned> internal_getNodes() const = 0;
+    virtual std::vector<unsigned> internal_getNeighbors(unsigned) const = 0;
 
   private:
     jGraph::internals::NameIndexMap<unsigned> nodeMap;

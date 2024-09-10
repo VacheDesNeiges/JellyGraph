@@ -64,12 +64,13 @@ class NameIndexMap
         indexToName.erase(indexToName.begin() + index);
     }
 
-    T getByIndex(unsigned index) const
+    T convertIndexToNodeName(unsigned index) const
     {
         return indexToName.at(index);
     }
 
-    std::vector<T> getByIndex(const std::vector<unsigned> &indexes) const
+    std::vector<T> convertIndexToNodeName(
+        const std::vector<unsigned> &indexes) const
     {
         std::vector<T> result;
         result.reserve(indexes.size());
@@ -81,12 +82,12 @@ class NameIndexMap
         return result;
     }
 
-    unsigned getByName(T name) const
+    unsigned convertNodeNameToIndex(T name) const
     {
         return nameToIndex.at(name);
     }
 
-    std::vector<unsigned> getByName(std::vector<T> names) const
+    std::vector<unsigned> convertNodeNameToIndex(std::vector<T> names) const
     {
         std::vector<unsigned> result;
         result.reserve(names.size());

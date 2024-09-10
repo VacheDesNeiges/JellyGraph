@@ -14,7 +14,7 @@ std::vector<std::vector<unsigned>> GraphAlgorithms::components() const
     result.reserve(components.size());
     for (const auto &component : components)
     {
-        result.emplace_back(getNodeMap().getByIndex(component));
+        result.emplace_back(getNodeMap().convertIndexToNodeName(component));
     }
     return result;
 }
@@ -23,7 +23,7 @@ std::vector<std::vector<unsigned>> GraphAlgorithms::internal_components() const
 {
     std::vector<std::vector<unsigned>> components;
 
-    const auto nodes = getNodesAsIndexes();
+    const auto nodes = internal_getNodes();
     std::vector<bool> visited(nodes.size(), false);
     std::vector<unsigned> currentComponent;
 
@@ -48,7 +48,7 @@ std::vector<std::vector<unsigned>> GraphAlgorithms::internal_components() const
 
             visited.at(node) = true;
             currentComponent.push_back(node);
-            for (const auto neighbor : getNeighborsAsIndexes(node))
+            for (const auto neighbor : internal_getNeighbors(node))
             {
                 stack.push(neighbor);
             }

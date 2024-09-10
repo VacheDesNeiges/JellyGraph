@@ -38,7 +38,8 @@ void MatrixGraph::removeNode(unsigned nodeName)
 {
     if (getNodeMap().contains(nodeName))
     {
-        const auto indexToDelete = getNodeMap().getByName(nodeName);
+        const auto indexToDelete =
+            getNodeMap().convertNodeNameToIndex(nodeName);
         edgeMatrix.erase(edgeMatrix.begin() + indexToDelete);
         for (auto &vec : edgeMatrix)
         {
@@ -56,8 +57,8 @@ void MatrixGraph::addEdge(std::pair<unsigned, unsigned> edge)
     if (!getNodeMap().contains(second))
         addNode(second);
 
-    const auto firstIndex = getNodeMap().getByName(first);
-    const auto secondIndex = getNodeMap().getByName(second);
+    const auto firstIndex = getNodeMap().convertNodeNameToIndex(first);
+    const auto secondIndex = getNodeMap().convertNodeNameToIndex(second);
 
     if (!edgeMatrix.at(firstIndex).at(secondIndex))
     {
@@ -89,10 +90,10 @@ unsigned MatrixGraph::getNumberOfNodes() const
 
 std::vector<unsigned> MatrixGraph::getNodes() const
 {
-    return getNodeMap().getByIndex(getNodesAsIndexes());
+    return getNodeMap().convertIndexToNodeName(internal_getNodes());
 }
 
-std::vector<unsigned> MatrixGraph::getNodesAsIndexes() const
+std::vector<unsigned> MatrixGraph::internal_getNodes() const
 {
     std::vector<unsigned> result;
     result.reserve(edgeMatrix.size());
@@ -114,10 +115,11 @@ std::vector<std::pair<unsigned, unsigned>> MatrixGraph::getEdges() const
         {
 
             if (edgeMatrix.at(i).at(j) &&
-                getNodeMap().getByIndex(i) < getNodeMap().getByIndex(j))
+                getNodeMap().convertIndexToNodeName(i) <
+                    getNodeMap().convertIndexToNodeName(j))
             {
-                result.emplace_back(getNodeMap().getByIndex(i),
-                                    getNodeMap().getByIndex(j));
+                result.emplace_back(getNodeMap().convertIndexToNodeName(i),
+                                    getNodeMap().convertIndexToNodeName(j));
             }
         }
     }
@@ -126,11 +128,12 @@ std::vector<std::pair<unsigned, unsigned>> MatrixGraph::getEdges() const
 
 std::vector<unsigned> MatrixGraph::getNeighbors(unsigned key) const
 {
-    return getNodeMap().getByIndex(
-        getNeighborsAsIndexes(getNodeMap().getByName(key)));
+    const auto nodeIndex = getNodeMap().convertNodeNameToIndex(key);
+    return getNodeMap().convertIndexToNodeName(
+        internal_getNeighbors(nodeIndex));
 }
 
-std::vector<unsigned> MatrixGraph::getNeighborsAsIndexes(unsigned index) const
+std::vector<unsigned> MatrixGraph::internal_getNeighbors(unsigned index) const
 {
     std::vector<unsigned> result;
     result.reserve(edgeMatrix.size());
