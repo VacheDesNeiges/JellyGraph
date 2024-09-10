@@ -27,4 +27,8 @@ class GraphPrimitives
     virtual std::vector<unsigned> getNeighbors(unsigned) const = 0;
 
     virtual bool hasEdge(std::pair<unsigned, unsigned>) const = 0;
+
+  private:
+    virtual std::vector<unsigned> getNodesAsIndexes() const = 0;
+    virtual std::vector<unsigned> getNeighborsAsIndexes(unsigned) const = 0;
 };

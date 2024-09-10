@@ -69,9 +69,33 @@ class NameIndexMap
         return indexToName.at(index);
     }
 
+    std::vector<T> getByIndex(const std::vector<unsigned> &indexes) const
+    {
+        std::vector<T> result;
+        result.reserve(indexes.size());
+
+        for (const unsigned index : indexes)
+        {
+            result.emplace_back(indexToName.at(index));
+        }
+        return result;
+    }
+
     unsigned getByName(T name) const
     {
         return nameToIndex.at(name);
+    }
+
+    std::vector<unsigned> getByName(std::vector<T> names) const
+    {
+        std::vector<unsigned> result;
+        result.reserve(names.size());
+
+        for (const auto name : names)
+        {
+            result.emplace_back(nameToIndex(name));
+        }
+        return result;
     }
 
     void reserve(size_t size)

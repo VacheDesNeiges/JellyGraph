@@ -4,5 +4,8 @@
 class GraphAlgorithms : public virtual GraphPrimitives
 {
   public:
-    void depthFirstSearch() const;
+    bool isConnected() const;
+    unsigned numberOfComponents() const;
+    void components() const;
+    void components(unsigned) const;
 };

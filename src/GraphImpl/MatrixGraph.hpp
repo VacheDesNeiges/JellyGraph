@@ -37,6 +37,9 @@ class MatrixGraph : public GraphAlgorithms,
     jGraph::internals::NameIndexMap<unsigned> nameIndexMap;
     unsigned edgeNumber = 0;
     std::vector<std::vector<bool>> edgeMatrix;
+
+    std::vector<unsigned> getNodesAsIndexes() const override;
+    std::vector<unsigned> getNeighborsAsIndexes(unsigned index) const override;
 };
 
 } // namespace jGraph

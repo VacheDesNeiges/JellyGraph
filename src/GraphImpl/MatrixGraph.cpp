@@ -89,11 +89,16 @@ unsigned MatrixGraph::getNumberOfNodes() const
 
 std::vector<unsigned> MatrixGraph::getNodes() const
 {
+    return nameIndexMap.getByIndex(getNodesAsIndexes());
+}
+
+std::vector<unsigned> MatrixGraph::getNodesAsIndexes() const
+{
     std::vector<unsigned> result;
     result.reserve(edgeMatrix.size());
     for (unsigned i = 0; i < edgeMatrix.size(); i++)
     {
-        result.emplace_back(nameIndexMap.getByIndex(i));
+        result.emplace_back(i);
     }
     return result;
 }
@@ -121,14 +126,19 @@ std::vector<std::pair<unsigned, unsigned>> MatrixGraph::getEdges() const
 
 std::vector<unsigned> MatrixGraph::getNeighbors(unsigned key) const
 {
-    const auto index = nameIndexMap.getByName(key);
+    return nameIndexMap.getByIndex(
+        getNeighborsAsIndexes(nameIndexMap.getByName(key)));
+}
+
+std::vector<unsigned> MatrixGraph::getNeighborsAsIndexes(unsigned index) const
+{
     std::vector<unsigned> result;
     result.reserve(edgeMatrix.size());
 
     for (unsigned i = 0; i < edgeMatrix.size(); i++)
     {
         if (edgeMatrix.at(index).at(i))
-            result.emplace_back(nameIndexMap.getByIndex(i));
+            result.emplace_back(i);
     }
     result.shrink_to_fit();
     return result;

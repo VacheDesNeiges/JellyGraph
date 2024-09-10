@@ -94,12 +94,16 @@ void ListGraph::removeEdge(std::pair<unsigned, unsigned> edge)
 
 std::vector<unsigned> ListGraph::getNodes() const
 {
+    return nameIndexMap.getByIndex(getNodesAsIndexes());
+}
+
+std::vector<unsigned> ListGraph::getNodesAsIndexes() const
+{
     std::vector<unsigned> result;
     result.reserve(getNumberOfNodes());
-
     for (unsigned i = 0; i < nodes.size(); i++)
     {
-        result.emplace_back(nameIndexMap.getByIndex(i));
+        result.emplace_back(i);
     }
     return result;
 }
@@ -125,15 +129,13 @@ std::vector<std::pair<unsigned, unsigned>> ListGraph::getEdges() const
 
 std::vector<unsigned> ListGraph::getNeighbors(unsigned key) const
 {
-    std::vector<unsigned> result;
-    const auto index = nameIndexMap.getByName(key);
-    result.reserve(nodes.at(index).size());
-    for (const auto neighbor : nodes.at(index))
-    {
-        result.emplace_back(nameIndexMap.getByIndex(neighbor));
-    }
+    return nameIndexMap.getByIndex(
+        getNeighborsAsIndexes(nameIndexMap.getByName(key)));
+}
 
-    return result;
+std::vector<unsigned> ListGraph::getNeighborsAsIndexes(unsigned index) const
+{
+    return nodes.at(index);
 }
 
 bool ListGraph::hasEdge(std::pair<unsigned, unsigned> edge) const
