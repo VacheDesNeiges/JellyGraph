@@ -21,6 +21,8 @@ class MatrixGraph : public GraphAlgorithms<T>,
     MatrixGraph() = default;
     MatrixGraph(unsigned numNodes);
 
+    void clear() override;
+
     void addNode(T nodeName) override;
     void removeNode(T nodeName) override;
     void addEdge(std::pair<T, T> edge) override;
@@ -209,6 +211,12 @@ template <typename T>
 unsigned MatrixGraph<T>::getNumberOfEdges() const
 {
     return edgeNumber;
+}
+
+template <typename T>
+void MatrixGraph<T>::clear()
+{
+    edgeMatrix.clear();
 }
 
 } // namespace jGraph
