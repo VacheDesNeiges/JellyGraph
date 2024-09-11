@@ -14,11 +14,11 @@ class GraphAlgorithms : public virtual GraphPrimitives<T>
   public:
     bool isConnected() const;
     unsigned numberOfComponents() const;
-    std::vector<T> component(T node) const;
+    std::vector<T> componentOfNode(T node) const;
     std::vector<std::vector<T>> components() const;
 
   private:
-    std::vector<unsigned> internal_component(unsigned node) const;
+    std::vector<unsigned> internal_componentOfNode(unsigned node) const;
     std::vector<std::vector<unsigned>> internal_components() const;
 };
 
@@ -29,16 +29,16 @@ bool GraphAlgorithms<T>::isConnected() const
 }
 
 template <typename T>
-std::vector<T> GraphAlgorithms<T>::component(T node) const
+std::vector<T> GraphAlgorithms<T>::componentOfNode(T node) const
 {
     const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(node);
 
     return this->getNodeMap().convertIndexToNodeName(
-        internal_component(nodeIndex));
+        internal_componentOfNode(nodeIndex));
 }
 
 template <typename T>
-std::vector<unsigned> GraphAlgorithms<T>::internal_component(
+std::vector<unsigned> GraphAlgorithms<T>::internal_componentOfNode(
     unsigned node) const
 {
     std::vector<unsigned> result;
