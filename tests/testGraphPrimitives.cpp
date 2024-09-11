@@ -3,6 +3,8 @@
 
 #include "gtest/gtest.h"
 
+#include <algorithm>
+
 template <typename T>
 class GraphPrimitivesTests : public ::testing::Test
 {

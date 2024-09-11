@@ -1,6 +1,7 @@
 #pragma once
 #include "GraphPrimitives.hpp"
 #include <stack>
+#include <utility>
 #include <vector>
 
 namespace jGraph

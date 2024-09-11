@@ -3,9 +3,10 @@
 #include "GraphAlgorithms.hpp"
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
+
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
-#include <linux/limits.h>
 #include <utility>
 #include <vector>
 

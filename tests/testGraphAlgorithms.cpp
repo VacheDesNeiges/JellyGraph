@@ -1,7 +1,13 @@
 #include "ListGraph.hpp"
 #include "MatrixGraph.hpp"
+
 #include "gtest/gtest.h"
+
+#include <algorithm>
+#include <array>
 #include <cassert>
+#include <utility>
+#include <vector>
 
 template <typename T>
 class GraphAlgorithmsTests : public ::testing::Test
@@ -29,12 +35,27 @@ TYPED_TEST(GraphAlgorithmsTests, isConnected)
 TYPED_TEST(GraphAlgorithmsTests, connectedComponents)
 {
     ASSERT_EQ(this->graph.components().size(), 0);
-    this->graph.addEdge({0, 1});
-    this->graph.addEdge({1, 2});
-    this->graph.addEdge({0, 3});
-    this->graph.addEdge({4, 5});
-    this->graph.addEdge({6, 7});
+
+    const std::array<std::pair<const unsigned, const unsigned>, 5> edges{
+        {{0, 1}, {1, 2}, {0, 3}, {4, 5}, {6, 7}}};
+
+    for (const auto &edge : edges)
+    {
+        this->graph.addEdge(edge);
+    }
 
     const auto components = this->graph.components();
     ASSERT_EQ(components.size(), 3);
+
+    const std::vector<std::vector<unsigned>> expectedComponents = {
+        {0, 1, 2, 3}, {4, 5}, {6, 7}};
+
+    for (const auto &expectedComponent : expectedComponents)
+    {
+        auto it = std::ranges::find_if(
+            components, [&expectedComponent](const auto &vec) {
+                return std::ranges::is_permutation(vec, expectedComponent);
+            });
+        ASSERT_TRUE(it != components.end());
+    }
 }

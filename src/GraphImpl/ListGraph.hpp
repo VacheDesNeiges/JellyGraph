@@ -79,20 +79,20 @@ unsigned ListGraph<T>::getNumberOfEdges() const
 template <typename T>
 void ListGraph<T>::removeNode(T nodeName)
 {
-    if (this->getNodeMap().contains(nodeName))
-    {
-        const auto index = this->getNodeMap().convertNodeNameToIndex(nodeName);
-        nodes.erase(nodes.begin() + index);
+    if (!this->getNodeMap().contains(nodeName))
+        return;
 
-        for (auto &node : nodes)
+    const auto index = this->getNodeMap().convertNodeNameToIndex(nodeName);
+    nodes.erase(nodes.begin() + index);
+
+    for (auto &node : nodes)
+    {
+        node.erase(std::ranges::remove(node, index).begin(), node.end());
+        for (auto &edge : node)
         {
-            node.erase(std::ranges::remove(node, index).begin(), node.end());
-            for (auto &edge : node)
+            if (edge > index)
             {
-                if (edge > index)
-                {
-                    edge--;
-                }
+                edge--;
             }
         }
     }
