@@ -36,3 +36,20 @@ TYPED_TEST(GraphMeasuresTests, averageNeighborDegree)
     this->graph.addEdge({2, 3});
     ASSERT_EQ(this->graph.averageNeighborDegree(), 1);
 }
+
+TYPED_TEST(GraphMeasuresTests, density)
+{
+    ASSERT_EQ(this->graph.density(), 0);
+
+    this->graph.addNode(0);
+    ASSERT_EQ(this->graph.density(), 0);
+    this->graph.addNode(1);
+    ASSERT_EQ(this->graph.density(), 0);
+
+    this->graph.addEdge({0, 1});
+    ASSERT_EQ(this->graph.density(), 1);
+
+    this->graph.addEdge({2, 3});
+    this->graph.addEdge({0, 3});
+    ASSERT_EQ(this->graph.density(), 0.5);
+}

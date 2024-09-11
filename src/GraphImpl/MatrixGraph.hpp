@@ -23,6 +23,7 @@ class MatrixGraph : public GraphAlgorithms<T>,
     MatrixGraph(unsigned numNodes);
 
     void clear() override;
+    bool isDirected() const override;
 
     void addNode(T nodeName) override;
     void removeNode(T nodeName) override;
@@ -218,6 +219,12 @@ template <typename T>
 void MatrixGraph<T>::clear()
 {
     edgeMatrix.clear();
+}
+
+template <typename T>
+bool MatrixGraph<T>::isDirected() const
+{
+    return false;
 }
 
 } // namespace jGraph

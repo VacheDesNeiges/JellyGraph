@@ -19,6 +19,7 @@ class ListGraph : public GraphAlgorithms<T>,
     ListGraph(unsigned numNodes);
 
     void clear() override;
+    bool isDirected() const override;
 
     void addNode(T nodeName) override;
     void removeNode(T nodeName) override;
@@ -199,6 +200,12 @@ template <typename T>
 void ListGraph<T>::clear()
 {
     nodes.clear();
+}
+
+template <typename T>
+bool ListGraph<T>::isDirected() const
+{
+    return false;
 }
 
 } // namespace jGraph
