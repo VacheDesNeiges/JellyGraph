@@ -32,6 +32,23 @@ TYPED_TEST(GraphAlgorithmsTests, isConnected)
     ASSERT_FALSE(this->graph.isConnected());
 }
 
+TYPED_TEST(GraphAlgorithmsTests, componentOfNode)
+{
+    const std::array<std::pair<const unsigned, const unsigned>, 5> edges{
+        {{0, 1}, {1, 2}, {0, 3}, {4, 5}, {6, 7}}};
+
+    for (const auto &edge : edges)
+    {
+        this->graph.addEdge(edge);
+    }
+    const auto computedComponent = this->graph.component(2);
+
+    const std::vector<unsigned> expectedComponent = {0, 1, 2, 3};
+
+    ASSERT_TRUE(
+        std::ranges::is_permutation(computedComponent, expectedComponent));
+}
+
 TYPED_TEST(GraphAlgorithmsTests, connectedComponents)
 {
     ASSERT_EQ(this->graph.components().size(), 0);

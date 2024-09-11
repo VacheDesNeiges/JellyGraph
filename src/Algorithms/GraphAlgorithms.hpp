@@ -1,5 +1,6 @@
 #pragma once
 #include "GraphPrimitives.hpp"
+#include <cstdio>
 #include <stack>
 #include <utility>
 #include <vector>
@@ -13,9 +14,11 @@ class GraphAlgorithms : public virtual GraphPrimitives<T>
   public:
     bool isConnected() const;
     unsigned numberOfComponents() const;
+    std::vector<T> component(T node) const;
     std::vector<std::vector<T>> components() const;
 
   private:
+    std::vector<unsigned> internal_component(unsigned node) const;
     std::vector<std::vector<unsigned>> internal_components() const;
 };
 
@@ -23,6 +26,46 @@ template <typename T>
 bool GraphAlgorithms<T>::isConnected() const
 {
     return components().size() == 1;
+}
+
+template <typename T>
+std::vector<T> GraphAlgorithms<T>::component(T node) const
+{
+    const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(node);
+
+    return this->getNodeMap().convertIndexToNodeName(
+        internal_component(nodeIndex));
+}
+
+template <typename T>
+std::vector<unsigned> GraphAlgorithms<T>::internal_component(
+    unsigned node) const
+{
+    std::vector<unsigned> result;
+    std::vector<bool> visited(this->getNumberOfNodes(), false);
+
+    std::vector<unsigned> underlyingStack;
+    underlyingStack.reserve(this->getNumberOfNodes());
+    std::stack<unsigned, std::vector<unsigned>> stack(
+        std::move(underlyingStack));
+
+    stack.push(node);
+    while (!stack.empty())
+    {
+        const auto currentNode = stack.top();
+        stack.pop();
+        if (visited.at(currentNode))
+            continue;
+
+        visited.at(currentNode) = true;
+        result.push_back(currentNode);
+        for (const auto neighbor : this->internal_getNeighbors(currentNode))
+        {
+            if (!visited.at(neighbor))
+                stack.push(neighbor);
+        }
+    }
+    return result;
 }
 
 template <typename T>
@@ -72,7 +115,8 @@ std::vector<std::vector<unsigned>> GraphAlgorithms<T>::internal_components()
             currentComponent.push_back(node);
             for (const auto neighbor : this->internal_getNeighbors(node))
             {
-                stack.push(neighbor);
+                if (!visited.at(neighbor))
+                    stack.push(neighbor);
             }
         }
         components.push_back(currentComponent);
