@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,8 +23,12 @@ jobs:
 
       - name: Install gtests
         run: |
-          sudo apt-get install libgtest-dev
-          
+          sudo apt-get install -y libgtest-dev
+
+      - name: Install Clang-Tidy
+        run: |
+          sudo apt-get install -y clang-tidy
+
       - name: Build
         run: |
           ./build.sh
@@ -32,3 +36,7 @@ jobs:
       - name: Test
         run: |
           ./test
+
+      - name: Clang-Tidy
+        run: |
+          clang-tidy ./src/**/*.?pp ./tests/*.?pp -p=./build/compile_commands.json --config-file=.clang-tidy
