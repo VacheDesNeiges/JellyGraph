@@ -10,9 +10,8 @@ class GraphMeasuresTests : public ::testing::Test
 };
 
 using GraphImplementations =
-    ::testing::Types<jGraph::MatrixGraph<unsigned>,
-                     jGraph::MatrixGraph<long long>,
-                     jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long>>;
+    ::testing::Types<jGraph::MatrixGraph<unsigned>, jGraph::MatrixGraph<double>,
+                     jGraph::ListGraph<unsigned>, jGraph::ListGraph<double>>;
 
 TYPED_TEST_SUITE(GraphMeasuresTests, GraphImplementations);
 

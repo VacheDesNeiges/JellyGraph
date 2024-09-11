@@ -13,7 +13,7 @@ namespace jGraph::internals
 template <typename T>
 concept ValidKeyType = std::copyable<T> && requires(T keyType) {
     { std::hash<T>{}(keyType) } -> std::convertible_to<std::size_t>;
-    { keyType <=> keyType } -> std::convertible_to<std::strong_ordering>;
+    { keyType <=> keyType } -> std::convertible_to<std::partial_ordering>;
 };
 
 template <typename T>

@@ -134,7 +134,12 @@ void MatrixGraph<T>::removeEdge(std::pair<T, T> edge)
 template <typename T>
 bool MatrixGraph<T>::hasEdge(std::pair<T, T> edge) const
 {
-    return edgeMatrix.at(edge.first).at(edge.second);
+    const unsigned first =
+        this->getNodeMap().convertNodeNameToIndex(edge.first);
+    const unsigned second =
+        this->getNodeMap().convertNodeNameToIndex(edge.second);
+
+    return edgeMatrix.at(first).at(second) == EDGE;
 }
 
 template <typename T>

@@ -124,7 +124,11 @@ void ListGraph<T>::addEdge(std::pair<T, T> edge)
 template <typename T>
 void ListGraph<T>::removeEdge(std::pair<T, T> edge)
 {
-    const auto [first, second] = edge;
+    const unsigned first =
+        this->getNodeMap().convertNodeNameToIndex(edge.first);
+    const unsigned second =
+        this->getNodeMap().convertNodeNameToIndex(edge.second);
+
     auto &vec = nodes.at(first);
     vec.erase(std::ranges::remove(vec, second).begin(), vec.end());
 
@@ -192,8 +196,12 @@ std::vector<unsigned> ListGraph<T>::internal_getNeighbors(unsigned index) const
 template <typename T>
 bool ListGraph<T>::hasEdge(std::pair<T, T> edge) const
 {
-    return std::ranges::find(nodes.at(edge.first), edge.second) !=
-           nodes.at(edge.first).end();
+    const unsigned first =
+        this->getNodeMap().convertNodeNameToIndex(edge.first);
+    const unsigned second =
+        this->getNodeMap().convertNodeNameToIndex(edge.second);
+
+    return std::ranges::find(nodes.at(first), second) != nodes.at(first).end();
 }
 
 template <typename T>
