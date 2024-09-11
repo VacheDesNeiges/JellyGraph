@@ -41,7 +41,7 @@ TYPED_TEST(GraphAlgorithmsTests, componentOfNode)
     {
         this->graph.addEdge(edge);
     }
-    const auto computedComponent = this->graph.component(2);
+    const auto computedComponent = this->graph.componentOfNode(2);
 
     const std::vector<unsigned> expectedComponent = {0, 1, 2, 3};
 

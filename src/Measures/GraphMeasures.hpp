@@ -8,8 +8,15 @@ template <typename T>
 class GraphMeasures : public virtual GraphPrimitives<T>
 {
   public:
+    unsigned degree(T node) const;
     float averageNeighborDegree() const;
 };
+
+template <typename T>
+unsigned GraphMeasures<T>::degree(T node) const
+{
+    return this->getNeighbors(node).size();
+}
 
 template <typename T>
 float GraphMeasures<T>::averageNeighborDegree() const
