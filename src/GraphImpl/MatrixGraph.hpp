@@ -45,12 +45,14 @@ class MatrixGraph : public GraphAlgorithms<T>,
 
     bool hasEdge(std::pair<T, T> edge) const override;
 
+  protected:
+    static constexpr uint8_t NOT_EDGE = 0;
+    static constexpr uint8_t EDGE = 1;
+
   private:
     unsigned edgeNumber = 0;
 
     std::vector<std::vector<uint8_t>> edgeMatrix;
-    static constexpr uint8_t NOT_EDGE = 0;
-    static constexpr uint8_t EDGE = 1;
 
     std::vector<unsigned> internal_getNodes() const override;
     std::vector<unsigned> internal_getNeighbors(unsigned index) const override;

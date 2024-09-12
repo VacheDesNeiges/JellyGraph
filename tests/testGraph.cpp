@@ -1,3 +1,4 @@
+#include "DirectedMatrixGraph.hpp"
 #include "ListGraph.hpp"
 #include "MatrixGraph.hpp"
 
