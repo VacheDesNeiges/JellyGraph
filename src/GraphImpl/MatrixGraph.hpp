@@ -80,7 +80,14 @@ MatrixGraph<T>::MatrixGraph(const R &rangeOfNodes)
 {
     for (const auto &node : rangeOfNodes)
     {
-        addNode(node);
+        if (this->getNodeMap().addByName(node))
+        {
+            for (auto &row : edgeMatrix)
+            {
+                row.emplace_back(false);
+            }
+            edgeMatrix.emplace_back(edgeMatrix.size() + 1, false);
+        }
     }
 }
 

@@ -70,7 +70,8 @@ ListGraph<T>::ListGraph(const R &rangeOfNodes)
 {
     for (const auto &node : rangeOfNodes)
     {
-        addNode(node);
+        if (this->getNodeMap().addByName(node))
+            nodes.emplace_back();
     }
 }
 

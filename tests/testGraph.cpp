@@ -1,8 +1,10 @@
 #include "ListGraph.hpp"
 #include "MatrixGraph.hpp"
+
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <array>
-#include <gtest/gtest.h>
 #include <string>
 
 TEST(GraphConstructors, rangeOfNodes)
@@ -11,8 +13,8 @@ TEST(GraphConstructors, rangeOfNodes)
     const std::array<char, 9> charsInString{'H', 'e', 'l', 'o', ' ',
                                             'w', 'r', 'd', '!'};
 
-    jGraph::MatrixGraph<char> g1(initString);
-    jGraph::ListGraph<char> g2(initString);
+    const jGraph::MatrixGraph<char> g1(initString);
+    const jGraph::ListGraph<char> g2(initString);
 
     const auto g1Nodes = g1.getNodes();
     const auto g2Nodes = g2.getNodes();
