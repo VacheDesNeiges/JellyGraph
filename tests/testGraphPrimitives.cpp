@@ -16,7 +16,7 @@ class GraphPrimitivesTests : public ::testing::Test
 };
 
 using GraphImplementations =
-    ::testing::Types<jGraph::MatrixGraph<unsigned>,
+    ::testing::Types<jGraph::MatrixGraph<unsigned, short>,
                      jGraph::MatrixGraph<long long>,
                      jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long>>;
 

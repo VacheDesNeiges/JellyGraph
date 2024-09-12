@@ -4,6 +4,7 @@
 #include "GraphPrimitives.hpp"
 #include <algorithm>
 #include <concepts>
+#include <cstddef>
 #include <ranges>
 #include <utility>
 #include <vector>
@@ -32,8 +33,8 @@ class ListGraph : public GraphAlgorithms<T>,
     void addEdge(std::pair<T, T> edge) override;
     void removeEdge(std::pair<T, T> edge) override;
 
-    unsigned getNumberOfNodes() const override;
-    unsigned getNumberOfEdges() const override;
+    size_t getNumberOfNodes() const override;
+    size_t getNumberOfEdges() const override;
 
     std::vector<T> getNodes() const override;
     std::vector<std::pair<T, T>> getEdges() const override;
@@ -85,13 +86,13 @@ void ListGraph<T>::addNode(T nodeName)
 }
 
 template <typename T>
-unsigned ListGraph<T>::getNumberOfNodes() const
+size_t ListGraph<T>::getNumberOfNodes() const
 {
     return static_cast<unsigned>(nodes.size());
 }
 
 template <typename T>
-unsigned ListGraph<T>::getNumberOfEdges() const
+size_t ListGraph<T>::getNumberOfEdges() const
 {
     return edgeNumber;
 }

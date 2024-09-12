@@ -1,27 +1,28 @@
 #pragma once
 #include "GraphPrimitives.hpp"
+#include "UnderlyingIndexType.hpp"
+#include <cstddef>
 
 namespace jGraph
 {
 
-template <typename T>
-class GraphMeasures : public virtual GraphPrimitives<T>
+template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
+class GraphMeasures : public virtual GraphPrimitives<T, IndexType>
 {
   public:
-    unsigned degree(T node) const;
+    size_t degree(T node) const;
     float averageNeighborDegree() const;
-
     float density() const;
 };
 
-template <typename T>
-unsigned GraphMeasures<T>::degree(T node) const
+template <typename T, typename IndexType>
+size_t GraphMeasures<T, IndexType>::degree(T node) const
 {
-    return static_cast<unsigned>(this->getNeighbors(node).size());
+    return this->getNeighbors(node).size();
 }
 
-template <typename T>
-float GraphMeasures<T>::averageNeighborDegree() const
+template <typename T, typename IndexType>
+float GraphMeasures<T, IndexType>::averageNeighborDegree() const
 {
     float result = 0;
     const auto &nodes = this->getNodes();
@@ -36,8 +37,8 @@ float GraphMeasures<T>::averageNeighborDegree() const
     return result;
 }
 
-template <typename T>
-float GraphMeasures<T>::density() const
+template <typename T, typename IndexType>
+float GraphMeasures<T, IndexType>::density() const
 {
     const auto edgeNumber = static_cast<float>(this->getNumberOfEdges());
     const auto nodeNumber = static_cast<float>(this->getNumberOfNodes());

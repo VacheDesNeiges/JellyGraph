@@ -16,7 +16,7 @@ concept ValidKeyType = std::copyable<T> && requires(T keyType) {
     { keyType <=> keyType } -> std::convertible_to<std::partial_ordering>;
 };
 
-template <typename T>
+template <typename T, typename IndexType>
     requires ValidKeyType<T>
 class NameIndexMap
 {
@@ -27,7 +27,7 @@ class NameIndexMap
         if (nameToIndex.contains(name))
             return false;
 
-        nameToIndex[name] = static_cast<unsigned>(indexToName.size());
+        nameToIndex[name] = static_cast<IndexType>(indexToName.size());
         indexToName.emplace_back(name);
         return true;
     }
@@ -53,7 +53,7 @@ class NameIndexMap
         nameToIndex.erase(name);
     }
 
-    void removeByIndex(unsigned index)
+    void removeByIndex(IndexType index)
     {
         if (!(indexToName.size() < index))
             return;
@@ -63,32 +63,32 @@ class NameIndexMap
         indexToName.erase(indexToName.begin() + index);
     }
 
-    T convertIndexToNodeName(unsigned index) const
+    T convertIndexToNodeName(IndexType index) const
     {
         return indexToName.at(index);
     }
 
     std::vector<T> convertIndexToNodeName(
-        const std::vector<unsigned> &indexes) const
+        const std::vector<IndexType> &indexes) const
     {
         std::vector<T> result;
         result.reserve(indexes.size());
 
-        for (const unsigned index : indexes)
+        for (const IndexType index : indexes)
         {
             result.emplace_back(indexToName.at(index));
         }
         return result;
     }
 
-    unsigned convertNodeNameToIndex(T name) const
+    IndexType convertNodeNameToIndex(T name) const
     {
         return nameToIndex.at(name);
     }
 
-    std::vector<unsigned> convertNodeNameToIndex(std::vector<T> names) const
+    std::vector<IndexType> convertNodeNameToIndex(std::vector<T> names) const
     {
-        std::vector<unsigned> result;
+        std::vector<IndexType> result;
         result.reserve(names.size());
 
         for (const auto name : names)
@@ -106,7 +106,7 @@ class NameIndexMap
 
   private:
     std::vector<T> indexToName;
-    std::unordered_map<T, unsigned> nameToIndex;
+    std::unordered_map<T, IndexType> nameToIndex;
 };
 
 } // namespace jGraph::internals

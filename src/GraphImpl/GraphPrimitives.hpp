@@ -1,13 +1,16 @@
 #pragma once
 
 #include "NameIndexMap.hpp"
+#include "UnderlyingIndexType.hpp"
+
+#include <cstddef>
 #include <utility>
 #include <vector>
 
 namespace jGraph
 {
 
-template <typename T>
+template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
 class GraphPrimitives
 {
   public:
@@ -27,8 +30,8 @@ class GraphPrimitives
     virtual void addEdge(std::pair<T, T>) = 0;
     virtual void removeEdge(std::pair<T, T>) = 0;
 
-    virtual unsigned getNumberOfNodes() const = 0;
-    virtual unsigned getNumberOfEdges() const = 0;
+    virtual size_t getNumberOfNodes() const = 0;
+    virtual size_t getNumberOfEdges() const = 0;
 
     virtual std::vector<T> getNodes() const = 0;
     virtual std::vector<std::pair<T, T>> getEdges() const = 0;
@@ -37,23 +40,25 @@ class GraphPrimitives
     virtual bool hasEdge(std::pair<T, T>) const = 0;
 
   protected:
-    jGraph::internals::NameIndexMap<T> &getNodeMap();
-    const jGraph::internals::NameIndexMap<T> &getNodeMap() const;
-    virtual std::vector<unsigned> internal_getNodes() const = 0;
-    virtual std::vector<unsigned> internal_getNeighbors(unsigned) const = 0;
+    jGraph::internals::NameIndexMap<T, IndexType> &getNodeMap();
+    const jGraph::internals::NameIndexMap<T, IndexType> &getNodeMap() const;
+    virtual std::vector<IndexType> internal_getNodes() const = 0;
+    virtual std::vector<IndexType> internal_getNeighbors(IndexType) const = 0;
 
   private:
-    jGraph::internals::NameIndexMap<T> nodeMap;
+    jGraph::internals::NameIndexMap<T, IndexType> nodeMap;
 };
 
-template <typename T>
-jGraph::internals::NameIndexMap<T> &GraphPrimitives<T>::getNodeMap()
+template <typename T, typename IndexType>
+jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
+    T, IndexType>::getNodeMap()
 {
     return nodeMap;
 }
 
-template <typename T>
-const jGraph::internals::NameIndexMap<T> &GraphPrimitives<T>::getNodeMap() const
+template <typename T, typename IndexType>
+const jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
+    T, IndexType>::getNodeMap() const
 {
     return nodeMap;
 }

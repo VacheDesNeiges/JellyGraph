@@ -3,11 +3,11 @@
 #include "GraphAlgorithms.hpp"
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
+#include "UnderlyingIndexType.hpp"
 
 #include <cassert>
 #include <concepts>
 #include <cstddef>
-#include <cstdint>
 #include <ranges>
 #include <utility>
 #include <vector>
@@ -15,10 +15,10 @@
 namespace jGraph
 {
 
-template <typename T>
-class MatrixGraph : public GraphAlgorithms<T>,
-                    public GraphMeasures<T>,
-                    public virtual GraphPrimitives<T>
+template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
+class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
+                    public GraphAlgorithms<T, IndexType>,
+                    public GraphMeasures<T, IndexType>
 {
   public:
     MatrixGraph() = default;
@@ -36,8 +36,8 @@ class MatrixGraph : public GraphAlgorithms<T>,
     void addEdge(std::pair<T, T> edge) override;
     void removeEdge(std::pair<T, T> edge) override;
 
-    unsigned getNumberOfNodes() const override;
-    unsigned getNumberOfEdges() const override;
+    size_t getNumberOfNodes() const override;
+    size_t getNumberOfEdges() const override;
 
     std::vector<T> getNodes() const override;
     std::vector<std::pair<T, T>> getEdges() const override;
@@ -46,39 +46,40 @@ class MatrixGraph : public GraphAlgorithms<T>,
     bool hasEdge(std::pair<T, T> edge) const override;
 
   protected:
-    static constexpr uint8_t NOT_EDGE = 0;
-    static constexpr uint8_t EDGE = 1;
+    static constexpr IndexType NOT_EDGE = 0;
+    static constexpr IndexType EDGE = 1;
 
   private:
     unsigned edgeNumber = 0;
 
-    std::vector<std::vector<uint8_t>> edgeMatrix;
+    std::vector<std::vector<IndexType>> edgeMatrix;
 
-    std::vector<unsigned> internal_getNodes() const override;
-    std::vector<unsigned> internal_getNeighbors(unsigned index) const override;
+    std::vector<IndexType> internal_getNodes() const override;
+    std::vector<IndexType> internal_getNeighbors(
+        IndexType index) const override;
 };
 
-template <typename T>
-MatrixGraph<T>::MatrixGraph(unsigned numNodes)
+template <typename T, typename IndexType>
+MatrixGraph<T, IndexType>::MatrixGraph(unsigned numNodes)
 {
     this->getNodeMap().reserve(numNodes);
-    for (unsigned i = 0; i < numNodes; i++)
+    for (IndexType i = 0; i < static_cast<IndexType>(numNodes); i++)
     {
         this->getNodeMap().addByName(i);
     }
 
     edgeMatrix.reserve(numNodes);
-    for (size_t i = 0; i < numNodes; i++)
+    for (IndexType i = 0; i < static_cast<IndexType>(numNodes); i++)
     {
         edgeMatrix.emplace_back();
         edgeMatrix.back().reserve(numNodes);
     }
 }
 
-template <typename T>
+template <typename T, typename IndexType>
 template <std::ranges::range R>
     requires std::convertible_to<std::ranges::range_value_t<R>, T>
-MatrixGraph<T>::MatrixGraph(const R &rangeOfNodes)
+MatrixGraph<T, IndexType>::MatrixGraph(const R &rangeOfNodes)
 {
     for (const auto &node : rangeOfNodes)
     {
@@ -93,8 +94,8 @@ MatrixGraph<T>::MatrixGraph(const R &rangeOfNodes)
     }
 }
 
-template <typename T>
-void MatrixGraph<T>::addNode(T nodeName)
+template <typename T, typename IndexType>
+void MatrixGraph<T, IndexType>::addNode(T nodeName)
 {
     if (this->getNodeMap().addByName(nodeName))
     {
@@ -106,8 +107,8 @@ void MatrixGraph<T>::addNode(T nodeName)
     }
 }
 
-template <typename T>
-void MatrixGraph<T>::removeNode(T nodeName)
+template <typename T, typename IndexType>
+void MatrixGraph<T, IndexType>::removeNode(T nodeName)
 {
     if (this->getNodeMap().contains(nodeName))
     {
@@ -121,8 +122,8 @@ void MatrixGraph<T>::removeNode(T nodeName)
     }
 }
 
-template <typename T>
-void MatrixGraph<T>::addEdge(std::pair<T, T> edge)
+template <typename T, typename IndexType>
+void MatrixGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
 {
     const auto [first, second] = edge;
     if (!this->getNodeMap().contains(first))
@@ -142,12 +143,12 @@ void MatrixGraph<T>::addEdge(std::pair<T, T> edge)
     }
 }
 
-template <typename T>
-void MatrixGraph<T>::removeEdge(std::pair<T, T> edge)
+template <typename T, typename IndexType>
+void MatrixGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 {
-    const unsigned first =
+    const IndexType first =
         this->getNodeMap().convertNodeNameToIndex(edge.first);
-    const unsigned second =
+    const IndexType second =
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
     if (edgeMatrix.at(first).at(second) == EDGE)
@@ -157,50 +158,51 @@ void MatrixGraph<T>::removeEdge(std::pair<T, T> edge)
     edgeMatrix[second][first] = NOT_EDGE;
 }
 
-template <typename T>
-bool MatrixGraph<T>::hasEdge(std::pair<T, T> edge) const
+template <typename T, typename IndexType>
+bool MatrixGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
 {
-    const unsigned first =
+    const IndexType first =
         this->getNodeMap().convertNodeNameToIndex(edge.first);
-    const unsigned second =
+    const IndexType second =
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
     return edgeMatrix.at(first).at(second) == EDGE;
 }
 
-template <typename T>
-unsigned MatrixGraph<T>::getNumberOfNodes() const
+template <typename T, typename IndexType>
+size_t MatrixGraph<T, IndexType>::getNumberOfNodes() const
 {
-    return static_cast<unsigned>(edgeMatrix.size());
+    return edgeMatrix.size();
 }
 
-template <typename T>
-std::vector<T> MatrixGraph<T>::getNodes() const
+template <typename T, typename IndexType>
+std::vector<T> MatrixGraph<T, IndexType>::getNodes() const
 {
     return this->getNodeMap().convertIndexToNodeName(internal_getNodes());
 }
 
-template <typename T>
-std::vector<unsigned> MatrixGraph<T>::internal_getNodes() const
+template <typename T, typename IndexType>
+std::vector<IndexType> MatrixGraph<T, IndexType>::internal_getNodes() const
 {
-    std::vector<unsigned> result;
+    std::vector<IndexType> result;
     result.reserve(edgeMatrix.size());
-    for (unsigned i = 0; i < edgeMatrix.size(); i++)
+    for (IndexType i = 0; i < static_cast<IndexType>(edgeMatrix.size()); i++)
     {
         result.emplace_back(i);
     }
     return result;
 }
 
-template <typename T>
-std::vector<std::pair<T, T>> MatrixGraph<T>::getEdges() const
+template <typename T, typename IndexType>
+std::vector<std::pair<T, T>> MatrixGraph<T, IndexType>::getEdges() const
 {
     std::vector<std::pair<T, T>> result;
     result.reserve(edgeNumber);
 
-    for (unsigned i = 0; i < edgeMatrix.size(); i++)
+    for (IndexType i = 0; i < static_cast<IndexType>(edgeMatrix.size()); i++)
     {
-        for (unsigned j = 0; j < edgeMatrix.size(); j++)
+        for (IndexType j = 0; j < static_cast<IndexType>(edgeMatrix.size());
+             j++)
         {
 
             if ((edgeMatrix.at(i).at(j) == EDGE) &&
@@ -216,22 +218,22 @@ std::vector<std::pair<T, T>> MatrixGraph<T>::getEdges() const
     return result;
 }
 
-template <typename T>
-std::vector<T> MatrixGraph<T>::getNeighbors(T key) const
+template <typename T, typename IndexType>
+std::vector<T> MatrixGraph<T, IndexType>::getNeighbors(T key) const
 {
     const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(key);
     return this->getNodeMap().convertIndexToNodeName(
         internal_getNeighbors(nodeIndex));
 }
 
-template <typename T>
-std::vector<unsigned> MatrixGraph<T>::internal_getNeighbors(
-    unsigned index) const
+template <typename T, typename IndexType>
+std::vector<IndexType> MatrixGraph<T, IndexType>::internal_getNeighbors(
+    IndexType index) const
 {
-    std::vector<unsigned> result;
+    std::vector<IndexType> result;
     result.reserve(edgeMatrix.size());
 
-    for (unsigned i = 0; i < edgeMatrix.size(); i++)
+    for (IndexType i = 0; i < static_cast<IndexType>(edgeMatrix.size()); i++)
     {
         if (edgeMatrix.at(index).at(i) == EDGE)
             result.emplace_back(i);
@@ -240,20 +242,20 @@ std::vector<unsigned> MatrixGraph<T>::internal_getNeighbors(
     return result;
 }
 
-template <typename T>
-unsigned MatrixGraph<T>::getNumberOfEdges() const
+template <typename T, typename IndexType>
+size_t MatrixGraph<T, IndexType>::getNumberOfEdges() const
 {
     return edgeNumber;
 }
 
-template <typename T>
-void MatrixGraph<T>::clear()
+template <typename T, typename IndexType>
+void MatrixGraph<T, IndexType>::clear()
 {
     edgeMatrix.clear();
 }
 
-template <typename T>
-bool MatrixGraph<T>::isDirected() const
+template <typename T, typename IndexType>
+bool MatrixGraph<T, IndexType>::isDirected() const
 {
     return false;
 }
