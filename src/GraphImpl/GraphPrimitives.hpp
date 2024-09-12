@@ -4,13 +4,18 @@
 #include "UnderlyingIndexType.hpp"
 
 #include <cstddef>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
 namespace jGraph
 {
 
+template <typename T>
+concept Integral = std::is_integral_v<T>;
+
 template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
+    requires Integral<IndexType>
 class GraphPrimitives
 {
   public:
@@ -50,6 +55,7 @@ class GraphPrimitives
 };
 
 template <typename T, typename IndexType>
+    requires Integral<IndexType>
 jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
     T, IndexType>::getNodeMap()
 {
@@ -57,6 +63,7 @@ jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
 }
 
 template <typename T, typename IndexType>
+    requires Integral<IndexType>
 const jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
     T, IndexType>::getNodeMap() const
 {
