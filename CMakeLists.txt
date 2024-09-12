@@ -41,6 +41,7 @@ add_executable(test
     tests/testGraphPrimitives.cpp
     tests/testGraphMeasures.cpp
     tests/testGraphAlgorithms.cpp
+    tests/testGraph.cpp
 )
 
 find_package(GTest REQUIRED)

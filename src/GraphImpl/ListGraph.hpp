@@ -3,6 +3,8 @@
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
 #include <algorithm>
+#include <concepts>
+#include <ranges>
 #include <utility>
 #include <vector>
 
@@ -17,6 +19,10 @@ class ListGraph : public GraphAlgorithms<T>,
   public:
     ListGraph() = default;
     ListGraph(unsigned numNodes);
+
+    template <std::ranges::range R>
+        requires std::convertible_to<std::ranges::range_value_t<R>, T>
+    ListGraph(const R &nodes);
 
     void clear() override;
     bool isDirected() const override;
@@ -53,6 +59,18 @@ ListGraph<T>::ListGraph(unsigned numNodes)
     {
         this->getNodeMap().addByName(i);
         nodes.emplace_back();
+    }
+}
+
+template <typename T>
+template <std::ranges::range R>
+    requires std::convertible_to<std::ranges::range_value_t<R>, T>
+
+ListGraph<T>::ListGraph(const R &rangeOfNodes)
+{
+    for (const auto &node : rangeOfNodes)
+    {
+        addNode(node);
     }
 }
 

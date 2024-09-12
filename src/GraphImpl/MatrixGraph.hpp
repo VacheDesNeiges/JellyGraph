@@ -5,8 +5,10 @@
 #include "GraphPrimitives.hpp"
 
 #include <cassert>
+#include <concepts>
 #include <cstddef>
 #include <cstdint>
+#include <ranges>
 #include <utility>
 #include <vector>
 
@@ -21,6 +23,10 @@ class MatrixGraph : public GraphAlgorithms<T>,
   public:
     MatrixGraph() = default;
     MatrixGraph(unsigned numNodes);
+
+    template <std::ranges::range R>
+        requires std::convertible_to<std::ranges::range_value_t<R>, T>
+    MatrixGraph(const R &nodes);
 
     void clear() override;
     bool isDirected() const override;
@@ -64,6 +70,17 @@ MatrixGraph<T>::MatrixGraph(unsigned numNodes)
     {
         edgeMatrix.emplace_back();
         edgeMatrix.back().reserve(numNodes);
+    }
+}
+
+template <typename T>
+template <std::ranges::range R>
+    requires std::convertible_to<std::ranges::range_value_t<R>, T>
+MatrixGraph<T>::MatrixGraph(const R &rangeOfNodes)
+{
+    for (const auto &node : rangeOfNodes)
+    {
+        addNode(node);
     }
 }
 
