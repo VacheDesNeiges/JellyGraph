@@ -26,26 +26,26 @@ class DirectedMatrixGraph : public MatrixGraph<T, IndexType>,
         requires std::convertible_to<std::ranges::range_value_t<R>, T>
     DirectedMatrixGraph(const R &nodes);
 
-    bool isDirected() const override;
+    [[nodiscard]] bool isDirected() const override;
 
     void addEdge(std::pair<T, T> edge) override;
     void removeEdge(std::pair<T, T> edge) override;
 
-    std::vector<std::pair<T, T>> getEdges() const override;
+    [[nodiscard]] std::vector<std::pair<T, T>> getEdges() const override;
 
-    std::vector<T> getNeighbors(T key) const override;
-    std::vector<T> getOutgoingNeighbors(T key) const override;
-    std::vector<T> getIngoingNeighbors(T key) const override;
+    [[nodiscard]] std::vector<T> getNeighbors(T key) const override;
+    [[nodiscard]] std::vector<T> getOutgoingNeighbors(T key) const override;
+    [[nodiscard]] std::vector<T> getIngoingNeighbors(T key) const override;
 
     bool hasEdge(std::pair<T, T> edge) const override;
 
   private:
-    std::vector<IndexType> internal_getNeighbors(
+    [[nodiscard]] std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
 
-    std::vector<IndexType> internal_getOutgoingNeighbors(
+    [[nodiscard]] std::vector<IndexType> internal_getOutgoingNeighbors(
         IndexType index) const override;
-    std::vector<IndexType> internal_getIngoingNeighbors(
+    [[nodiscard]] std::vector<IndexType> internal_getIngoingNeighbors(
         IndexType index) const override;
 };
 

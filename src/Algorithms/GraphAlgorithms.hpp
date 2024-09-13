@@ -13,14 +13,16 @@ template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
 class GraphAlgorithms : public virtual GraphPrimitives<T, IndexType>
 {
   public:
-    bool isConnected() const;
-    size_t numberOfComponents() const;
-    std::vector<T> componentOfNode(T node) const;
-    std::vector<std::vector<T>> components() const;
+    [[nodiscard]] bool isConnected() const;
+    [[nodiscard]] size_t numberOfComponents() const;
+    [[nodiscard]] std::vector<T> componentOfNode(T node) const;
+    [[nodiscard]] std::vector<std::vector<T>> components() const;
 
   private:
-    std::vector<IndexType> internal_componentOfNode(IndexType node) const;
-    std::vector<std::vector<IndexType>> internal_components() const;
+    [[nodiscard]] std::vector<IndexType> internal_componentOfNode(
+        IndexType node) const;
+    [[nodiscard]] std::vector<std::vector<IndexType>> internal_components()
+        const;
 };
 
 template <typename T, typename IndexType>

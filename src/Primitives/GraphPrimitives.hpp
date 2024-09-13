@@ -28,27 +28,29 @@ class GraphPrimitives
     GraphPrimitives &operator=(GraphPrimitives &&) = delete;
 
     virtual void clear() = 0;
-    virtual bool isDirected() const = 0;
+    [[nodiscard]] virtual bool isDirected() const = 0;
 
     virtual void addNode(T) = 0;
     virtual void removeNode(T) = 0;
     virtual void addEdge(std::pair<T, T>) = 0;
     virtual void removeEdge(std::pair<T, T>) = 0;
 
-    virtual size_t getNumberOfNodes() const = 0;
-    virtual size_t getNumberOfEdges() const = 0;
+    [[nodiscard]] virtual size_t getNumberOfNodes() const = 0;
+    [[nodiscard]] virtual size_t getNumberOfEdges() const = 0;
 
-    virtual std::vector<T> getNodes() const = 0;
-    virtual std::vector<std::pair<T, T>> getEdges() const = 0;
-    virtual std::vector<T> getNeighbors(T) const = 0;
+    [[nodiscard]] virtual std::vector<T> getNodes() const = 0;
+    [[nodiscard]] virtual std::vector<std::pair<T, T>> getEdges() const = 0;
+    [[nodiscard]] virtual std::vector<T> getNeighbors(T) const = 0;
 
-    virtual bool hasEdge(std::pair<T, T>) const = 0;
+    [[nodiscard]] virtual bool hasEdge(std::pair<T, T>) const = 0;
 
   protected:
-    jGraph::internals::NameIndexMap<T, IndexType> &getNodeMap();
-    const jGraph::internals::NameIndexMap<T, IndexType> &getNodeMap() const;
-    virtual std::vector<IndexType> internal_getNodes() const = 0;
-    virtual std::vector<IndexType> internal_getNeighbors(IndexType) const = 0;
+    [[nodiscard]] jGraph::internals::NameIndexMap<T, IndexType> &getNodeMap();
+    [[nodiscard]] const jGraph::internals::NameIndexMap<T, IndexType> &
+    getNodeMap() const;
+    [[nodiscard]] virtual std::vector<IndexType> internal_getNodes() const = 0;
+    [[nodiscard]] virtual std::vector<IndexType> internal_getNeighbors(
+        IndexType) const = 0;
 
   private:
     jGraph::internals::NameIndexMap<T, IndexType> nodeMap;

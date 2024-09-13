@@ -22,91 +22,131 @@ class NameIndexMap
 {
 
   public:
-    bool addByName(T name)
-    {
-        if (nameToIndex.contains(name))
-            return false;
+    bool addByName(T name);
 
-        nameToIndex[name] = static_cast<IndexType>(indexToName.size());
-        indexToName.emplace_back(name);
-        return true;
-    }
+    [[nodiscard]] size_t getSize() const;
 
-    size_t getSize() const
-    {
-        return indexToName.size();
-    }
+    [[nodiscard]] bool contains(T key) const;
 
-    bool contains(T key) const
-    {
-        return nameToIndex.contains(key);
-    }
+    void removeByName(T name);
+    void removeByIndex(IndexType index);
 
-    void removeByName(T name)
-    {
+    [[nodiscard]] T convertIndexToNodeName(IndexType index) const;
+    [[nodiscard]] std::vector<T> convertIndexToNodeName(
+        const std::vector<IndexType> &indexes) const;
 
-        if (!(nameToIndex.contains(name)))
-            return;
+    [[nodiscard]] IndexType convertNodeNameToIndex(T name) const;
+    [[nodiscard]] std::vector<IndexType> convertNodeNameToIndex(
+        std::vector<T> names) const;
 
-        const auto index = nameToIndex.at(name);
-        indexToName.erase(indexToName.begin() + index);
-        nameToIndex.erase(name);
-    }
-
-    void removeByIndex(IndexType index)
-    {
-        if (!(indexToName.size() < index))
-            return;
-
-        const auto name = indexToName.atw(index);
-        nameToIndex.erase(name);
-        indexToName.erase(indexToName.begin() + index);
-    }
-
-    T convertIndexToNodeName(IndexType index) const
-    {
-        return indexToName.at(index);
-    }
-
-    std::vector<T> convertIndexToNodeName(
-        const std::vector<IndexType> &indexes) const
-    {
-        std::vector<T> result;
-        result.reserve(indexes.size());
-
-        for (const IndexType index : indexes)
-        {
-            result.emplace_back(indexToName.at(index));
-        }
-        return result;
-    }
-
-    IndexType convertNodeNameToIndex(T name) const
-    {
-        return nameToIndex.at(name);
-    }
-
-    std::vector<IndexType> convertNodeNameToIndex(std::vector<T> names) const
-    {
-        std::vector<IndexType> result;
-        result.reserve(names.size());
-
-        for (const auto name : names)
-        {
-            result.emplace_back(nameToIndex(name));
-        }
-        return result;
-    }
-
-    void reserve(size_t size)
-    {
-        indexToName.reserve(size);
-        nameToIndex.reserve(size);
-    }
+    void reserve(size_t size);
 
   private:
     std::vector<T> indexToName;
     std::unordered_map<T, IndexType> nameToIndex;
 };
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+bool NameIndexMap<T, IndexType>::addByName(T name)
+{
+    if (nameToIndex.contains(name))
+        return false;
+
+    nameToIndex[name] = static_cast<IndexType>(indexToName.size());
+    indexToName.emplace_back(name);
+    return true;
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+size_t NameIndexMap<T, IndexType>::getSize() const
+{
+    return indexToName.size();
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+bool NameIndexMap<T, IndexType>::contains(T key) const
+{
+    return nameToIndex.contains(key);
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+void NameIndexMap<T, IndexType>::removeByName(T name)
+{
+
+    if (!(nameToIndex.contains(name)))
+        return;
+
+    const auto index = nameToIndex.at(name);
+    indexToName.erase(indexToName.begin() + index);
+    nameToIndex.erase(name);
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+void NameIndexMap<T, IndexType>::removeByIndex(IndexType index)
+{
+    if (!(indexToName.size() < index))
+        return;
+
+    const auto name = indexToName.atw(index);
+    nameToIndex.erase(name);
+    indexToName.erase(indexToName.begin() + index);
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+T NameIndexMap<T, IndexType>::convertIndexToNodeName(IndexType index) const
+{
+    return indexToName.at(index);
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+std::vector<T> NameIndexMap<T, IndexType>::convertIndexToNodeName(
+    const std::vector<IndexType> &indexes) const
+{
+    std::vector<T> result;
+    result.reserve(indexes.size());
+
+    for (const IndexType index : indexes)
+    {
+        result.emplace_back(indexToName.at(index));
+    }
+    return result;
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+IndexType NameIndexMap<T, IndexType>::convertNodeNameToIndex(T name) const
+{
+    return nameToIndex.at(name);
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+std::vector<IndexType> NameIndexMap<T, IndexType>::convertNodeNameToIndex(
+    std::vector<T> names) const
+{
+    std::vector<IndexType> result;
+    result.reserve(names.size());
+
+    for (const auto name : names)
+    {
+        result.emplace_back(nameToIndex(name));
+    }
+    return result;
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+void NameIndexMap<T, IndexType>::reserve(size_t size)
+{
+    indexToName.reserve(size);
+    nameToIndex.reserve(size);
+}
 
 } // namespace jGraph::internals

@@ -10,9 +10,9 @@ template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
 class GraphMeasures : public virtual GraphPrimitives<T, IndexType>
 {
   public:
-    size_t degree(T node) const;
-    float averageNeighborDegree() const;
-    float density() const;
+    [[nodiscard]] size_t degree(T node) const;
+    [[nodiscard]] float averageNeighborDegree() const;
+    [[nodiscard]] float density() const;
 };
 
 template <typename T, typename IndexType>

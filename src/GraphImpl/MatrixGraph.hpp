@@ -29,30 +29,31 @@ class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
     MatrixGraph(const R &nodes);
 
     void clear() override;
-    bool isDirected() const override;
+    [[nodiscard]] bool isDirected() const override;
 
     void addNode(T nodeName) override;
     void removeNode(T nodeName) override;
     void addEdge(std::pair<T, T> edge) override;
     void removeEdge(std::pair<T, T> edge) override;
 
-    size_t getNumberOfNodes() const override;
-    size_t getNumberOfEdges() const override;
+    [[nodiscard]] size_t getNumberOfNodes() const override;
+    [[nodiscard]] size_t getNumberOfEdges() const override;
 
-    std::vector<T> getNodes() const override;
-    std::vector<std::pair<T, T>> getEdges() const override;
-    std::vector<T> getNeighbors(T key) const override;
+    [[nodiscard]] std::vector<T> getNodes() const override;
+    [[nodiscard]] std::vector<std::pair<T, T>> getEdges() const override;
+    [[nodiscard]] std::vector<T> getNeighbors(T key) const override;
 
-    bool hasEdge(std::pair<T, T> edge) const override;
+    [[nodiscard]] bool hasEdge(std::pair<T, T> edge) const override;
 
   protected:
     static constexpr IndexType NOT_EDGE = 0;
     static constexpr IndexType EDGE = 1;
 
-    std::vector<std::vector<IndexType>> &getEdgeMatrix();
-    const std::vector<std::vector<IndexType>> &getEdgeMatrix() const;
-    size_t &getEdgeNumber();
-    size_t getEdgeNumber() const;
+    [[nodiscard]] std::vector<std::vector<IndexType>> &getEdgeMatrix();
+    [[nodiscard]] const std::vector<std::vector<IndexType>> &getEdgeMatrix()
+        const;
+    [[nodiscard]] size_t &getEdgeNumber();
+    [[nodiscard]] size_t getEdgeNumber() const;
 
   private:
     size_t edgeNumber = 0;

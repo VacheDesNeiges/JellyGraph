@@ -27,28 +27,28 @@ class ListGraph : public GraphAlgorithms<T, IndexType>,
     ListGraph(const R &nodes);
 
     void clear() override;
-    bool isDirected() const override;
+    [[nodiscard]] bool isDirected() const override;
 
     void addNode(T nodeName) override;
     void removeNode(T nodeName) override;
     void addEdge(std::pair<T, T> edge) override;
     void removeEdge(std::pair<T, T> edge) override;
 
-    size_t getNumberOfNodes() const override;
-    size_t getNumberOfEdges() const override;
+    [[nodiscard]] size_t getNumberOfNodes() const override;
+    [[nodiscard]] size_t getNumberOfEdges() const override;
 
-    std::vector<T> getNodes() const override;
-    std::vector<std::pair<T, T>> getEdges() const override;
-    std::vector<T> getNeighbors(T key) const override;
+    [[nodiscard]] std::vector<T> getNodes() const override;
+    [[nodiscard]] std::vector<std::pair<T, T>> getEdges() const override;
+    [[nodiscard]] std::vector<T> getNeighbors(T key) const override;
 
-    bool hasEdge(std::pair<T, T> edge) const override;
+    [[nodiscard]] bool hasEdge(std::pair<T, T> edge) const override;
 
   private:
     size_t edgeNumber = 0;
     std::vector<std::vector<IndexType>> nodes;
 
-    std::vector<IndexType> internal_getNodes() const override;
-    std::vector<IndexType> internal_getNeighbors(
+    [[nodiscard]] std::vector<IndexType> internal_getNodes() const override;
+    [[nodiscard]] std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
 };
 

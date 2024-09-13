@@ -16,7 +16,6 @@ readability-*,
 -readability-braces-around-statements,
 -readability-convert-member-functions-to-static,
 -modernize-use-trailing-return-type,
--modernize-use-nodiscard,
 -llvm-header-guard,
 "
 
