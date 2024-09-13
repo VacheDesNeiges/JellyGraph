@@ -25,7 +25,7 @@ target_include_directories(jellyGraph
     ${PROJECT_SOURCE_DIR}/src/Utils
     ${PROJECT_SOURCE_DIR}/src/Measures
     ${PROJECT_SOURCE_DIR}/src/Algorithms
-
+    ${PROJECT_SOURCE_DIR}/src/Primitives
 )
 
 install(TARGETS jellyGraph)
