@@ -105,6 +105,9 @@ void ListGraph<T, IndexType>::removeNode(T nodeName)
     if (!this->getNodeMap().contains(nodeName))
         return;
 
+    const auto associatedEdgesNumber = this->getNeighbors(nodeName).size();
+    edgeNumber -= associatedEdgesNumber;
+
     const auto index = this->getNodeMap().convertNodeNameToIndex(nodeName);
     nodes.erase(nodes.begin() + index);
 

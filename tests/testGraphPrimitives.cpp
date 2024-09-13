@@ -98,6 +98,15 @@ TYPED_TEST(GraphPrimitivesTests, addingEdgeCanAddNode)
     ASSERT_EQ(this->graph.getNumberOfNodes(), 3);
 }
 
+TYPED_TEST(GraphPrimitivesTests, removingNodeCorrectlyUpdatesEdgeNumber)
+{
+    this->graph.addEdge({0, 1});
+    this->graph.addEdge({1, 2});
+    this->graph.removeNode(1);
+
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 0);
+}
+
 TYPED_TEST(GraphPrimitivesTests, getNodes)
 {
     this->graph.addNode(1);
@@ -120,12 +129,12 @@ TYPED_TEST(GraphPrimitivesTests, getEdges)
 
     ASSERT_EQ(vec.size(), 3);
 
-    using NodeType = typename decltype(vec)::value_type;
+    using EdgeType = typename decltype(vec)::value_type;
 
-    ASSERT_TRUE(std::ranges::find(vec, NodeType{2, 4}) != vec.end());
-    ASSERT_TRUE(std::ranges::find(vec, NodeType{1, 4}) != vec.end());
-    ASSERT_TRUE(std::ranges::find(vec, NodeType{1, 3}) != vec.end());
-    ASSERT_FALSE(std::ranges::find(vec, NodeType{3, 1}) != vec.end());
+    ASSERT_TRUE(std::ranges::find(vec, EdgeType{2, 4}) != vec.end());
+    ASSERT_TRUE(std::ranges::find(vec, EdgeType{1, 4}) != vec.end());
+    ASSERT_TRUE(std::ranges::find(vec, EdgeType{1, 3}) != vec.end());
+    ASSERT_FALSE(std::ranges::find(vec, EdgeType{3, 1}) != vec.end());
 }
 
 TYPED_TEST(GraphPrimitivesTests, getNeighbors)

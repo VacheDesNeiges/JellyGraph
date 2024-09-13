@@ -114,6 +114,9 @@ void MatrixGraph<T, IndexType>::addNode(T nodeName)
 template <typename T, typename IndexType>
 void MatrixGraph<T, IndexType>::removeNode(T nodeName)
 {
+    const auto associatedEdgesNumber = this->getNeighbors(nodeName).size();
+    edgeNumber -= associatedEdgesNumber;
+
     if (this->getNodeMap().contains(nodeName))
     {
         const auto indexToDelete =
