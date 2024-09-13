@@ -5,7 +5,7 @@
 #include "UnderlyingIndexType.hpp"
 
 #include <concepts>
-#include <cstdint>
+#include <initializer_list>
 #include <ranges>
 #include <utility>
 #include <vector>
@@ -20,6 +20,7 @@ class DirectedMatrixGraph : public MatrixGraph<T, IndexType>,
   public:
     DirectedMatrixGraph() = default;
     DirectedMatrixGraph(unsigned numNodes);
+    DirectedMatrixGraph(std::initializer_list<T> nodes);
 
     template <std::ranges::range R>
         requires std::convertible_to<std::ranges::range_value_t<R>, T>
@@ -39,9 +40,6 @@ class DirectedMatrixGraph : public MatrixGraph<T, IndexType>,
     bool hasEdge(std::pair<T, T> edge) const override;
 
   private:
-    unsigned edgeNumber = 0;
-    std::vector<std::vector<uint8_t>> edgeMatrix;
-
     std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
 
@@ -50,6 +48,43 @@ class DirectedMatrixGraph : public MatrixGraph<T, IndexType>,
     std::vector<IndexType> internal_getIngoingNeighbors(
         IndexType index) const override;
 };
+
+template <typename T, typename IndexType>
+DirectedMatrixGraph<T, IndexType>::DirectedMatrixGraph(
+    std::initializer_list<T> nodes)
+{
+    for (const auto &node : nodes)
+    {
+        if (this->getNodeMap().addByName(node))
+        {
+            for (auto &row : this->getthis->getEdgeMatrix()())
+            {
+                row.emplace_back(false);
+            }
+            this->getEdgeMatrix().emplace_back(this->getEdgeMatrix().size() + 1,
+                                               false);
+        }
+    }
+}
+
+template <typename T, typename IndexType>
+template <std::ranges::range R>
+    requires std::convertible_to<std::ranges::range_value_t<R>, T>
+DirectedMatrixGraph<T, IndexType>::DirectedMatrixGraph(const R &rangeOfNodes)
+{
+    for (const auto &node : rangeOfNodes)
+    {
+        if (this->getNodeMap().addByName(node))
+        {
+            for (auto &row : this->getEdgeMatrix())
+            {
+                row.emplace_back(false);
+            }
+            this->getEdgeMatrix().emplace_back(this->getEdgeMatrix().size() + 1,
+                                               false);
+        }
+    }
+}
 
 template <typename T, typename IndexType>
 bool DirectedMatrixGraph<T, IndexType>::isDirected() const
@@ -70,10 +105,10 @@ void DirectedMatrixGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
     const auto firstIndex = this->getNodeMap().convertNodeNameToIndex(first);
     const auto secondIndex = this->getNodeMap().convertNodeNameToIndex(second);
 
-    if (edgeMatrix.at(firstIndex).at(secondIndex) == this->NOT_EDGE)
+    if (this->getEdgeMatrix().at(firstIndex).at(secondIndex) == this->NOT_EDGE)
     {
-        edgeNumber++;
-        edgeMatrix[firstIndex][secondIndex] = this->EDGE;
+        this->getEdgeNumber()++;
+        this->getEdgeMatrix()[firstIndex][secondIndex] = this->EDGE;
     }
 }
 
@@ -85,10 +120,10 @@ void DirectedMatrixGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
     const IndexType second =
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-    if (edgeMatrix.at(first).at(second) == this->EDGE)
+    if (this->getEdgeMatrix().at(first).at(second) == this->EDGE)
     {
-        edgeNumber--;
-        edgeMatrix[first][second] = this->NOT_EDGE;
+        this->getEdgeNumber()--;
+        this->getEdgeMatrix()[first][second] = this->NOT_EDGE;
     }
 }
 
@@ -96,14 +131,15 @@ template <typename T, typename IndexType>
 std::vector<std::pair<T, T>> DirectedMatrixGraph<T, IndexType>::getEdges() const
 {
     std::vector<std::pair<T, T>> result;
-    result.reserve(edgeNumber);
+    result.reserve(this->getEdgeNumber());
 
-    for (IndexType i = 0; i < static_cast<IndexType>(edgeMatrix.size()); i++)
+    for (IndexType i = 0;
+         i < static_cast<IndexType>(this->getEdgeMatrix().size()); i++)
     {
-        for (IndexType j = 0; j < static_cast<IndexType>(edgeMatrix.size());
-             j++)
+        for (IndexType j = 0;
+             j < static_cast<IndexType>(this->getEdgeMatrix().size()); j++)
         {
-            if (edgeMatrix.at(i).at(j) == this->EDGE)
+            if (this->getEdgeMatrix().at(i).at(j) == this->EDGE)
             {
                 result.emplace_back(
                     this->getNodeMap().convertIndexToNodeName(i),
@@ -122,7 +158,7 @@ bool DirectedMatrixGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
     const IndexType second =
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-    return edgeMatrix.at(first).at(second) == this->EDGE;
+    return this->getEdgeMatrix().at(first).at(second) == this->EDGE;
 }
 
 template <typename T, typename IndexType>
@@ -138,11 +174,12 @@ std::vector<IndexType> DirectedMatrixGraph<T, IndexType>::internal_getNeighbors(
     IndexType index) const
 {
     std::vector<IndexType> result;
-    result.reserve(edgeMatrix.size());
-    for (IndexType i = 0; i < static_cast<IndexType>(edgeMatrix.size()); i++)
+    result.reserve(this->getEdgeMatrix().size());
+    for (IndexType i = 0;
+         i < static_cast<IndexType>(this->getEdgeMatrix().size()); i++)
     {
-        if (edgeMatrix.at(index).at(i) == this->EDGE ||
-            edgeMatrix.at(i).at(index) == this->EDGE)
+        if (this->getEdgeMatrix().at(index).at(i) == this->EDGE ||
+            this->getEdgeMatrix().at(i).at(index) == this->EDGE)
         {
             result.emplace_back(i);
         }
@@ -155,7 +192,7 @@ template <typename T, typename IndexType>
 std::vector<T> DirectedMatrixGraph<T, IndexType>::getOutgoingNeighbors(
     T key) const
 {
-    const auto nodeIndex = this->getNodeMap().convertIndexToNodeName(key);
+    const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(key);
     return this->getNodeMap().convertIndexToNodeName(
         internal_getOutgoingNeighbors(nodeIndex));
 }
@@ -165,11 +202,12 @@ std::vector<IndexType> DirectedMatrixGraph<
     T, IndexType>::internal_getOutgoingNeighbors(IndexType index) const
 {
     std::vector<IndexType> result;
-    result.reserve(edgeMatrix.size());
+    result.reserve(this->getEdgeMatrix().size());
 
-    for (IndexType i = 0; i < static_cast<IndexType>(edgeMatrix.size()); i++)
+    for (IndexType i = 0;
+         i < static_cast<IndexType>(this->getEdgeMatrix().size()); i++)
     {
-        if (edgeMatrix.at(index).at(i) == this->EDGE)
+        if (this->getEdgeMatrix().at(index).at(i) == this->EDGE)
             result.emplace_back(i);
     }
     result.shrink_to_fit();
@@ -180,7 +218,7 @@ template <typename T, typename IndexType>
 std::vector<T> DirectedMatrixGraph<T, IndexType>::getIngoingNeighbors(
     T key) const
 {
-    const auto nodeIndex = this->getNodeMap().convertIndexToNodeName(key);
+    const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(key);
     return this->getNodeMap().convertIndexToNodeName(
         internal_getIngoingNeighbors(nodeIndex));
 }
@@ -190,10 +228,11 @@ std::vector<IndexType> DirectedMatrixGraph<
     T, IndexType>::internal_getIngoingNeighbors(IndexType index) const
 {
     std::vector<IndexType> result;
-    result.reserve(edgeMatrix.size());
-    for (IndexType i = 0; i < static_cast<IndexType>(edgeMatrix.size()); i++)
+    result.reserve(this->getEdgeMatrix().size());
+    for (IndexType i = 0;
+         i < static_cast<IndexType>(this->getEdgeMatrix().size()); i++)
     {
-        if (edgeMatrix.at(i).at(index) == this->EDGE)
+        if (this->getEdgeMatrix().at(i).at(index) == this->EDGE)
             result.emplace_back(i);
     }
     result.shrink_to_fit();

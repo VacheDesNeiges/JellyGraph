@@ -49,9 +49,13 @@ class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
     static constexpr IndexType NOT_EDGE = 0;
     static constexpr IndexType EDGE = 1;
 
+    std::vector<std::vector<IndexType>> &getEdgeMatrix();
+    const std::vector<std::vector<IndexType>> &getEdgeMatrix() const;
+    size_t &getEdgeNumber();
+    size_t getEdgeNumber() const;
+
   private:
     size_t edgeNumber = 0;
-
     std::vector<std::vector<IndexType>> edgeMatrix;
 
     std::vector<IndexType> internal_getNodes() const override;
@@ -258,6 +262,33 @@ template <typename T, typename IndexType>
 bool MatrixGraph<T, IndexType>::isDirected() const
 {
     return false;
+}
+
+template <typename T, typename IndexType>
+size_t &MatrixGraph<T, IndexType>::getEdgeNumber()
+{
+    return edgeNumber;
+}
+
+template <typename T, typename IndexType>
+size_t MatrixGraph<T, IndexType>::getEdgeNumber() const
+{
+    return edgeNumber;
+}
+
+template <typename T, typename IndexType>
+std::vector<std::vector<IndexType>> &MatrixGraph<T, IndexType>::getEdgeMatrix()
+
+{
+    return edgeMatrix;
+}
+
+template <typename T, typename IndexType>
+const std::vector<std::vector<IndexType>> &MatrixGraph<
+    T, IndexType>::getEdgeMatrix() const
+
+{
+    return edgeMatrix;
 }
 
 } // namespace jGraph
