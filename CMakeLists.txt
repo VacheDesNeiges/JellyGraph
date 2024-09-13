@@ -12,6 +12,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -pedantic \
     -Wshadow \
     -Wconversion \
+    -Wunused-value \
     -O3 \
     -march=native"
 )
