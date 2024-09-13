@@ -1,11 +1,12 @@
 #pragma once
 
+#include "UnderlyingIndexType.hpp"
 #include <vector>
 
 namespace jGraph
 {
 
-template <typename T>
+template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
 class DirectedGraphPrimitives
 {
   public:
@@ -22,10 +23,10 @@ class DirectedGraphPrimitives
     virtual std::vector<T> getIngoingNeighbors(T) const = 0;
 
   protected:
-    virtual std::vector<unsigned> internal_getOutgoingNeighbors(
-        unsigned) const = 0;
-    virtual std::vector<unsigned> internal_getIngoingNeighbors(
-        unsigned) const = 0;
+    virtual std::vector<IndexType> internal_getOutgoingNeighbors(
+        IndexType) const = 0;
+    virtual std::vector<IndexType> internal_getIngoingNeighbors(
+        IndexType) const = 0;
 };
 
 } // namespace jGraph
