@@ -15,10 +15,9 @@ class GraphPrimitivesTests : public ::testing::Test
     T numGraph{numNode};
 };
 
-using GraphImplementations =
-    ::testing::Types<jGraph::MatrixGraph<unsigned, short>,
-                     jGraph::MatrixGraph<long long>,
-                     jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long>>;
+using GraphImplementations = ::testing::Types<
+    jGraph::MatrixGraph<unsigned, short>, jGraph::MatrixGraph<long long>,
+    jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long, short>>;
 
 TYPED_TEST_SUITE(GraphPrimitivesTests, GraphImplementations);
 

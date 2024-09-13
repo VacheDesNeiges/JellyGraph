@@ -2,6 +2,7 @@
 #include "GraphAlgorithms.hpp"
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
+#include "UnderlyingIndexType.hpp"
 #include <algorithm>
 #include <concepts>
 #include <cstddef>
@@ -12,10 +13,10 @@
 namespace jGraph
 {
 
-template <typename T>
-class ListGraph : public GraphAlgorithms<T>,
-                  public GraphMeasures<T>,
-                  public virtual GraphPrimitives<T>
+template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
+class ListGraph : public GraphAlgorithms<T, IndexType>,
+                  public GraphMeasures<T, IndexType>,
+                  public virtual GraphPrimitives<T, IndexType>
 {
   public:
     ListGraph() = default;
@@ -43,31 +44,32 @@ class ListGraph : public GraphAlgorithms<T>,
     bool hasEdge(std::pair<T, T> edge) const override;
 
   private:
-    unsigned edgeNumber = 0;
-    std::vector<std::vector<unsigned>> nodes;
+    size_t edgeNumber = 0;
+    std::vector<std::vector<IndexType>> nodes;
 
-    std::vector<unsigned> internal_getNodes() const override;
-    std::vector<unsigned> internal_getNeighbors(unsigned index) const override;
+    std::vector<IndexType> internal_getNodes() const override;
+    std::vector<IndexType> internal_getNeighbors(
+        IndexType index) const override;
 };
 
-template <typename T>
-ListGraph<T>::ListGraph(unsigned numNodes)
+template <typename T, typename IndexType>
+ListGraph<T, IndexType>::ListGraph(unsigned numNodes)
 {
 
     nodes.reserve(numNodes);
     this->getNodeMap().reserve(numNodes);
-    for (unsigned i = 0; i < numNodes; i++)
+    for (IndexType i = 0; i < static_cast<IndexType>(numNodes); i++)
     {
         this->getNodeMap().addByName(i);
         nodes.emplace_back();
     }
 }
 
-template <typename T>
+template <typename T, typename IndexType>
 template <std::ranges::range R>
     requires std::convertible_to<std::ranges::range_value_t<R>, T>
 
-ListGraph<T>::ListGraph(const R &rangeOfNodes)
+ListGraph<T, IndexType>::ListGraph(const R &rangeOfNodes)
 {
     for (const auto &node : rangeOfNodes)
     {
@@ -76,8 +78,8 @@ ListGraph<T>::ListGraph(const R &rangeOfNodes)
     }
 }
 
-template <typename T>
-void ListGraph<T>::addNode(T nodeName)
+template <typename T, typename IndexType>
+void ListGraph<T, IndexType>::addNode(T nodeName)
 {
     if (this->getNodeMap().addByName(nodeName))
     {
@@ -85,20 +87,20 @@ void ListGraph<T>::addNode(T nodeName)
     }
 }
 
-template <typename T>
-size_t ListGraph<T>::getNumberOfNodes() const
+template <typename T, typename IndexType>
+size_t ListGraph<T, IndexType>::getNumberOfNodes() const
 {
-    return static_cast<unsigned>(nodes.size());
+    return static_cast<IndexType>(nodes.size());
 }
 
-template <typename T>
-size_t ListGraph<T>::getNumberOfEdges() const
+template <typename T, typename IndexType>
+size_t ListGraph<T, IndexType>::getNumberOfEdges() const
 {
     return edgeNumber;
 }
 
-template <typename T>
-void ListGraph<T>::removeNode(T nodeName)
+template <typename T, typename IndexType>
+void ListGraph<T, IndexType>::removeNode(T nodeName)
 {
     if (!this->getNodeMap().contains(nodeName))
         return;
@@ -119,8 +121,8 @@ void ListGraph<T>::removeNode(T nodeName)
     }
 }
 
-template <typename T>
-void ListGraph<T>::addEdge(std::pair<T, T> edge)
+template <typename T, typename IndexType>
+void ListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
 {
     const auto [first, second] = edge;
     if (!this->getNodeMap().contains(first))
@@ -141,12 +143,12 @@ void ListGraph<T>::addEdge(std::pair<T, T> edge)
     }
 }
 
-template <typename T>
-void ListGraph<T>::removeEdge(std::pair<T, T> edge)
+template <typename T, typename IndexType>
+void ListGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 {
-    const unsigned first =
+    const IndexType first =
         this->getNodeMap().convertNodeNameToIndex(edge.first);
-    const unsigned second =
+    const IndexType second =
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
     auto &vec = nodes.at(first);
@@ -160,33 +162,34 @@ void ListGraph<T>::removeEdge(std::pair<T, T> edge)
     }
 }
 
-template <typename T>
-std::vector<T> ListGraph<T>::getNodes() const
+template <typename T, typename IndexType>
+std::vector<T> ListGraph<T, IndexType>::getNodes() const
 {
     return this->getNodeMap().convertIndexToNodeName(internal_getNodes());
 }
 
-template <typename T>
-std::vector<unsigned> ListGraph<T>::internal_getNodes() const
+template <typename T, typename IndexType>
+std::vector<IndexType> ListGraph<T, IndexType>::internal_getNodes() const
 {
-    std::vector<unsigned> result;
+    std::vector<IndexType> result;
     result.reserve(getNumberOfNodes());
-    for (unsigned i = 0; i < nodes.size(); i++)
+    for (IndexType i = 0; i < static_cast<IndexType>(nodes.size()); i++)
     {
         result.emplace_back(i);
     }
     return result;
 }
 
-template <typename T>
-std::vector<std::pair<T, T>> ListGraph<T>::getEdges() const
+template <typename T, typename IndexType>
+std::vector<std::pair<T, T>> ListGraph<T, IndexType>::getEdges() const
 {
     std::vector<std::pair<T, T>> result;
     result.reserve(getNumberOfEdges());
 
-    for (unsigned i = 0; i < nodes.size(); i++)
+    for (IndexType i = 0; i < static_cast<IndexType>(nodes.size()); i++)
     {
-        for (unsigned j = 0; j < nodes.at(i).size(); j++)
+        for (IndexType j = 0; j < static_cast<IndexType>(nodes.at(i).size());
+             j++)
         {
             const auto firstIndex =
                 this->getNodeMap().convertIndexToNodeName(i);
@@ -200,38 +203,39 @@ std::vector<std::pair<T, T>> ListGraph<T>::getEdges() const
     return result;
 }
 
-template <typename T>
-std::vector<T> ListGraph<T>::getNeighbors(T key) const
+template <typename T, typename IndexType>
+std::vector<T> ListGraph<T, IndexType>::getNeighbors(T key) const
 {
     return this->getNodeMap().convertIndexToNodeName(
         internal_getNeighbors(this->getNodeMap().convertNodeNameToIndex(key)));
 }
 
-template <typename T>
-std::vector<unsigned> ListGraph<T>::internal_getNeighbors(unsigned index) const
+template <typename T, typename IndexType>
+std::vector<IndexType> ListGraph<T, IndexType>::internal_getNeighbors(
+    IndexType index) const
 {
     return nodes.at(index);
 }
 
-template <typename T>
-bool ListGraph<T>::hasEdge(std::pair<T, T> edge) const
+template <typename T, typename IndexType>
+bool ListGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
 {
-    const unsigned first =
+    const IndexType first =
         this->getNodeMap().convertNodeNameToIndex(edge.first);
-    const unsigned second =
+    const IndexType second =
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
     return std::ranges::find(nodes.at(first), second) != nodes.at(first).end();
 }
 
-template <typename T>
-void ListGraph<T>::clear()
+template <typename T, typename IndexType>
+void ListGraph<T, IndexType>::clear()
 {
     nodes.clear();
 }
 
-template <typename T>
-bool ListGraph<T>::isDirected() const
+template <typename T, typename IndexType>
+bool ListGraph<T, IndexType>::isDirected() const
 {
     return false;
 }

@@ -50,7 +50,7 @@ class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
     static constexpr IndexType EDGE = 1;
 
   private:
-    unsigned edgeNumber = 0;
+    size_t edgeNumber = 0;
 
     std::vector<std::vector<IndexType>> edgeMatrix;
 
