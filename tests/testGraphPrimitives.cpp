@@ -4,6 +4,9 @@
 #include "gtest/gtest.h"
 
 #include <algorithm>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 template <typename T>
 class GraphPrimitivesTests : public ::testing::Test
@@ -39,6 +42,18 @@ TYPED_TEST(GraphPrimitivesTests, addNode)
     ASSERT_EQ(this->graph.getNumberOfNodes(), 2);
 }
 
+TYPED_TEST(GraphPrimitivesTests, addNodeFromSpan)
+{
+    this->graph.addNode(0);
+    using nodeType =
+        typename std::remove_reference_t<decltype(this->graph.getNodes().at(
+            0))>;
+    std::vector<nodeType> newNodes{0, 1, 2, 3, 4};
+
+    this->graph.addNode(newNodes);
+    ASSERT_EQ(this->graph.getNumberOfNodes(), 5);
+}
+
 TYPED_TEST(GraphPrimitivesTests, removeNode)
 {
     this->graph.addNode(0);
@@ -59,6 +74,25 @@ TYPED_TEST(GraphPrimitivesTests, addEdge)
     this->graph.addEdge({1, 2});
     ASSERT_EQ(this->graph.getNumberOfEdges(), 2);
     this->graph.addEdge({1, 2});
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 2);
+}
+
+TYPED_TEST(GraphPrimitivesTests, addEdgeFromSpan)
+{
+    this->graph.addNode(0);
+    this->graph.addNode(1);
+    this->graph.addNode(2);
+
+    this->graph.addEdge({0, 1});
+
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 1);
+    using nodeType =
+        typename std::remove_reference_t<decltype(this->graph.getNodes().at(
+            0))>;
+    std::vector<std::pair<nodeType, nodeType>> newEdges{{0, 1}, {2, 3}};
+
+    this->graph.addEdge(newEdges);
+    ASSERT_EQ(this->graph.getNumberOfNodes(), 4);
     ASSERT_EQ(this->graph.getNumberOfEdges(), 2);
 }
 
