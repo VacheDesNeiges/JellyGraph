@@ -42,7 +42,6 @@ add_executable(test
     tests/testGraphPrimitives.cpp
     tests/testGraphMeasures.cpp
     tests/testGraphAlgorithms.cpp
-    tests/testDirectedGraphs.cpp
     tests/testGraphs.cpp
 )
 

@@ -1,3 +1,4 @@
+#include "DirectedMatrixGraph.hpp"
 #include "ListGraph.hpp"
 #include "MatrixGraph.hpp"
 
@@ -13,25 +14,43 @@ class GraphPrimitivesTests : public ::testing::Test
 {
   public:
     T graph;
-
-    constexpr static unsigned numNode = 5;
-    T numGraph{numNode};
 };
 
-using GraphImplementations = ::testing::Types<
+template <typename T>
+class SimpleGraphPrimitivesTests : public ::testing::Test
+{
+  public:
+    T graph;
+};
+
+template <typename T>
+class DirectedGraphPrimitivesTests : public ::testing::Test
+{
+  public:
+    T graph;
+};
+
+using AllGraphs = ::testing::Types<
+    jGraph::MatrixGraph<unsigned, short>, jGraph::MatrixGraph<long long>,
+    jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long, short>,
+    jGraph::DirectedMatrixGraph<unsigned>,
+    jGraph::DirectedMatrixGraph<long long, short>>;
+
+using SimpleGraphs = ::testing::Types<
     jGraph::MatrixGraph<unsigned, short>, jGraph::MatrixGraph<long long>,
     jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long, short>>;
 
-TYPED_TEST_SUITE(GraphPrimitivesTests, GraphImplementations);
+using DirectedGraphs =
+    ::testing::Types<jGraph::DirectedMatrixGraph<unsigned, short>,
+                     jGraph::DirectedMatrixGraph<long long>>;
+
+TYPED_TEST_SUITE(GraphPrimitivesTests, AllGraphs);
+TYPED_TEST_SUITE(SimpleGraphPrimitivesTests, SimpleGraphs);
+TYPED_TEST_SUITE(DirectedGraphPrimitivesTests, DirectedGraphs);
 
 TYPED_TEST(GraphPrimitivesTests, initEmptyGraph)
 {
     ASSERT_EQ(this->graph.getNumberOfNodes(), 0);
-}
-
-TYPED_TEST(GraphPrimitivesTests, initWithNumNode)
-{
-    ASSERT_EQ(this->numGraph.getNumberOfNodes(), this->numNode);
 }
 
 TYPED_TEST(GraphPrimitivesTests, addNode)
@@ -62,6 +81,17 @@ TYPED_TEST(GraphPrimitivesTests, removeNode)
     ASSERT_EQ(this->graph.getNumberOfNodes(), 1);
 }
 
+TYPED_TEST(DirectedGraphPrimitivesTests, removeNodeWithEdges)
+{
+    this->graph.addEdge({0, 1});
+    this->graph.addEdge({1, 2});
+    this->graph.addEdge({0, 2});
+
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 3);
+    this->graph.removeNode(2);
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 1);
+}
+
 TYPED_TEST(GraphPrimitivesTests, addEdge)
 {
     this->graph.addNode(0);
@@ -74,6 +104,18 @@ TYPED_TEST(GraphPrimitivesTests, addEdge)
     this->graph.addEdge({1, 2});
     ASSERT_EQ(this->graph.getNumberOfEdges(), 2);
     this->graph.addEdge({1, 2});
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 2);
+}
+
+TYPED_TEST(DirectedGraphPrimitivesTests, addEdge)
+{
+    this->graph.addNode(0);
+    this->graph.addNode(1);
+
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 0);
+    this->graph.addEdge({0, 1});
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 1);
+    this->graph.addEdge({1, 0});
     ASSERT_EQ(this->graph.getNumberOfEdges(), 2);
 }
 
@@ -96,7 +138,7 @@ TYPED_TEST(GraphPrimitivesTests, addEdgeFromSpan)
     ASSERT_EQ(this->graph.getNumberOfEdges(), 2);
 }
 
-TYPED_TEST(GraphPrimitivesTests, hasEdge)
+TYPED_TEST(SimpleGraphPrimitivesTests, hasEdge)
 {
     this->graph.addNode(0);
     this->graph.addNode(1);
@@ -108,7 +150,16 @@ TYPED_TEST(GraphPrimitivesTests, hasEdge)
     ASSERT_FALSE(this->graph.hasEdge({2, 1}));
 }
 
-TYPED_TEST(GraphPrimitivesTests, removeEdge)
+TYPED_TEST(DirectedGraphPrimitivesTests, hasEdge)
+{
+    this->graph.addEdge({0, 1});
+    this->graph.addNode(2);
+    ASSERT_TRUE(this->graph.hasEdge({0, 1}));
+    ASSERT_FALSE(this->graph.hasEdge({1, 0}));
+    ASSERT_FALSE(this->graph.hasEdge({0, 2}));
+}
+
+TYPED_TEST(SimpleGraphPrimitivesTests, removeEdge)
 {
     this->graph.addNode(0);
     this->graph.addNode(1);
@@ -120,6 +171,17 @@ TYPED_TEST(GraphPrimitivesTests, removeEdge)
 
     ASSERT_FALSE(this->graph.hasEdge({0, 1}));
     ASSERT_FALSE(this->graph.hasEdge({1, 0}));
+}
+
+TYPED_TEST(DirectedGraphPrimitivesTests, removeEdge)
+{
+    this->graph.addEdge({0, 1});
+    this->graph.addEdge({1, 0});
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 2);
+    this->graph.removeEdge({1, 0});
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 1);
+    ASSERT_FALSE(this->graph.hasEdge({1, 0}));
+    ASSERT_TRUE(this->graph.hasEdge({0, 1}));
 }
 
 TYPED_TEST(GraphPrimitivesTests, addingEdgeCanAddNode)
@@ -152,7 +214,7 @@ TYPED_TEST(GraphPrimitivesTests, getNodes)
     ASSERT_TRUE(std::ranges::find(vec, 4) != vec.end());
 }
 
-TYPED_TEST(GraphPrimitivesTests, getEdges)
+TYPED_TEST(SimpleGraphPrimitivesTests, getEdges)
 {
 
     this->graph.addEdge({2, 4});
@@ -171,6 +233,23 @@ TYPED_TEST(GraphPrimitivesTests, getEdges)
     ASSERT_FALSE(std::ranges::find(vec, EdgeType{3, 1}) != vec.end());
 }
 
+TYPED_TEST(DirectedGraphPrimitivesTests, getEdges)
+{
+    this->graph.addEdge({0, 1});
+    this->graph.addEdge({1, 2});
+    this->graph.addEdge({4, 3});
+
+    const auto edges = this->graph.getEdges();
+
+    ASSERT_EQ(edges.size(), 3);
+
+    using EdgeType = typename decltype(edges)::value_type;
+    ASSERT_TRUE(std::ranges::find(edges, EdgeType{0, 1}) != edges.end());
+    ASSERT_TRUE(std::ranges::find(edges, EdgeType{1, 2}) != edges.end());
+    ASSERT_TRUE(std::ranges::find(edges, EdgeType{4, 3}) != edges.end());
+    ASSERT_FALSE(std::ranges::find(edges, EdgeType{3, 4}) != edges.end());
+}
+
 TYPED_TEST(GraphPrimitivesTests, getNeighbors)
 {
     this->graph.addEdge({2, 4});
@@ -187,4 +266,18 @@ TYPED_TEST(GraphPrimitivesTests, getNeighbors)
 
     ASSERT_TRUE(std::ranges::find(neighborsOf2, 4) != neighborsOf2.end());
     ASSERT_FALSE(std::ranges::find(neighborsOf2, 1) != neighborsOf2.end());
+}
+
+TYPED_TEST(DirectedGraphPrimitivesTests, IngoingNeighbors)
+{
+    this->graph.addEdge({0, 1});
+    this->graph.addEdge({1, 2});
+    ASSERT_EQ(this->graph.getIngoingNeighbors(1).size(), 1);
+}
+
+TYPED_TEST(DirectedGraphPrimitivesTests, outgoingNeighbors)
+{
+    this->graph.addEdge({0, 1});
+    this->graph.addEdge({1, 2});
+    ASSERT_EQ(this->graph.getOutgoingNeighbors(1).size(), 1);
 }

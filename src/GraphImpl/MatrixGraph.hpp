@@ -23,7 +23,6 @@ class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
 {
   public:
     MatrixGraph() = default;
-    MatrixGraph(unsigned numNodes);
 
     template <std::ranges::range R>
         requires std::convertible_to<std::ranges::range_value_t<R>, T>
@@ -66,23 +65,6 @@ class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
     std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
 };
-
-template <typename T, typename IndexType>
-MatrixGraph<T, IndexType>::MatrixGraph(unsigned numNodes)
-{
-    this->getNodeMap().reserve(numNodes);
-    for (IndexType i = 0; i < static_cast<IndexType>(numNodes); i++)
-    {
-        this->getNodeMap().addByName(i);
-    }
-
-    edgeMatrix.reserve(numNodes);
-    for (IndexType i = 0; i < static_cast<IndexType>(numNodes); i++)
-    {
-        edgeMatrix.emplace_back();
-        edgeMatrix.back().reserve(numNodes);
-    }
-}
 
 template <typename T, typename IndexType>
 template <std::ranges::range R>

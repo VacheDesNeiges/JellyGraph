@@ -22,7 +22,6 @@ class ListGraph : public GraphAlgorithms<T, IndexType>,
 {
   public:
     ListGraph() = default;
-    ListGraph(unsigned numNodes);
 
     template <std::ranges::range R>
         requires std::convertible_to<std::ranges::range_value_t<R>, T>
@@ -56,19 +55,6 @@ class ListGraph : public GraphAlgorithms<T, IndexType>,
     [[nodiscard]] std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
 };
-
-template <typename T, typename IndexType>
-ListGraph<T, IndexType>::ListGraph(unsigned numNodes)
-{
-
-    nodes.reserve(numNodes);
-    this->getNodeMap().reserve(numNodes);
-    for (IndexType i = 0; i < static_cast<IndexType>(numNodes); i++)
-    {
-        this->getNodeMap().addByName(i);
-        nodes.emplace_back();
-    }
-}
 
 template <typename T, typename IndexType>
 template <std::ranges::range R>

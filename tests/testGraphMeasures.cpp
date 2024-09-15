@@ -9,11 +9,11 @@ class GraphMeasuresTests : public ::testing::Test
     T graph;
 };
 
-using GraphImplementations =
+using AllGraphs =
     ::testing::Types<jGraph::MatrixGraph<unsigned>, jGraph::MatrixGraph<double>,
                      jGraph::ListGraph<unsigned>, jGraph::ListGraph<double>>;
 
-TYPED_TEST_SUITE(GraphMeasuresTests, GraphImplementations);
+TYPED_TEST_SUITE(GraphMeasuresTests, AllGraphs);
 
 TYPED_TEST(GraphMeasuresTests, degree)
 {

@@ -16,12 +16,12 @@ class GraphAlgorithmsTests : public ::testing::Test
     T graph;
 };
 
-using GraphImplementations =
+using AllGraphs =
     ::testing::Types<jGraph::MatrixGraph<unsigned>,
                      jGraph::MatrixGraph<long long>,
                      jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long>>;
 
-TYPED_TEST_SUITE(GraphAlgorithmsTests, GraphImplementations);
+TYPED_TEST_SUITE(GraphAlgorithmsTests, AllGraphs);
 
 TYPED_TEST(GraphAlgorithmsTests, isConnected)
 {

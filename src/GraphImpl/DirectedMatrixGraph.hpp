@@ -20,7 +20,6 @@ class DirectedMatrixGraph : public MatrixGraph<T, IndexType>,
 {
   public:
     DirectedMatrixGraph() = default;
-    DirectedMatrixGraph(unsigned numNodes);
     DirectedMatrixGraph(std::initializer_list<T> nodes);
 
     template <std::ranges::range R>
@@ -59,7 +58,7 @@ DirectedMatrixGraph<T, IndexType>::DirectedMatrixGraph(
     {
         if (this->getNodeMap().addByName(node))
         {
-            for (auto &row : this->getthis->getEdgeMatrix()())
+            for (auto &row : this->getEdgeMatrix())
             {
                 row.emplace_back(false);
             }
