@@ -36,11 +36,7 @@ class ListGraph : public GraphAlgorithms<T, IndexType>,
     void removeNode(T nodeName) override;
 
     void addEdge(std::pair<T, T> edge) override;
-
-    template <std::ranges::range R>
-        requires std::convertible_to<std::ranges::range_value_t<R>, T>
-    void addEdge(const R &edges);
-
+    void addEdge(std::span<std::pair<T, T>> edges) override;
     void removeEdge(std::pair<T, T> edge) override;
 
     [[nodiscard]] size_t getNumberOfNodes() const override;
@@ -168,6 +164,31 @@ void ListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
         nodes.at(firstIndex).push_back(secondIndex);
         nodes.at(secondIndex).push_back(firstIndex);
         edgeNumber++;
+    }
+}
+
+template <typename T, typename IndexType>
+void ListGraph<T, IndexType>::addEdge(std::span<std::pair<T, T>> edges)
+{
+    for (const std::pair<T, T> &edge : edges)
+    {
+        for (const T &node : {edge.first, edge.second})
+        {
+            if (!this->getNodeMap().contains(node))
+                addNode(node);
+        }
+        const auto &firstIndex =
+            this->getNodeMap().convertNodeNameToIndex(edge.first);
+        const auto &secondIndex =
+            this->getNodeMap().convertNodeNameToIndex(edge.second);
+
+        if (std::ranges::find(nodes.at(firstIndex), secondIndex) ==
+            nodes.at(firstIndex).end())
+        {
+            edgeNumber++;
+            nodes.at(firstIndex).push_back(secondIndex);
+            nodes.at(secondIndex).push_back(firstIndex);
+        }
     }
 }
 

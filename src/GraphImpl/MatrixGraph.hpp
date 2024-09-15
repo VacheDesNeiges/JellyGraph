@@ -35,7 +35,6 @@ class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
     void addNode(T nodeName) override;
     void addNode(std::span<T> nodes) override;
     void removeNode(T nodeName) override;
-    [[nodiscard]] bool hasNode(T) override;
 
     void addEdge(std::pair<T, T> edge) override;
     void addEdge(std::span<std::pair<T, T>> edges) override;
@@ -171,6 +170,30 @@ void MatrixGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
         edgeNumber++;
         edgeMatrix[firstIndex][secondIndex] = EDGE;
         edgeMatrix[secondIndex][firstIndex] = EDGE;
+    }
+}
+
+template <typename T, typename IndexType>
+void MatrixGraph<T, IndexType>::addEdge(std::span<std::pair<T, T>> edges)
+{
+    for (const std::pair<T, T> &edge : edges)
+    {
+        for (const T &node : {edge.first, edge.second})
+        {
+            if (!this->getNodeMap().contains(node))
+                addNode(node);
+        }
+        const auto firstIndex =
+            this->getNodeMap().convertNodeNameToIndex(edge.first);
+        const auto secondIndex =
+            this->getNodeMap().convertNodeNameToIndex(edge.second);
+
+        if (edgeMatrix.at(firstIndex).at(secondIndex) == NOT_EDGE)
+        {
+            edgeNumber++;
+            edgeMatrix[firstIndex][secondIndex] = EDGE;
+            edgeMatrix[secondIndex][firstIndex] = EDGE;
+        }
     }
 }
 

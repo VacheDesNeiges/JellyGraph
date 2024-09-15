@@ -7,6 +7,7 @@
 #include <concepts>
 #include <initializer_list>
 #include <ranges>
+#include <span>
 #include <utility>
 #include <vector>
 
@@ -29,6 +30,7 @@ class DirectedMatrixGraph : public MatrixGraph<T, IndexType>,
     [[nodiscard]] bool isDirected() const override;
 
     void addEdge(std::pair<T, T> edge) override;
+    void addEdge(std::span<std::pair<T, T>> edges) override;
     void removeEdge(std::pair<T, T> edge) override;
 
     [[nodiscard]] std::vector<std::pair<T, T>> getEdges() const override;
@@ -109,6 +111,31 @@ void DirectedMatrixGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
     {
         this->getEdgeNumber()++;
         this->getEdgeMatrix()[firstIndex][secondIndex] = this->EDGE;
+    }
+}
+
+template <typename T, typename IndexType>
+void DirectedMatrixGraph<T, IndexType>::addEdge(
+    std::span<std::pair<T, T>> edges)
+{
+    for (const std::pair<T, T> &edge : edges)
+    {
+        for (const T &node : {edge.first, edge.second})
+        {
+            if (!this->getNodeMap().contains(node))
+                this->addNode(node);
+        }
+        const auto firstIndex =
+            this->getNodeMap().convertNodeNameToIndex(edge.first);
+        const auto secondIndex =
+            this->getNodeMap().convertNodeNameToIndex(edge.second);
+
+        if (this->getEdgeMatrix().at(firstIndex).at(secondIndex) ==
+            this->NOT_EDGE)
+        {
+            this->getEdgeNumber()++;
+            this->getEdgeMatrix()[firstIndex][secondIndex] = this->EDGE;
+        }
     }
 }
 

@@ -37,7 +37,6 @@ class GraphPrimitives
     virtual void addNode(T) = 0;
     virtual void addNode(std::initializer_list<T> nodes);
     virtual void addNode(std::span<T> nodes) = 0;
-    virtual bool hasNode(T) = 0;
 
     virtual void removeNode(T) = 0;
 
