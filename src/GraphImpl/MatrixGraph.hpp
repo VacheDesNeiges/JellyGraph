@@ -123,7 +123,7 @@ void MatrixGraph<T, IndexType>::addNode(std::span<T> nodes)
     nodesToAdd.reserve(nodes.size());
     for (const auto &node : nodes)
     {
-        if (!this->hasNode(node))
+        if (this->getNodeMap().addByName(node))
             nodesToAdd.emplace_back(node);
     }
 

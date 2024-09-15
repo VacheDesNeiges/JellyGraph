@@ -4,9 +4,11 @@
 #include "GraphPrimitives.hpp"
 #include "UnderlyingIndexType.hpp"
 #include <algorithm>
+#include <climits>
 #include <concepts>
 #include <cstddef>
 #include <ranges>
+#include <span>
 #include <utility>
 #include <vector>
 
@@ -30,6 +32,7 @@ class ListGraph : public GraphAlgorithms<T, IndexType>,
     [[nodiscard]] bool isDirected() const override;
 
     void addNode(T nodeName) override;
+    void addNode(std::span<T> nodes) override;
     void removeNode(T nodeName) override;
 
     void addEdge(std::pair<T, T> edge) override;
@@ -91,6 +94,22 @@ void ListGraph<T, IndexType>::addNode(T nodeName)
     {
         nodes.emplace_back();
     }
+}
+
+template <typename T, typename TypeIndex>
+void ListGraph<T, TypeIndex>::addNode(std::span<T> newNodes)
+{
+    std::vector<T> nodesToAdd;
+    nodesToAdd.reserve(newNodes.size());
+
+    for (const auto &node : newNodes)
+    {
+        if (this->getNodeMap().addByName(node))
+            nodesToAdd.emplace_back(node);
+    }
+
+    const auto newSize = nodes.size() + nodesToAdd.size();
+    nodes.resize(newSize);
 }
 
 template <typename T, typename IndexType>
