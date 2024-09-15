@@ -31,7 +31,13 @@ class ListGraph : public GraphAlgorithms<T, IndexType>,
 
     void addNode(T nodeName) override;
     void removeNode(T nodeName) override;
+
     void addEdge(std::pair<T, T> edge) override;
+
+    template <std::ranges::range R>
+        requires std::convertible_to<std::ranges::range_value_t<R>, T>
+    void addEdge(const R &edges);
+
     void removeEdge(std::pair<T, T> edge) override;
 
     [[nodiscard]] size_t getNumberOfNodes() const override;

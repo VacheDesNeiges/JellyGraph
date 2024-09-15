@@ -9,6 +9,7 @@
 #include <concepts>
 #include <cstddef>
 #include <ranges>
+#include <span>
 #include <utility>
 #include <vector>
 
@@ -32,9 +33,14 @@ class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
     [[nodiscard]] bool isDirected() const override;
 
     void addNode(T nodeName) override;
+    void addNode(std::span<T> nodes) override;
     void removeNode(T nodeName) override;
+    [[nodiscard]] bool hasNode(T) override;
+
     void addEdge(std::pair<T, T> edge) override;
+    void addEdge(std::span<std::pair<T, T>> edges) override;
     void removeEdge(std::pair<T, T> edge) override;
+    [[nodiscard]] bool hasEdge(std::pair<T, T> edge) const override;
 
     [[nodiscard]] size_t getNumberOfNodes() const override;
     [[nodiscard]] size_t getNumberOfEdges() const override;
@@ -42,8 +48,6 @@ class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
     [[nodiscard]] std::vector<T> getNodes() const override;
     [[nodiscard]] std::vector<std::pair<T, T>> getEdges() const override;
     [[nodiscard]] std::vector<T> getNeighbors(T key) const override;
-
-    [[nodiscard]] bool hasEdge(std::pair<T, T> edge) const override;
 
   protected:
     static constexpr IndexType NOT_EDGE = 0;
@@ -106,10 +110,29 @@ void MatrixGraph<T, IndexType>::addNode(T nodeName)
     {
         for (auto &row : edgeMatrix)
         {
-            row.emplace_back(false);
+            row.emplace_back(NOT_EDGE);
         }
-        edgeMatrix.emplace_back(edgeMatrix.size() + 1, false);
+        edgeMatrix.emplace_back(edgeMatrix.size() + 1, NOT_EDGE);
     }
+}
+
+template <typename T, typename IndexType>
+void MatrixGraph<T, IndexType>::addNode(std::span<T> nodes)
+{
+    std::vector<T> nodesToAdd;
+    nodesToAdd.reserve(nodes.size());
+    for (const auto &node : nodes)
+    {
+        if (!this->hasNode(node))
+            nodesToAdd.emplace_back(node);
+    }
+
+    const auto newSize = edgeMatrix.size() + nodesToAdd.size();
+    for (auto &row : edgeMatrix)
+    {
+        row.resize(newSize, NOT_EDGE);
+    }
+    edgeMatrix.resize(newSize, std::vector<IndexType>(newSize, NOT_EDGE));
 }
 
 template <typename T, typename IndexType>

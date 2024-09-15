@@ -3,7 +3,11 @@
 #include "NameIndexMap.hpp"
 #include "UnderlyingIndexType.hpp"
 
+#include <concepts>
 #include <cstddef>
+#include <initializer_list>
+#include <ranges>
+#include <span>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -31,8 +35,26 @@ class GraphPrimitives
     [[nodiscard]] virtual bool isDirected() const = 0;
 
     virtual void addNode(T) = 0;
+    virtual void addNode(std::initializer_list<T> nodes);
+    virtual void addNode(std::span<T> nodes) = 0;
+    virtual bool hasNode(T) = 0;
+
     virtual void removeNode(T) = 0;
+
     virtual void addEdge(std::pair<T, T>) = 0;
+    virtual void addEdge(std::initializer_list<std::pair<T, T>> edges);
+    virtual void addEdge(std::span<std::pair<T, T>> edges) = 0;
+
+    template <std::ranges::range R>
+        requires std::convertible_to<std::ranges::range_value_t<R>, T>
+    void addEdge(const R &edges)
+    {
+        for (const auto &edge : edges)
+        {
+            addEdge(edge);
+        }
+    }
+
     virtual void removeEdge(std::pair<T, T>) = 0;
 
     [[nodiscard]] virtual size_t getNumberOfNodes() const = 0;
@@ -70,6 +92,27 @@ const jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
     T, IndexType>::getNodeMap() const
 {
     return nodeMap;
+}
+
+template <typename T, typename IndexType>
+    requires Integral<IndexType>
+void GraphPrimitives<T, IndexType>::addNode(std::initializer_list<T> nodes)
+{
+    for (const auto &node : nodes)
+    {
+        addNode(node);
+    }
+}
+
+template <typename T, typename IndexType>
+    requires Integral<IndexType>
+void GraphPrimitives<T, IndexType>::addEdge(
+    std::initializer_list<std::pair<T, T>> edges)
+{
+    for (const auto &edge : edges)
+    {
+        addEdge(edge);
+    }
 }
 
 } // namespace jGraph
