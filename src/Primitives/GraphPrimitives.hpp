@@ -3,10 +3,8 @@
 #include "NameIndexMap.hpp"
 #include "UnderlyingIndexType.hpp"
 
-#include <concepts>
 #include <cstddef>
 #include <initializer_list>
-#include <ranges>
 #include <span>
 #include <type_traits>
 #include <utility>
@@ -44,16 +42,6 @@ class GraphPrimitives
     virtual void addEdge(std::initializer_list<std::pair<T, T>> edges);
     virtual void addEdge(std::span<std::pair<T, T>> edges) = 0;
 
-    template <std::ranges::range R>
-        requires std::convertible_to<std::ranges::range_value_t<R>, T>
-    void addEdge(const R &edges)
-    {
-        for (const auto &edge : edges)
-        {
-            addEdge(edge);
-        }
-    }
-
     virtual void removeEdge(std::pair<T, T>) = 0;
 
     [[nodiscard]] virtual size_t getNumberOfNodes() const = 0;
@@ -61,6 +49,7 @@ class GraphPrimitives
 
     [[nodiscard]] virtual std::vector<T> getNodes() const = 0;
     [[nodiscard]] virtual std::vector<std::pair<T, T>> getEdges() const = 0;
+    [[nodiscard]] virtual double getWeight(std::pair<T, T> edge) const;
     [[nodiscard]] virtual std::vector<T> getNeighbors(T) const = 0;
 
     [[nodiscard]] virtual bool hasEdge(std::pair<T, T>) const = 0;
@@ -112,6 +101,14 @@ void GraphPrimitives<T, IndexType>::addEdge(
     {
         addEdge(edge);
     }
+}
+
+template <typename T, typename IndexType>
+    requires Integral<IndexType>
+double GraphPrimitives<T, IndexType>::getWeight(
+    [[maybe_unused]] std::pair<T, T> edge) const
+{
+    return 1;
 }
 
 } // namespace jGraph
