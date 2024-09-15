@@ -15,6 +15,12 @@ class GraphPrimitivesTests : public ::testing::Test
   public:
     T graph;
 };
+using AllGraphs = ::testing::Types<
+    jGraph::MatrixGraph<unsigned, short>, jGraph::MatrixGraph<long long>,
+    jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long, short>,
+    jGraph::DirectedMatrixGraph<unsigned>,
+    jGraph::DirectedMatrixGraph<long long, short>>;
+TYPED_TEST_SUITE(GraphPrimitivesTests, AllGraphs);
 
 template <typename T>
 class SimpleGraphPrimitivesTests : public ::testing::Test
@@ -22,6 +28,10 @@ class SimpleGraphPrimitivesTests : public ::testing::Test
   public:
     T graph;
 };
+using SimpleGraphs = ::testing::Types<
+    jGraph::MatrixGraph<unsigned, short>, jGraph::MatrixGraph<long long>,
+    jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long, short>>;
+TYPED_TEST_SUITE(SimpleGraphPrimitivesTests, SimpleGraphs);
 
 template <typename T>
 class DirectedGraphPrimitivesTests : public ::testing::Test
@@ -29,23 +39,9 @@ class DirectedGraphPrimitivesTests : public ::testing::Test
   public:
     T graph;
 };
-
-using AllGraphs = ::testing::Types<
-    jGraph::MatrixGraph<unsigned, short>, jGraph::MatrixGraph<long long>,
-    jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long, short>,
-    jGraph::DirectedMatrixGraph<unsigned>,
-    jGraph::DirectedMatrixGraph<long long, short>>;
-
-using SimpleGraphs = ::testing::Types<
-    jGraph::MatrixGraph<unsigned, short>, jGraph::MatrixGraph<long long>,
-    jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long, short>>;
-
 using DirectedGraphs =
     ::testing::Types<jGraph::DirectedMatrixGraph<unsigned, short>,
                      jGraph::DirectedMatrixGraph<long long>>;
-
-TYPED_TEST_SUITE(GraphPrimitivesTests, AllGraphs);
-TYPED_TEST_SUITE(SimpleGraphPrimitivesTests, SimpleGraphs);
 TYPED_TEST_SUITE(DirectedGraphPrimitivesTests, DirectedGraphs);
 
 TYPED_TEST(GraphPrimitivesTests, initEmptyGraph)
