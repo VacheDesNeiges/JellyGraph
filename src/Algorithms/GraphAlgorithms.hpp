@@ -1,7 +1,15 @@
 #pragma once
+
 #include "GraphPrimitives.hpp"
 #include "UnderlyingIndexType.hpp"
+
+#include <algorithm>
+#include <cassert>
+#include <cfloat>
 #include <cstdio>
+#include <limits>
+#include <optional>
+#include <queue>
 #include <stack>
 #include <utility>
 #include <vector>
@@ -17,6 +25,10 @@ class GraphAlgorithms : public virtual GraphPrimitives<T, IndexType>
     [[nodiscard]] size_t numberOfComponents() const;
     [[nodiscard]] std::vector<T> componentOfNode(T node) const;
     [[nodiscard]] std::vector<std::vector<T>> components() const;
+
+    [[nodiscard]] std::vector<std::vector<std::pair<T, T>>> djikstra(
+        std::pair<T, T> pathExtremities) const;
+    [[nodiscard]] std::vector<std::pair<T, T>> djikstra(T startingNode) const;
 
   private:
     [[nodiscard]] std::vector<IndexType> internal_componentOfNode(
@@ -125,6 +137,81 @@ std::vector<std::vector<IndexType>> GraphAlgorithms<
         components.push_back(currentComponent);
     }
     return components;
+}
+
+template <typename T, typename IndexType>
+std::vector<std::pair<T, T>> GraphAlgorithms<T, IndexType>::djikstra(
+    T startingNode) const
+{
+    // Data structures necessary for the algorithm
+    // ------------------------------------------------------------------------
+    const auto numNodes = this->getNumberOfNodes();
+    const auto startingNodeIndex =
+        this->getNodeMap().convertNodeNameToIndex(startingNode);
+
+    std::vector<std::optional<IndexType>> previousNodes(numNodes, std::nullopt);
+    std::vector<double> distances(numNodes,
+                                  std::numeric_limits<double>::infinity());
+
+    distances.at(startingNode) = 0;
+
+    auto comparaisonFunction = [](std::pair<IndexType, double> lhs,
+                                  std::pair<IndexType, double> rhs) {
+        return lhs.second > rhs.second;
+    };
+
+    std::priority_queue<std::pair<IndexType, double>,
+                        std::vector<std::pair<IndexType, double>>,
+                        decltype(comparaisonFunction)>
+        nodesPriorityQueue(comparaisonFunction);
+
+    // Algorithm
+    // ------------------------------------------------------------------------
+    nodesPriorityQueue.emplace({startingNode, 0});
+    while (!nodesPriorityQueue.empty())
+    {
+        const auto [currentBestNode, currentBestDistance] =
+            nodesPriorityQueue.top();
+        nodesPriorityQueue.pop();
+
+        if (currentBestDistance > distances[currentBestNode])
+            continue;
+
+        for (const IndexType examinedNeighbor :
+             this->internal_getNeighbors(currentBestNode))
+        {
+            const double edgeWeight =
+                this->getWeight(currentBestNode, examinedNeighbor);
+            assert(edgeWeight >= 0);
+
+            double examinedDistance = distances[currentBestNode] + edgeWeight;
+
+            if (examinedDistance < distances.at(examinedNeighbor))
+            {
+                distances[examinedNeighbor] = examinedDistance;
+                previousNodes[examinedNeighbor] = currentBestNode;
+                nodesPriorityQueue.emplace(examinedNeighbor, examinedDistance);
+            }
+        }
+    }
+    // Result construction
+    // ------------------------------------------------------------------------
+    std::vector<std::pair<T, T>> result;
+    for (const auto &node : this->internal_getNodes())
+    {
+        if (previousNodes[node])
+        {
+            const auto nodeName =
+                this->getNodeMap().convertIndexToNodeName(node);
+
+            const auto precedingNode =
+                this->getNodeMap().convertIndexToNodeName(
+                    previousNodes[node].value());
+
+            result.emplace_back(precedingNode, node);
+        }
+    }
+    return result;
 }
 
 }; // namespace jGraph
