@@ -1,3 +1,4 @@
+#include "DirectedListGraph.hpp"
 #include "DirectedMatrixGraph.hpp"
 #include "ListGraph.hpp"
 #include "MatrixGraph.hpp"
@@ -19,7 +20,9 @@ using AllGraphs = ::testing::Types<
     jGraph::MatrixGraph<unsigned, short>, jGraph::MatrixGraph<long long>,
     jGraph::ListGraph<unsigned>, jGraph::ListGraph<long long, short>,
     jGraph::DirectedMatrixGraph<unsigned>,
-    jGraph::DirectedMatrixGraph<long long, short>>;
+    jGraph::DirectedMatrixGraph<long long, short>,
+    jGraph::DirectedListGraph<unsigned>,
+    jGraph::DirectedListGraph<long long, short>>;
 TYPED_TEST_SUITE(GraphPrimitivesTests, AllGraphs);
 
 template <typename T>
@@ -41,7 +44,9 @@ class DirectedGraphPrimitivesTests : public ::testing::Test
 };
 using DirectedGraphs =
     ::testing::Types<jGraph::DirectedMatrixGraph<unsigned, short>,
-                     jGraph::DirectedMatrixGraph<long long>>;
+                     jGraph::DirectedMatrixGraph<long long>,
+                     jGraph::DirectedListGraph<unsigned, short>,
+                     jGraph::DirectedListGraph<long long>>;
 TYPED_TEST_SUITE(DirectedGraphPrimitivesTests, DirectedGraphs);
 
 TYPED_TEST(GraphPrimitivesTests, initEmptyGraph)

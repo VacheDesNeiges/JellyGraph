@@ -34,7 +34,6 @@ class DirectedMatrixGraph : public MatrixGraph<T, IndexType>,
 
     [[nodiscard]] std::vector<std::pair<T, T>> getEdges() const override;
 
-    [[nodiscard]] std::vector<T> getNeighbors(T key) const override;
     [[nodiscard]] std::vector<T> getOutgoingNeighbors(T key) const override;
     [[nodiscard]] std::vector<T> getIngoingNeighbors(T key) const override;
 
@@ -185,14 +184,6 @@ bool DirectedMatrixGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
     return this->getEdgeMatrix().at(first).at(second) == this->EDGE;
-}
-
-template <typename T, typename IndexType>
-std::vector<T> DirectedMatrixGraph<T, IndexType>::getNeighbors(T key) const
-{
-    const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(key);
-    return this->getNodeMap().convertIndexToNodeName(
-        internal_getNeighbors(nodeIndex));
 }
 
 template <typename T, typename IndexType>
