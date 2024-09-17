@@ -14,8 +14,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -Wconversion \
     -Wunused-value \
     -O3 \
-    -march=native \
-    -std=c++20"
+    -march=native"
 )
 
 add_library(jellyGraph INTERFACE)
