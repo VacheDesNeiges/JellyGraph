@@ -121,11 +121,12 @@ constexpr void MatrixGraph<T, IndexType>::addNode(std::span<T> nodes)
 template <typename T, typename IndexType>
 constexpr void MatrixGraph<T, IndexType>::removeNode(T nodeName)
 {
-    const auto associatedEdgesNumber = this->getNeighbors(nodeName).size();
-    edgeNumber -= associatedEdgesNumber;
 
     if (this->getNodeMap().contains(nodeName))
     {
+        const auto associatedEdgesNumber = this->getNeighbors(nodeName).size();
+        edgeNumber -= associatedEdgesNumber;
+
         const auto indexToDelete =
             this->getNodeMap().convertNodeNameToIndex(nodeName);
         edgeMatrix.erase(edgeMatrix.begin() + indexToDelete);

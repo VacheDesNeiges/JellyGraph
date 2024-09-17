@@ -82,6 +82,14 @@ TYPED_TEST(GraphPrimitivesTests, removeNode)
     ASSERT_EQ(this->graph.getNumberOfNodes(), 1);
 }
 
+TYPED_TEST(GraphPrimitivesTests, removeNodeNotInGraph)
+{
+    this->graph.addNode(0);
+    this->graph.addNode(1);
+    this->graph.removeNode(2);
+    ASSERT_EQ(this->graph.getNumberOfNodes(), 2);
+}
+
 TYPED_TEST(DirectedGraphPrimitivesTests, removeNodeWithEdges)
 {
     this->graph.addEdge({0, 1});
@@ -89,7 +97,7 @@ TYPED_TEST(DirectedGraphPrimitivesTests, removeNodeWithEdges)
     this->graph.addEdge({0, 2});
 
     ASSERT_EQ(this->graph.getNumberOfEdges(), 3);
-    this->graph.removeNode(2);
+    this->graph.removeNode(0);
     ASSERT_EQ(this->graph.getNumberOfEdges(), 1);
 }
 
