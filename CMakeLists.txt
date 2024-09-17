@@ -10,10 +10,14 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -Wall \
     -Wextra \
     -pedantic \
+    -Werror \
     -Wshadow \
     -Wconversion \
     -Wunused-value \
+    -Wold-style-cast \
+    -Wnon-virtual-dtor \
     -O3 \
+    -flto \
     -march=native"
 )
 
