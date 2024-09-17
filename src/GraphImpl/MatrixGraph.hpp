@@ -299,6 +299,7 @@ template <typename T, typename IndexType>
 constexpr void MatrixGraph<T, IndexType>::clear()
 {
     edgeMatrix.clear();
+    edgeNumber = 0;
 }
 
 template <typename T, typename IndexType>

@@ -287,6 +287,7 @@ template <typename T, typename IndexType>
 constexpr void ListGraph<T, IndexType>::clear()
 {
     adjacencyList.clear();
+    edgeNumber = 0;
 }
 
 template <typename T, typename IndexType>

@@ -259,6 +259,19 @@ TYPED_TEST(DirectedGraphPrimitivesTests, getEdges)
     ASSERT_FALSE(std::ranges::find(edges, EdgeType{3, 4}) != edges.end());
 }
 
+TYPED_TEST(GraphPrimitivesTests, clear)
+{
+    this->graph.addEdge({0, 1});
+    this->graph.addEdge({1, 2});
+    this->graph.addEdge({4, 3});
+    this->graph.clear();
+
+    ASSERT_EQ(this->graph.getNumberOfNodes(), 0);
+    ASSERT_EQ(this->graph.getNodes().size(), 0);
+    ASSERT_EQ(this->graph.getNumberOfEdges(), 0);
+    ASSERT_EQ(this->graph.getEdges().size(), 0);
+}
+
 TYPED_TEST(GraphPrimitivesTests, getNeighbors)
 {
     this->graph.addEdge({2, 4});
