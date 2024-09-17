@@ -21,30 +21,34 @@ template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
 class GraphAlgorithms : public virtual GraphPrimitives<T, IndexType>
 {
   public:
-    [[nodiscard]] bool isConnected() const;
-    [[nodiscard]] size_t numberOfComponents() const;
-    [[nodiscard]] std::vector<T> componentOfNode(T node) const;
-    [[nodiscard]] std::vector<std::vector<T>> components() const;
+    [[nodiscard]] constexpr bool isConnected() const;
+    [[nodiscard]] constexpr size_t numberOfComponents() const;
+    [[nodiscard]] constexpr std::vector<T> componentOfNode(T node) const;
+    [[nodiscard]] constexpr std::vector<std::vector<T>> components() const;
 
-    [[nodiscard]] std::vector<std::vector<std::pair<T, T>>> djikstra(
+    [[nodiscard]] constexpr std::vector<std::vector<std::pair<T, T>>> djikstra(
         std::pair<T, T> pathExtremities) const;
-    [[nodiscard]] std::vector<std::pair<T, T>> djikstra(T startingNode) const;
+    [[nodiscard]] constexpr std::vector<std::pair<T, T>> djikstra(
+        T startingNode) const;
 
   private:
-    [[nodiscard]] std::vector<IndexType> internal_componentOfNode(
+    [[nodiscard]] constexpr std::vector<IndexType> internal_componentOfNode(
         IndexType node) const;
-    [[nodiscard]] std::vector<std::vector<IndexType>> internal_components()
-        const;
+    [[nodiscard]] constexpr std::vector<std::vector<IndexType>>
+    internal_components() const;
+    [[nodiscard]] constexpr std::vector<std::pair<IndexType, IndexType>>
+    internal_djikstra(IndexType startingNode) const;
 };
 
 template <typename T, typename IndexType>
-bool GraphAlgorithms<T, IndexType>::isConnected() const
+constexpr bool GraphAlgorithms<T, IndexType>::isConnected() const
 {
     return components().size() == 1;
 }
 
 template <typename T, typename IndexType>
-std::vector<T> GraphAlgorithms<T, IndexType>::componentOfNode(T node) const
+constexpr std::vector<T> GraphAlgorithms<T, IndexType>::componentOfNode(
+    T node) const
 {
     const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(node);
 
@@ -53,8 +57,8 @@ std::vector<T> GraphAlgorithms<T, IndexType>::componentOfNode(T node) const
 }
 
 template <typename T, typename IndexType>
-std::vector<IndexType> GraphAlgorithms<T, IndexType>::internal_componentOfNode(
-    IndexType node) const
+constexpr std::vector<IndexType> GraphAlgorithms<
+    T, IndexType>::internal_componentOfNode(IndexType node) const
 {
     std::vector<IndexType> result;
     std::vector<bool> visited(this->getNumberOfNodes(), false);
@@ -84,7 +88,8 @@ std::vector<IndexType> GraphAlgorithms<T, IndexType>::internal_componentOfNode(
 }
 
 template <typename T, typename IndexType>
-std::vector<std::vector<T>> GraphAlgorithms<T, IndexType>::components() const
+constexpr std::vector<std::vector<T>> GraphAlgorithms<
+    T, IndexType>::components() const
 {
     std::vector<std::vector<T>> result;
     const auto components = internal_components();
@@ -98,7 +103,7 @@ std::vector<std::vector<T>> GraphAlgorithms<T, IndexType>::components() const
 }
 
 template <typename T, typename IndexType>
-std::vector<std::vector<IndexType>> GraphAlgorithms<
+constexpr std::vector<std::vector<IndexType>> GraphAlgorithms<
     T, IndexType>::internal_components() const
 {
     std::vector<std::vector<IndexType>> components;
@@ -140,19 +145,35 @@ std::vector<std::vector<IndexType>> GraphAlgorithms<
 }
 
 template <typename T, typename IndexType>
-std::vector<std::pair<T, T>> GraphAlgorithms<T, IndexType>::djikstra(
+constexpr std::vector<std::pair<T, T>> GraphAlgorithms<T, IndexType>::djikstra(
     T startingNode) const
+{
+    IndexType startingNodeIndex =
+        this->getNodeMap().convertNodeNameToIndex(startingNode);
+    const auto resultAsIndexes = internal_djikstra(startingNodeIndex);
+
+    std::vector<std::pair<T, T>> result;
+    result.reserve(resultAsIndexes.size());
+
+    for (const auto &[fromNode, node] : resultAsIndexes)
+    {
+        const auto first = this->getNodeMap().convertIndexToNodeName(fromNode);
+        const auto second = this->getNodeMap().convertIndexToNodeName(node);
+        result.emplace_back({first, second});
+    }
+    return result;
+}
+
+template <typename T, typename IndexType>
+constexpr std::vector<std::pair<IndexType, IndexType>> GraphAlgorithms<
+    T, IndexType>::internal_djikstra(IndexType startingNode) const
 {
     // Data structures necessary for the algorithm
     // ------------------------------------------------------------------------
     const auto numNodes = this->getNumberOfNodes();
-    const auto startingNodeIndex =
-        this->getNodeMap().convertNodeNameToIndex(startingNode);
-
     std::vector<std::optional<IndexType>> previousNodes(numNodes, std::nullopt);
     std::vector<double> distances(numNodes,
                                   std::numeric_limits<double>::infinity());
-
     distances.at(startingNode) = 0;
 
     auto comparaisonFunction = [](std::pair<IndexType, double> lhs,
@@ -164,7 +185,6 @@ std::vector<std::pair<T, T>> GraphAlgorithms<T, IndexType>::djikstra(
                         std::vector<std::pair<IndexType, double>>,
                         decltype(comparaisonFunction)>
         nodesPriorityQueue(comparaisonFunction);
-
     // Algorithm
     // ------------------------------------------------------------------------
     nodesPriorityQueue.emplace({startingNode, 0});
@@ -196,20 +216,11 @@ std::vector<std::pair<T, T>> GraphAlgorithms<T, IndexType>::djikstra(
     }
     // Result construction
     // ------------------------------------------------------------------------
-    std::vector<std::pair<T, T>> result;
+    std::vector<std::pair<IndexType, IndexType>> result;
     for (const auto &node : this->internal_getNodes())
     {
         if (previousNodes[node])
-        {
-            const auto nodeName =
-                this->getNodeMap().convertIndexToNodeName(node);
-
-            const auto precedingNode =
-                this->getNodeMap().convertIndexToNodeName(
-                    previousNodes[node].value());
-
-            result.emplace_back(precedingNode, node);
-        }
+            result.emplace_back(previousNodes[node].value(), node);
     }
     return result;
 }

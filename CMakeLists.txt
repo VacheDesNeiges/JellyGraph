@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22.1)
 project (jellyGraph)
 
-SET(CMAKE_CXX_COMPILER "g++")
+SET(CMAKE_CXX_COMPILER "clang++-18")
 SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -14,7 +14,8 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -Wconversion \
     -Wunused-value \
     -O3 \
-    -march=native"
+    -march=native \
+    -std=c++20"
 )
 
 add_library(jellyGraph INTERFACE)
@@ -51,3 +52,4 @@ target_link_libraries(test PRIVATE
     gtest
     jellyGraph
 )
+

@@ -21,46 +21,52 @@ template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
 class GraphPrimitives
 {
   public:
-    GraphPrimitives() = default;
-    virtual ~GraphPrimitives() = default;
+    constexpr GraphPrimitives() = default;
+    constexpr virtual ~GraphPrimitives() = default;
 
     GraphPrimitives(const GraphPrimitives &) = delete;
     GraphPrimitives(GraphPrimitives &&) = delete;
     GraphPrimitives &operator=(const GraphPrimitives &) = delete;
     GraphPrimitives &operator=(GraphPrimitives &&) = delete;
 
-    virtual void clear() = 0;
+    constexpr virtual void clear() = 0;
     [[nodiscard]] virtual bool isDirected() const = 0;
 
-    virtual void addNode(T) = 0;
-    virtual void addNode(std::initializer_list<T> nodes);
-    virtual void addNode(std::span<T> nodes) = 0;
+    constexpr virtual void addNode(T) = 0;
+    constexpr virtual void addNode(std::initializer_list<T> nodes);
+    constexpr virtual void addNode(std::span<T> nodes) = 0;
 
-    virtual void removeNode(T) = 0;
+    constexpr virtual void removeNode(T) = 0;
 
-    virtual void addEdge(std::pair<T, T>) = 0;
-    virtual void addEdge(std::initializer_list<std::pair<T, T>> edges);
-    virtual void addEdge(std::span<std::pair<T, T>> edges) = 0;
+    constexpr virtual void addEdge(std::pair<T, T>) = 0;
+    constexpr virtual void addEdge(
+        std::initializer_list<std::pair<T, T>> edges);
+    constexpr virtual void addEdge(std::span<std::pair<T, T>> edges) = 0;
 
-    virtual void removeEdge(std::pair<T, T>) = 0;
+    constexpr virtual void removeEdge(std::pair<T, T>) = 0;
 
-    [[nodiscard]] virtual size_t getNumberOfNodes() const = 0;
-    [[nodiscard]] virtual size_t getNumberOfEdges() const = 0;
+    [[nodiscard]] constexpr virtual size_t getNumberOfNodes() const = 0;
+    [[nodiscard]] constexpr virtual size_t getNumberOfEdges() const = 0;
 
-    [[nodiscard]] virtual std::vector<T> getNodes() const = 0;
-    [[nodiscard]] virtual std::vector<std::pair<T, T>> getEdges() const = 0;
-    [[nodiscard]] virtual double getWeight(std::pair<T, T> edge) const;
-    [[nodiscard]] virtual std::vector<T> getNeighbors(T) const = 0;
+    [[nodiscard]] constexpr virtual std::vector<T> getNodes() const = 0;
+    [[nodiscard]] constexpr virtual std::vector<std::pair<T, T>> getEdges()
+        const = 0;
+    [[nodiscard]] constexpr virtual double getWeight(
+        std::pair<T, T> edge) const;
+    [[nodiscard]] constexpr virtual std::vector<T> getNeighbors(T) const = 0;
 
-    [[nodiscard]] virtual bool hasEdge(std::pair<T, T>) const = 0;
+    [[nodiscard]] constexpr virtual bool hasEdge(std::pair<T, T>) const = 0;
 
   protected:
-    [[nodiscard]] jGraph::internals::NameIndexMap<T, IndexType> &getNodeMap();
-    [[nodiscard]] const jGraph::internals::NameIndexMap<T, IndexType> &
+    [[nodiscard]] constexpr jGraph::internals::NameIndexMap<T, IndexType> &
+    getNodeMap();
+    [[nodiscard]] constexpr const jGraph::internals::NameIndexMap<T,
+                                                                  IndexType> &
     getNodeMap() const;
-    [[nodiscard]] virtual std::vector<IndexType> internal_getNodes() const = 0;
-    [[nodiscard]] virtual std::vector<IndexType> internal_getNeighbors(
-        IndexType) const = 0;
+    [[nodiscard]] constexpr virtual std::vector<IndexType> internal_getNodes()
+        const = 0;
+    [[nodiscard]] constexpr virtual std::vector<
+        IndexType> internal_getNeighbors(IndexType) const = 0;
 
   private:
     jGraph::internals::NameIndexMap<T, IndexType> nodeMap;
@@ -68,7 +74,7 @@ class GraphPrimitives
 
 template <typename T, typename IndexType>
     requires Integral<IndexType>
-jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
+constexpr jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
     T, IndexType>::getNodeMap()
 {
     return nodeMap;
@@ -76,7 +82,7 @@ jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
 
 template <typename T, typename IndexType>
     requires Integral<IndexType>
-const jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
+constexpr const jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
     T, IndexType>::getNodeMap() const
 {
     return nodeMap;
@@ -84,7 +90,8 @@ const jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
 
 template <typename T, typename IndexType>
     requires Integral<IndexType>
-void GraphPrimitives<T, IndexType>::addNode(std::initializer_list<T> nodes)
+constexpr void GraphPrimitives<T, IndexType>::addNode(
+    std::initializer_list<T> nodes)
 {
     for (const auto &node : nodes)
     {
@@ -94,7 +101,7 @@ void GraphPrimitives<T, IndexType>::addNode(std::initializer_list<T> nodes)
 
 template <typename T, typename IndexType>
     requires Integral<IndexType>
-void GraphPrimitives<T, IndexType>::addEdge(
+constexpr void GraphPrimitives<T, IndexType>::addEdge(
     std::initializer_list<std::pair<T, T>> edges)
 {
     for (const auto &edge : edges)
@@ -105,7 +112,7 @@ void GraphPrimitives<T, IndexType>::addEdge(
 
 template <typename T, typename IndexType>
     requires Integral<IndexType>
-double GraphPrimitives<T, IndexType>::getWeight(
+constexpr double GraphPrimitives<T, IndexType>::getWeight(
     [[maybe_unused]] std::pair<T, T> edge) const
 {
     return 1;

@@ -21,54 +21,58 @@ class ListGraph : public GraphAlgorithms<T, IndexType>,
                   public virtual GraphPrimitives<T, IndexType>
 {
   public:
-    ListGraph() = default;
+    constexpr ListGraph() = default;
 
     template <std::ranges::range R>
         requires std::convertible_to<std::ranges::range_value_t<R>, T>
-    ListGraph(const R &nodes);
+    constexpr ListGraph(const R &nodes);
 
-    void clear() override;
-    [[nodiscard]] bool isDirected() const override;
+    constexpr void clear() override;
+    [[nodiscard]] constexpr bool isDirected() const override;
 
-    void addNode(T nodeName) override;
-    void addNode(std::span<T> nodes) override;
-    void removeNode(T nodeName) override;
+    constexpr void addNode(T nodeName) override;
+    constexpr void addNode(std::span<T> nodes) override;
+    constexpr void removeNode(T nodeName) override;
 
-    void addEdge(std::pair<T, T> edge) override;
-    void addEdge(std::span<std::pair<T, T>> edges) override;
-    void removeEdge(std::pair<T, T> edge) override;
+    constexpr void addEdge(std::pair<T, T> edge) override;
+    constexpr void addEdge(std::span<std::pair<T, T>> edges) override;
+    constexpr void removeEdge(std::pair<T, T> edge) override;
 
-    [[nodiscard]] size_t getNumberOfNodes() const override;
-    [[nodiscard]] size_t getNumberOfEdges() const override;
+    [[nodiscard]] constexpr size_t getNumberOfNodes() const override;
+    [[nodiscard]] constexpr size_t getNumberOfEdges() const override;
 
-    [[nodiscard]] std::vector<T> getNodes() const override;
-    [[nodiscard]] std::vector<std::pair<T, T>> getEdges() const override;
-    [[nodiscard]] std::vector<T> getNeighbors(T key) const override;
+    [[nodiscard]] constexpr std::vector<T> getNodes() const override;
+    [[nodiscard]] constexpr std::vector<std::pair<T, T>> getEdges()
+        const override;
+    [[nodiscard]] constexpr std::vector<T> getNeighbors(T key) const override;
 
-    [[nodiscard]] bool hasEdge(std::pair<T, T> edge) const override;
+    [[nodiscard]] constexpr bool hasEdge(std::pair<T, T> edge) const override;
 
   protected:
-    [[nodiscard]] std::vector<std::vector<IndexType>> &getAdjacencyList();
-    [[nodiscard]] const std::vector<std::vector<IndexType>> &getAdjacencyList()
-        const;
+    [[nodiscard]] constexpr std::vector<std::vector<IndexType>> &
+    getAdjacencyList();
+    [[nodiscard]] constexpr const std::vector<std::vector<IndexType>> &
+    getAdjacencyList() const;
 
-    [[nodiscard]] size_t &getEdgeNumber();
-    [[nodiscard]] size_t getEdgeNumber() const;
+    [[nodiscard]] constexpr size_t &getEdgeNumber();
+    [[nodiscard]] constexpr size_t getEdgeNumber() const;
 
   private:
     size_t edgeNumber = 0;
     std::vector<std::vector<IndexType>> adjacencyList;
 
-    [[nodiscard]] std::vector<IndexType> internal_getNodes() const override;
-    [[nodiscard]] std::vector<IndexType> internal_getNeighbors(
+    [[nodiscard]] constexpr std::vector<IndexType> internal_getNodes()
+        const override;
+    [[nodiscard]] constexpr std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
 };
 
 template <typename T, typename IndexType>
 template <std::ranges::range R>
     requires std::convertible_to<std::ranges::range_value_t<R>, T>
+constexpr
 
-ListGraph<T, IndexType>::ListGraph(const R &rangeOfNodes)
+    ListGraph<T, IndexType>::ListGraph(const R &rangeOfNodes)
 {
     for (const auto &node : rangeOfNodes)
     {
@@ -78,7 +82,7 @@ ListGraph<T, IndexType>::ListGraph(const R &rangeOfNodes)
 }
 
 template <typename T, typename IndexType>
-void ListGraph<T, IndexType>::addNode(T nodeName)
+constexpr void ListGraph<T, IndexType>::addNode(T nodeName)
 {
     if (this->getNodeMap().addByName(nodeName))
     {
@@ -87,7 +91,7 @@ void ListGraph<T, IndexType>::addNode(T nodeName)
 }
 
 template <typename T, typename TypeIndex>
-void ListGraph<T, TypeIndex>::addNode(std::span<T> newNodes)
+constexpr void ListGraph<T, TypeIndex>::addNode(std::span<T> newNodes)
 {
     std::vector<T> nodesToAdd;
     nodesToAdd.reserve(newNodes.size());
@@ -103,19 +107,19 @@ void ListGraph<T, TypeIndex>::addNode(std::span<T> newNodes)
 }
 
 template <typename T, typename IndexType>
-size_t ListGraph<T, IndexType>::getNumberOfNodes() const
+constexpr size_t ListGraph<T, IndexType>::getNumberOfNodes() const
 {
     return adjacencyList.size();
 }
 
 template <typename T, typename IndexType>
-size_t ListGraph<T, IndexType>::getNumberOfEdges() const
+constexpr size_t ListGraph<T, IndexType>::getNumberOfEdges() const
 {
     return edgeNumber;
 }
 
 template <typename T, typename IndexType>
-void ListGraph<T, IndexType>::removeNode(T nodeName)
+constexpr void ListGraph<T, IndexType>::removeNode(T nodeName)
 {
     if (!this->getNodeMap().contains(nodeName))
         return;
@@ -140,7 +144,7 @@ void ListGraph<T, IndexType>::removeNode(T nodeName)
 }
 
 template <typename T, typename IndexType>
-void ListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
+constexpr void ListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
 {
     const auto [first, second] = edge;
     if (!this->getNodeMap().contains(first))
@@ -162,7 +166,8 @@ void ListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
 }
 
 template <typename T, typename IndexType>
-void ListGraph<T, IndexType>::addEdge(std::span<std::pair<T, T>> edges)
+constexpr void ListGraph<T, IndexType>::addEdge(
+    std::span<std::pair<T, T>> edges)
 {
     for (const std::pair<T, T> &edge : edges)
     {
@@ -187,7 +192,7 @@ void ListGraph<T, IndexType>::addEdge(std::span<std::pair<T, T>> edges)
 }
 
 template <typename T, typename IndexType>
-void ListGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
+constexpr void ListGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 {
     const IndexType first =
         this->getNodeMap().convertNodeNameToIndex(edge.first);
@@ -206,13 +211,14 @@ void ListGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 }
 
 template <typename T, typename IndexType>
-std::vector<T> ListGraph<T, IndexType>::getNodes() const
+constexpr std::vector<T> ListGraph<T, IndexType>::getNodes() const
 {
     return this->getNodeMap().convertIndexToNodeName(internal_getNodes());
 }
 
 template <typename T, typename IndexType>
-std::vector<IndexType> ListGraph<T, IndexType>::internal_getNodes() const
+constexpr std::vector<IndexType> ListGraph<T, IndexType>::internal_getNodes()
+    const
 {
     std::vector<IndexType> result;
     result.reserve(getNumberOfNodes());
@@ -224,7 +230,7 @@ std::vector<IndexType> ListGraph<T, IndexType>::internal_getNodes() const
 }
 
 template <typename T, typename IndexType>
-std::vector<std::pair<T, T>> ListGraph<T, IndexType>::getEdges() const
+constexpr std::vector<std::pair<T, T>> ListGraph<T, IndexType>::getEdges() const
 {
     std::vector<std::pair<T, T>> result;
     result.reserve(getNumberOfEdges());
@@ -247,21 +253,21 @@ std::vector<std::pair<T, T>> ListGraph<T, IndexType>::getEdges() const
 }
 
 template <typename T, typename IndexType>
-std::vector<T> ListGraph<T, IndexType>::getNeighbors(T key) const
+constexpr std::vector<T> ListGraph<T, IndexType>::getNeighbors(T key) const
 {
     return this->getNodeMap().convertIndexToNodeName(
         internal_getNeighbors(this->getNodeMap().convertNodeNameToIndex(key)));
 }
 
 template <typename T, typename IndexType>
-std::vector<IndexType> ListGraph<T, IndexType>::internal_getNeighbors(
+constexpr std::vector<IndexType> ListGraph<T, IndexType>::internal_getNeighbors(
     IndexType index) const
 {
     return adjacencyList.at(index);
 }
 
 template <typename T, typename IndexType>
-bool ListGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
+constexpr bool ListGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
 {
     const IndexType first =
         this->getNodeMap().convertNodeNameToIndex(edge.first);
@@ -273,38 +279,39 @@ bool ListGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
 }
 
 template <typename T, typename IndexType>
-void ListGraph<T, IndexType>::clear()
+constexpr void ListGraph<T, IndexType>::clear()
 {
     adjacencyList.clear();
 }
 
 template <typename T, typename IndexType>
-bool ListGraph<T, IndexType>::isDirected() const
+constexpr bool ListGraph<T, IndexType>::isDirected() const
 {
     return false;
 }
 
 template <typename T, typename IndexType>
-size_t ListGraph<T, IndexType>::getEdgeNumber() const
+constexpr size_t ListGraph<T, IndexType>::getEdgeNumber() const
 {
     return edgeNumber;
 }
 
 template <typename T, typename IndexType>
-size_t &ListGraph<T, IndexType>::getEdgeNumber()
+constexpr size_t &ListGraph<T, IndexType>::getEdgeNumber()
 {
     return edgeNumber;
 }
 
 template <typename T, typename IndexType>
-const std::vector<std::vector<IndexType>> &ListGraph<
+constexpr const std::vector<std::vector<IndexType>> &ListGraph<
     T, IndexType>::getAdjacencyList() const
 {
     return adjacencyList;
 }
 
 template <typename T, typename IndexType>
-std::vector<std::vector<IndexType>> &ListGraph<T, IndexType>::getAdjacencyList()
+constexpr std::vector<std::vector<IndexType>> &ListGraph<
+    T, IndexType>::getAdjacencyList()
 {
     return adjacencyList;
 }

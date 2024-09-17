@@ -19,33 +19,36 @@ class DirectedListGraph : public ListGraph<T, IndexType>,
                           public DirectedGraphPrimitives<T, IndexType>
 {
   public:
-    DirectedListGraph() = default;
-    DirectedListGraph(std::initializer_list<T> newNodes);
+    constexpr DirectedListGraph() = default;
+    constexpr DirectedListGraph(std::initializer_list<T> newNodes);
 
-    [[nodiscard]] bool isDirected() const override;
+    [[nodiscard]] constexpr bool isDirected() const override;
 
-    void addEdge(std::pair<T, T> edge) override;
-    void addEdge(std::span<std::pair<T, T>> edges) override;
+    constexpr void addEdge(std::pair<T, T> edge) override;
+    constexpr void addEdge(std::span<std::pair<T, T>> edges) override;
 
-    void removeEdge(std::pair<T, T> edge) override;
+    constexpr void removeEdge(std::pair<T, T> edge) override;
 
-    [[nodiscard]] std::vector<std::pair<T, T>> getEdges() const override;
+    [[nodiscard]] constexpr std::vector<std::pair<T, T>> getEdges()
+        const override;
 
-    [[nodiscard]] std::vector<T> getNeighbors(T key) const override;
-    [[nodiscard]] std::vector<T> getOutgoingNeighbors(T key) const override;
-    [[nodiscard]] std::vector<T> getIngoingNeighbors(T key) const override;
+    [[nodiscard]] constexpr std::vector<T> getNeighbors(T key) const override;
+    [[nodiscard]] constexpr std::vector<T> getOutgoingNeighbors(
+        T key) const override;
+    [[nodiscard]] constexpr std::vector<T> getIngoingNeighbors(
+        T key) const override;
 
   private:
-    [[nodiscard]] std::vector<IndexType> internal_getNeighbors(
+    [[nodiscard]] constexpr std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
-    [[nodiscard]] std::vector<IndexType> internal_getOutgoingNeighbors(
-        IndexType index) const override;
-    [[nodiscard]] std::vector<IndexType> internal_getIngoingNeighbors(
+    [[nodiscard]] constexpr std::vector<IndexType>
+    internal_getOutgoingNeighbors(IndexType index) const override;
+    [[nodiscard]] constexpr std::vector<IndexType> internal_getIngoingNeighbors(
         IndexType index) const override;
 };
 
 template <typename T, typename IndexType>
-DirectedListGraph<T, IndexType>::DirectedListGraph(
+constexpr DirectedListGraph<T, IndexType>::DirectedListGraph(
     std::initializer_list<T> newNodes)
 {
     for (const auto &node : newNodes)
@@ -56,13 +59,13 @@ DirectedListGraph<T, IndexType>::DirectedListGraph(
 }
 
 template <typename T, typename IndexType>
-bool DirectedListGraph<T, IndexType>::isDirected() const
+constexpr bool DirectedListGraph<T, IndexType>::isDirected() const
 {
     return true;
 }
 
 template <typename T, typename IndexType>
-void DirectedListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
+constexpr void DirectedListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
 {
     const auto [first, second] = edge;
     if (!this->getNodeMap().contains(first))
@@ -84,7 +87,8 @@ void DirectedListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
 }
 
 template <typename T, typename IndexType>
-void DirectedListGraph<T, IndexType>::addEdge(std::span<std::pair<T, T>> edges)
+constexpr void DirectedListGraph<T, IndexType>::addEdge(
+    std::span<std::pair<T, T>> edges)
 {
     for (const std::pair<T, T> &edge : edges)
     {
@@ -109,7 +113,7 @@ void DirectedListGraph<T, IndexType>::addEdge(std::span<std::pair<T, T>> edges)
 }
 
 template <typename T, typename IndexType>
-void DirectedListGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
+constexpr void DirectedListGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 {
     const IndexType first =
         this->getNodeMap().convertNodeNameToIndex(edge.first);
@@ -123,7 +127,8 @@ void DirectedListGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 }
 
 template <typename T, typename IndexType>
-std::vector<std::pair<T, T>> DirectedListGraph<T, IndexType>::getEdges() const
+constexpr std::vector<std::pair<T, T>> DirectedListGraph<
+    T, IndexType>::getEdges() const
 {
     std::vector<std::pair<T, T>> result;
     result.reserve(this->getNumberOfEdges());
@@ -145,15 +150,16 @@ std::vector<std::pair<T, T>> DirectedListGraph<T, IndexType>::getEdges() const
 }
 
 template <typename T, typename IndexType>
-std::vector<T> DirectedListGraph<T, IndexType>::getNeighbors(T key) const
+constexpr std::vector<T> DirectedListGraph<T, IndexType>::getNeighbors(
+    T key) const
 {
     return this->getNodeMap().convertIndexToNodeName(
         internal_getNeighbors(this->getNodeMap().convertNodeNameToIndex(key)));
 }
 
 template <typename T, typename IndexType>
-std::vector<IndexType> DirectedListGraph<T, IndexType>::internal_getNeighbors(
-    IndexType index) const
+constexpr std::vector<IndexType> DirectedListGraph<
+    T, IndexType>::internal_getNeighbors(IndexType index) const
 {
     std::unordered_set<IndexType> resultSet;
 
@@ -177,7 +183,7 @@ std::vector<IndexType> DirectedListGraph<T, IndexType>::internal_getNeighbors(
 }
 
 template <typename T, typename IndexType>
-std::vector<T> DirectedListGraph<T, IndexType>::getOutgoingNeighbors(
+constexpr std::vector<T> DirectedListGraph<T, IndexType>::getOutgoingNeighbors(
     T key) const
 {
     return this->getNodeMap().convertIndexToNodeName(
@@ -186,14 +192,15 @@ std::vector<T> DirectedListGraph<T, IndexType>::getOutgoingNeighbors(
 }
 
 template <typename T, typename IndexType>
-std::vector<IndexType> DirectedListGraph<
+constexpr std::vector<IndexType> DirectedListGraph<
     T, IndexType>::internal_getOutgoingNeighbors(IndexType index) const
 {
     return this->getAdjacencyList().at(index);
 }
 
 template <typename T, typename IndexType>
-std::vector<T> DirectedListGraph<T, IndexType>::getIngoingNeighbors(T key) const
+constexpr std::vector<T> DirectedListGraph<T, IndexType>::getIngoingNeighbors(
+    T key) const
 {
     return this->getNodeMap().convertIndexToNodeName(
         internal_getIngoingNeighbors(
@@ -201,7 +208,7 @@ std::vector<T> DirectedListGraph<T, IndexType>::getIngoingNeighbors(T key) const
 }
 
 template <typename T, typename IndexType>
-std::vector<IndexType> DirectedListGraph<
+constexpr std::vector<IndexType> DirectedListGraph<
     T, IndexType>::internal_getIngoingNeighbors(IndexType index) const
 {
     std::vector<IndexType> result;

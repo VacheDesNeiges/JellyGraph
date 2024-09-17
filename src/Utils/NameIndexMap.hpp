@@ -22,24 +22,26 @@ class NameIndexMap
 {
 
   public:
-    bool addByName(T name);
+    constexpr NameIndexMap() = default;
 
-    [[nodiscard]] size_t getSize() const;
+    constexpr bool addByName(T name);
 
-    [[nodiscard]] bool contains(T key) const;
+    [[nodiscard]] constexpr size_t getSize() const;
 
-    void removeByName(T name);
-    void removeByIndex(IndexType index);
+    [[nodiscard]] constexpr bool contains(T key) const;
 
-    [[nodiscard]] T convertIndexToNodeName(IndexType index) const;
-    [[nodiscard]] std::vector<T> convertIndexToNodeName(
+    constexpr void removeByName(T name);
+    constexpr void removeByIndex(IndexType index);
+
+    [[nodiscard]] constexpr T convertIndexToNodeName(IndexType index) const;
+    [[nodiscard]] constexpr std::vector<T> convertIndexToNodeName(
         const std::vector<IndexType> &indexes) const;
 
-    [[nodiscard]] IndexType convertNodeNameToIndex(T name) const;
-    [[nodiscard]] std::vector<IndexType> convertNodeNameToIndex(
+    [[nodiscard]] constexpr IndexType convertNodeNameToIndex(T name) const;
+    [[nodiscard]] constexpr std::vector<IndexType> convertNodeNameToIndex(
         std::vector<T> names) const;
 
-    void reserve(size_t size);
+    constexpr void reserve(size_t size);
 
   private:
     std::vector<T> indexToName;
@@ -48,7 +50,7 @@ class NameIndexMap
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-bool NameIndexMap<T, IndexType>::addByName(T name)
+constexpr bool NameIndexMap<T, IndexType>::addByName(T name)
 {
     if (nameToIndex.contains(name))
         return false;
@@ -60,21 +62,21 @@ bool NameIndexMap<T, IndexType>::addByName(T name)
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-size_t NameIndexMap<T, IndexType>::getSize() const
+constexpr size_t NameIndexMap<T, IndexType>::getSize() const
 {
     return indexToName.size();
 }
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-bool NameIndexMap<T, IndexType>::contains(T key) const
+constexpr bool NameIndexMap<T, IndexType>::contains(T key) const
 {
     return nameToIndex.contains(key);
 }
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-void NameIndexMap<T, IndexType>::removeByName(T name)
+constexpr void NameIndexMap<T, IndexType>::removeByName(T name)
 {
 
     if (!(nameToIndex.contains(name)))
@@ -87,7 +89,7 @@ void NameIndexMap<T, IndexType>::removeByName(T name)
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-void NameIndexMap<T, IndexType>::removeByIndex(IndexType index)
+constexpr void NameIndexMap<T, IndexType>::removeByIndex(IndexType index)
 {
     if (!(indexToName.size() < index))
         return;
@@ -99,14 +101,15 @@ void NameIndexMap<T, IndexType>::removeByIndex(IndexType index)
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-T NameIndexMap<T, IndexType>::convertIndexToNodeName(IndexType index) const
+constexpr T NameIndexMap<T, IndexType>::convertIndexToNodeName(
+    IndexType index) const
 {
     return indexToName.at(index);
 }
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-std::vector<T> NameIndexMap<T, IndexType>::convertIndexToNodeName(
+constexpr std::vector<T> NameIndexMap<T, IndexType>::convertIndexToNodeName(
     const std::vector<IndexType> &indexes) const
 {
     std::vector<T> result;
@@ -121,15 +124,16 @@ std::vector<T> NameIndexMap<T, IndexType>::convertIndexToNodeName(
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-IndexType NameIndexMap<T, IndexType>::convertNodeNameToIndex(T name) const
+constexpr IndexType NameIndexMap<T, IndexType>::convertNodeNameToIndex(
+    T name) const
 {
     return nameToIndex.at(name);
 }
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-std::vector<IndexType> NameIndexMap<T, IndexType>::convertNodeNameToIndex(
-    std::vector<T> names) const
+constexpr std::vector<IndexType> NameIndexMap<
+    T, IndexType>::convertNodeNameToIndex(std::vector<T> names) const
 {
     std::vector<IndexType> result;
     result.reserve(names.size());
@@ -143,7 +147,7 @@ std::vector<IndexType> NameIndexMap<T, IndexType>::convertNodeNameToIndex(
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-void NameIndexMap<T, IndexType>::reserve(size_t size)
+constexpr void NameIndexMap<T, IndexType>::reserve(size_t size)
 {
     indexToName.reserve(size);
     nameToIndex.reserve(size);

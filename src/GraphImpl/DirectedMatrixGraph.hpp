@@ -19,38 +19,41 @@ class DirectedMatrixGraph : public MatrixGraph<T, IndexType>,
                             public DirectedGraphPrimitives<T, IndexType>
 {
   public:
-    DirectedMatrixGraph() = default;
-    DirectedMatrixGraph(std::initializer_list<T> nodes);
+    constexpr DirectedMatrixGraph() = default;
+    constexpr DirectedMatrixGraph(std::initializer_list<T> nodes);
 
     template <std::ranges::range R>
         requires std::convertible_to<std::ranges::range_value_t<R>, T>
-    DirectedMatrixGraph(const R &nodes);
+    constexpr DirectedMatrixGraph(const R &nodes);
 
-    [[nodiscard]] bool isDirected() const override;
+    [[nodiscard]] constexpr bool isDirected() const override;
 
-    void addEdge(std::pair<T, T> edge) override;
-    void addEdge(std::span<std::pair<T, T>> edges) override;
-    void removeEdge(std::pair<T, T> edge) override;
+    constexpr void addEdge(std::pair<T, T> edge) override;
+    constexpr void addEdge(std::span<std::pair<T, T>> edges) override;
+    constexpr void removeEdge(std::pair<T, T> edge) override;
 
-    [[nodiscard]] std::vector<std::pair<T, T>> getEdges() const override;
+    [[nodiscard]] constexpr std::vector<std::pair<T, T>> getEdges()
+        const override;
 
-    [[nodiscard]] std::vector<T> getOutgoingNeighbors(T key) const override;
-    [[nodiscard]] std::vector<T> getIngoingNeighbors(T key) const override;
+    [[nodiscard]] constexpr std::vector<T> getOutgoingNeighbors(
+        T key) const override;
+    [[nodiscard]] constexpr std::vector<T> getIngoingNeighbors(
+        T key) const override;
 
-    bool hasEdge(std::pair<T, T> edge) const override;
+    constexpr bool hasEdge(std::pair<T, T> edge) const override;
 
   private:
-    [[nodiscard]] std::vector<IndexType> internal_getNeighbors(
+    [[nodiscard]] constexpr std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
 
-    [[nodiscard]] std::vector<IndexType> internal_getOutgoingNeighbors(
-        IndexType index) const override;
-    [[nodiscard]] std::vector<IndexType> internal_getIngoingNeighbors(
+    [[nodiscard]] constexpr std::vector<IndexType>
+    internal_getOutgoingNeighbors(IndexType index) const override;
+    [[nodiscard]] constexpr std::vector<IndexType> internal_getIngoingNeighbors(
         IndexType index) const override;
 };
 
 template <typename T, typename IndexType>
-DirectedMatrixGraph<T, IndexType>::DirectedMatrixGraph(
+constexpr DirectedMatrixGraph<T, IndexType>::DirectedMatrixGraph(
     std::initializer_list<T> nodes)
 {
     for (const auto &node : nodes)
@@ -70,7 +73,8 @@ DirectedMatrixGraph<T, IndexType>::DirectedMatrixGraph(
 template <typename T, typename IndexType>
 template <std::ranges::range R>
     requires std::convertible_to<std::ranges::range_value_t<R>, T>
-DirectedMatrixGraph<T, IndexType>::DirectedMatrixGraph(const R &rangeOfNodes)
+constexpr DirectedMatrixGraph<T, IndexType>::DirectedMatrixGraph(
+    const R &rangeOfNodes)
 {
     for (const auto &node : rangeOfNodes)
     {
@@ -87,13 +91,13 @@ DirectedMatrixGraph<T, IndexType>::DirectedMatrixGraph(const R &rangeOfNodes)
 }
 
 template <typename T, typename IndexType>
-bool DirectedMatrixGraph<T, IndexType>::isDirected() const
+constexpr bool DirectedMatrixGraph<T, IndexType>::isDirected() const
 {
     return true;
 }
 
 template <typename T, typename IndexType>
-void DirectedMatrixGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
+constexpr void DirectedMatrixGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
 {
     const auto [first, second] = edge;
 
@@ -113,7 +117,7 @@ void DirectedMatrixGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
 }
 
 template <typename T, typename IndexType>
-void DirectedMatrixGraph<T, IndexType>::addEdge(
+constexpr void DirectedMatrixGraph<T, IndexType>::addEdge(
     std::span<std::pair<T, T>> edges)
 {
     for (const std::pair<T, T> &edge : edges)
@@ -138,7 +142,8 @@ void DirectedMatrixGraph<T, IndexType>::addEdge(
 }
 
 template <typename T, typename IndexType>
-void DirectedMatrixGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
+constexpr void DirectedMatrixGraph<T, IndexType>::removeEdge(
+    std::pair<T, T> edge)
 {
     const IndexType first =
         this->getNodeMap().convertNodeNameToIndex(edge.first);
@@ -153,7 +158,8 @@ void DirectedMatrixGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 }
 
 template <typename T, typename IndexType>
-std::vector<std::pair<T, T>> DirectedMatrixGraph<T, IndexType>::getEdges() const
+constexpr std::vector<std::pair<T, T>> DirectedMatrixGraph<
+    T, IndexType>::getEdges() const
 {
     std::vector<std::pair<T, T>> result;
     result.reserve(this->getEdgeNumber());
@@ -176,7 +182,8 @@ std::vector<std::pair<T, T>> DirectedMatrixGraph<T, IndexType>::getEdges() const
 }
 
 template <typename T, typename IndexType>
-bool DirectedMatrixGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
+constexpr bool DirectedMatrixGraph<T, IndexType>::hasEdge(
+    std::pair<T, T> edge) const
 {
     const IndexType first =
         this->getNodeMap().convertNodeNameToIndex(edge.first);
@@ -187,8 +194,8 @@ bool DirectedMatrixGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
 }
 
 template <typename T, typename IndexType>
-std::vector<IndexType> DirectedMatrixGraph<T, IndexType>::internal_getNeighbors(
-    IndexType index) const
+constexpr std::vector<IndexType> DirectedMatrixGraph<
+    T, IndexType>::internal_getNeighbors(IndexType index) const
 {
     std::vector<IndexType> result;
     result.reserve(this->getEdgeMatrix().size());
@@ -206,8 +213,8 @@ std::vector<IndexType> DirectedMatrixGraph<T, IndexType>::internal_getNeighbors(
 }
 
 template <typename T, typename IndexType>
-std::vector<T> DirectedMatrixGraph<T, IndexType>::getOutgoingNeighbors(
-    T key) const
+constexpr std::vector<T> DirectedMatrixGraph<
+    T, IndexType>::getOutgoingNeighbors(T key) const
 {
     const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(key);
     return this->getNodeMap().convertIndexToNodeName(
@@ -215,7 +222,7 @@ std::vector<T> DirectedMatrixGraph<T, IndexType>::getOutgoingNeighbors(
 }
 
 template <typename T, typename IndexType>
-std::vector<IndexType> DirectedMatrixGraph<
+constexpr std::vector<IndexType> DirectedMatrixGraph<
     T, IndexType>::internal_getOutgoingNeighbors(IndexType index) const
 {
     std::vector<IndexType> result;
@@ -232,7 +239,7 @@ std::vector<IndexType> DirectedMatrixGraph<
 }
 
 template <typename T, typename IndexType>
-std::vector<T> DirectedMatrixGraph<T, IndexType>::getIngoingNeighbors(
+constexpr std::vector<T> DirectedMatrixGraph<T, IndexType>::getIngoingNeighbors(
     T key) const
 {
     const auto nodeIndex = this->getNodeMap().convertNodeNameToIndex(key);
@@ -241,7 +248,7 @@ std::vector<T> DirectedMatrixGraph<T, IndexType>::getIngoingNeighbors(
 }
 
 template <typename T, typename IndexType>
-std::vector<IndexType> DirectedMatrixGraph<
+constexpr std::vector<IndexType> DirectedMatrixGraph<
     T, IndexType>::internal_getIngoingNeighbors(IndexType index) const
 {
     std::vector<IndexType> result;

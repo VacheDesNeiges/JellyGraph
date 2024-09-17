@@ -6,11 +6,12 @@
 
 #include <algorithm>
 #include <array>
-#include <string>
+#include <string_view>
 
 TEST(GraphConstructors, rangeOfNodes)
 {
-    const std::string initString = "Hello world!!";
+
+    constexpr std::string_view initString = "Hello world!!";
     const std::array<char, 9> charsInString{'H', 'e', 'l', 'o', ' ',
                                             'w', 'r', 'd', '!'};
 
