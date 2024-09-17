@@ -16,7 +16,10 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -Wunused-value \
     -Wold-style-cast \
     -Wnon-virtual-dtor \
-    -O3 \
+    -O0 \
+    -fprofile-instr-generate \
+    -fcoverage-mapping \
+    -g \
     -flto \
     -march=native"
 )
