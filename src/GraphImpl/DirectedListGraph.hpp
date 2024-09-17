@@ -5,6 +5,7 @@
 #include "UnderlyingIndexType.hpp"
 
 #include <algorithm>
+#include <cstddef>
 #include <initializer_list>
 #include <span>
 #include <unordered_set>
@@ -77,12 +78,15 @@ constexpr void DirectedListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
     const auto firstIndex = this->getNodeMap().convertNodeNameToIndex(first);
     const auto secondIndex = this->getNodeMap().convertNodeNameToIndex(second);
 
-    if (std::ranges::find(this->getAdjacencyList().at(firstIndex),
-                          secondIndex) ==
-        this->getAdjacencyList().at(firstIndex).end())
+    if (std::ranges::find(
+            this->getAdjacencyList().at(static_cast<size_t>(firstIndex)),
+            secondIndex) ==
+        this->getAdjacencyList().at(static_cast<size_t>(firstIndex)).end())
     {
         this->getEdgeNumber()++;
-        this->getAdjacencyList().at(firstIndex).push_back(secondIndex);
+        this->getAdjacencyList()
+            .at(static_cast<size_t>(firstIndex))
+            .push_back(secondIndex);
     }
 }
 
@@ -102,12 +106,15 @@ constexpr void DirectedListGraph<T, IndexType>::addEdge(
         const auto secondIndex =
             this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-        if (std::ranges::find(this->getAdjacencyList().at(firstIndex),
-                              secondIndex) ==
-            this->getAdjacencyList().at(firstIndex).end())
+        if (std::ranges::find(
+                this->getAdjacencyList().at(static_cast<size_t>(firstIndex)),
+                secondIndex) ==
+            this->getAdjacencyList().at(static_cast<size_t>(firstIndex)).end())
         {
             this->getEdgeNumber()++;
-            this->getAdjacencyList().at(firstIndex).push_back(secondIndex);
+            this->getAdjacencyList()
+                .at(static_cast<size_t>(firstIndex))
+                .push_back(secondIndex);
         }
     }
 }
@@ -115,10 +122,10 @@ constexpr void DirectedListGraph<T, IndexType>::addEdge(
 template <typename T, typename IndexType>
 constexpr void DirectedListGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 {
-    const IndexType first =
-        this->getNodeMap().convertNodeNameToIndex(edge.first);
-    const IndexType second =
-        this->getNodeMap().convertNodeNameToIndex(edge.second);
+    const auto first = static_cast<size_t>(
+        this->getNodeMap().convertNodeNameToIndex(edge.first));
+    const auto second = static_cast<size_t>(
+        this->getNodeMap().convertNodeNameToIndex(edge.second));
 
     auto &edgesOfFirst = this->getAdjacencyList().at(first);
     bool edgeRemoved = (std::erase(edgesOfFirst, second) == 1);
@@ -133,13 +140,13 @@ constexpr std::vector<std::pair<T, T>> DirectedListGraph<
     std::vector<std::pair<T, T>> result;
     result.reserve(this->getNumberOfEdges());
 
-    const auto numNodes = static_cast<IndexType>(this->getNumberOfNodes());
-    for (IndexType i = 0; i < numNodes; i++)
+    const auto numNodes = this->getNumberOfNodes();
+    for (size_t i = 0; i < numNodes; i++)
     {
         for (const auto &neighbor : this->getAdjacencyList().at(i))
         {
-            const auto firstIndex =
-                this->getNodeMap().convertIndexToNodeName(i);
+            const auto firstIndex = this->getNodeMap().convertIndexToNodeName(
+                static_cast<IndexType>(i));
             const auto secondIndex =
                 this->getNodeMap().convertIndexToNodeName(neighbor);
 
@@ -164,16 +171,16 @@ constexpr std::vector<IndexType> DirectedListGraph<
     std::unordered_set<IndexType> resultSet;
 
     auto nodes = this->getAdjacencyList();
-    for (IndexType i = 0; i < static_cast<IndexType>(nodes.size()); i++)
+    for (size_t i = 0; i < nodes.size(); i++)
     {
-        if (i == index)
+        if (static_cast<IndexType>(i) == index)
             continue;
 
         if (std::ranges::find(nodes.at(i), index) != nodes.at(i).end())
-            resultSet.emplace(i);
+            resultSet.emplace(static_cast<IndexType>(i));
     }
 
-    for (const auto outgoingNeighbor : nodes.at(index))
+    for (const auto outgoingNeighbor : nodes.at(static_cast<size_t>(index)))
     {
         resultSet.emplace(outgoingNeighbor);
     }
@@ -195,7 +202,7 @@ template <typename T, typename IndexType>
 constexpr std::vector<IndexType> DirectedListGraph<
     T, IndexType>::internal_getOutgoingNeighbors(IndexType index) const
 {
-    return this->getAdjacencyList().at(index);
+    return this->getAdjacencyList().at(static_cast<size_t>(index));
 }
 
 template <typename T, typename IndexType>
@@ -215,15 +222,14 @@ constexpr std::vector<IndexType> DirectedListGraph<
     result.reserve(this->getNumberOfNodes());
 
     auto nodes = this->getAdjacencyList();
-    for (IndexType i = 0; i < static_cast<IndexType>(nodes.size()); i++)
+    for (size_t i = 0; i < nodes.size(); i++)
     {
-        if (i == index)
+        if (static_cast<IndexType>(i) == index)
             continue;
 
         if (std::ranges::find(nodes.at(i), index) != nodes.at(i).end())
-            result.emplace_back(i);
+            result.emplace_back(static_cast<IndexType>(i));
     }
-
     result.shrink_to_fit();
     return result;
 }

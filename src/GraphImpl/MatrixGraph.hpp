@@ -146,8 +146,10 @@ constexpr void MatrixGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
     if (!this->getNodeMap().contains(second))
         addNode(second);
 
-    const auto firstIndex = this->getNodeMap().convertNodeNameToIndex(first);
-    const auto secondIndex = this->getNodeMap().convertNodeNameToIndex(second);
+    const auto firstIndex =
+        static_cast<size_t>(this->getNodeMap().convertNodeNameToIndex(first));
+    const auto secondIndex =
+        static_cast<size_t>(this->getNodeMap().convertNodeNameToIndex(second));
 
     if (edgeMatrix.at(firstIndex).at(secondIndex) == NOT_EDGE)
     {
@@ -168,10 +170,10 @@ constexpr void MatrixGraph<T, IndexType>::addEdge(
             if (!this->getNodeMap().contains(node))
                 addNode(node);
         }
-        const auto firstIndex =
-            this->getNodeMap().convertNodeNameToIndex(edge.first);
-        const auto secondIndex =
-            this->getNodeMap().convertNodeNameToIndex(edge.second);
+        const auto firstIndex = static_cast<size_t>(
+            this->getNodeMap().convertNodeNameToIndex(edge.first));
+        const auto secondIndex = static_cast<size_t>(
+            this->getNodeMap().convertNodeNameToIndex(edge.second));
 
         if (edgeMatrix.at(firstIndex).at(secondIndex) == NOT_EDGE)
         {
@@ -185,10 +187,10 @@ constexpr void MatrixGraph<T, IndexType>::addEdge(
 template <typename T, typename IndexType>
 constexpr void MatrixGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 {
-    const IndexType first =
-        this->getNodeMap().convertNodeNameToIndex(edge.first);
-    const IndexType second =
-        this->getNodeMap().convertNodeNameToIndex(edge.second);
+    const auto first = static_cast<size_t>(
+        this->getNodeMap().convertNodeNameToIndex(edge.first));
+    const auto second = static_cast<size_t>(
+        this->getNodeMap().convertNodeNameToIndex(edge.second));
 
     if (edgeMatrix.at(first).at(second) == EDGE)
         edgeNumber--;
@@ -200,10 +202,10 @@ constexpr void MatrixGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 template <typename T, typename IndexType>
 constexpr bool MatrixGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
 {
-    const IndexType first =
-        this->getNodeMap().convertNodeNameToIndex(edge.first);
-    const IndexType second =
-        this->getNodeMap().convertNodeNameToIndex(edge.second);
+    const auto first = static_cast<size_t>(
+        this->getNodeMap().convertNodeNameToIndex(edge.first));
+    const auto second = static_cast<size_t>(
+        this->getNodeMap().convertNodeNameToIndex(edge.second));
 
     return edgeMatrix.at(first).at(second) == EDGE;
 }
@@ -240,19 +242,21 @@ constexpr std::vector<std::pair<T, T>> MatrixGraph<T, IndexType>::getEdges()
     std::vector<std::pair<T, T>> result;
     result.reserve(edgeNumber);
 
-    for (IndexType i = 0; i < static_cast<IndexType>(edgeMatrix.size()); i++)
+    for (size_t i = 0; i < edgeMatrix.size(); i++)
     {
-        for (IndexType j = 0; j < static_cast<IndexType>(edgeMatrix.size());
-             j++)
+        for (size_t j = 0; j < edgeMatrix.size(); j++)
         {
 
             if ((edgeMatrix.at(i).at(j) == EDGE) &&
-                this->getNodeMap().convertIndexToNodeName(i) <
-                    this->getNodeMap().convertIndexToNodeName(j))
+                this->getNodeMap().convertIndexToNodeName(
+                    static_cast<IndexType>(i)) <
+                    this->getNodeMap().convertIndexToNodeName(
+                        static_cast<IndexType>(j)))
             {
-                result.emplace_back(
-                    this->getNodeMap().convertIndexToNodeName(i),
-                    this->getNodeMap().convertIndexToNodeName(j));
+                result.emplace_back(this->getNodeMap().convertIndexToNodeName(
+                                        static_cast<IndexType>(i)),
+                                    this->getNodeMap().convertIndexToNodeName(
+                                        static_cast<IndexType>(j)));
             }
         }
     }
@@ -276,7 +280,8 @@ constexpr std::vector<IndexType> MatrixGraph<
 
     for (IndexType i = 0; i < static_cast<IndexType>(edgeMatrix.size()); i++)
     {
-        if (edgeMatrix.at(index).at(i) == EDGE)
+        if (edgeMatrix.at(static_cast<size_t>(index))
+                .at(static_cast<size_t>(i)) == EDGE)
             result.emplace_back(i);
     }
     result.shrink_to_fit();

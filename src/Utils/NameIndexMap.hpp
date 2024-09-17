@@ -104,7 +104,7 @@ template <typename T, typename IndexType>
 constexpr T NameIndexMap<T, IndexType>::convertIndexToNodeName(
     IndexType index) const
 {
-    return indexToName.at(index);
+    return indexToName.at(static_cast<size_t>(index));
 }
 
 template <typename T, typename IndexType>
@@ -117,7 +117,7 @@ constexpr std::vector<T> NameIndexMap<T, IndexType>::convertIndexToNodeName(
 
     for (const IndexType index : indexes)
     {
-        result.emplace_back(indexToName.at(index));
+        result.emplace_back(indexToName.at(static_cast<size_t>(index)));
     }
     return result;
 }

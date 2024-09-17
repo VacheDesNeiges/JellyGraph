@@ -156,11 +156,14 @@ constexpr void ListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
     const auto firstIndex = this->getNodeMap().convertNodeNameToIndex(first);
     const auto secondIndex = this->getNodeMap().convertNodeNameToIndex(second);
 
-    if (std::ranges::find(adjacencyList.at(firstIndex), secondIndex) ==
-        adjacencyList.at(firstIndex).end())
+    if (std::ranges::find(adjacencyList.at(static_cast<size_t>(firstIndex)),
+                          secondIndex) ==
+        adjacencyList.at(static_cast<size_t>(firstIndex)).end())
     {
-        adjacencyList.at(firstIndex).push_back(secondIndex);
-        adjacencyList.at(secondIndex).push_back(firstIndex);
+        adjacencyList.at(static_cast<size_t>(firstIndex))
+            .push_back(secondIndex);
+        adjacencyList.at(static_cast<size_t>(secondIndex))
+            .push_back(firstIndex);
         edgeNumber++;
     }
 }
@@ -181,12 +184,15 @@ constexpr void ListGraph<T, IndexType>::addEdge(
         const auto &secondIndex =
             this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-        if (std::ranges::find(adjacencyList.at(firstIndex), secondIndex) ==
-            adjacencyList.at(firstIndex).end())
+        if (std::ranges::find(adjacencyList.at(static_cast<size_t>(firstIndex)),
+                              secondIndex) ==
+            adjacencyList.at(static_cast<size_t>(firstIndex)).end())
         {
             edgeNumber++;
-            adjacencyList.at(firstIndex).push_back(secondIndex);
-            adjacencyList.at(secondIndex).push_back(firstIndex);
+            adjacencyList.at(static_cast<size_t>(firstIndex))
+                .push_back(secondIndex);
+            adjacencyList.at(static_cast<size_t>(secondIndex))
+                .push_back(firstIndex);
         }
     }
 }
@@ -194,10 +200,10 @@ constexpr void ListGraph<T, IndexType>::addEdge(
 template <typename T, typename IndexType>
 constexpr void ListGraph<T, IndexType>::removeEdge(std::pair<T, T> edge)
 {
-    const IndexType first =
-        this->getNodeMap().convertNodeNameToIndex(edge.first);
-    const IndexType second =
-        this->getNodeMap().convertNodeNameToIndex(edge.second);
+    const auto first = static_cast<size_t>(
+        this->getNodeMap().convertNodeNameToIndex(edge.first));
+    const auto second = static_cast<size_t>(
+        this->getNodeMap().convertNodeNameToIndex(edge.second));
 
     auto &vec = adjacencyList.at(first);
     vec.erase(std::ranges::remove(vec, second).begin(), vec.end());
@@ -235,20 +241,18 @@ constexpr std::vector<std::pair<T, T>> ListGraph<T, IndexType>::getEdges() const
     std::vector<std::pair<T, T>> result;
     result.reserve(getNumberOfEdges());
 
-    for (IndexType i = 0; i < static_cast<IndexType>(adjacencyList.size()); i++)
+    for (size_t i = 0; i < adjacencyList.size(); i++)
     {
-        for (IndexType j = 0;
-             j < static_cast<IndexType>(adjacencyList.at(i).size()); j++)
+        for (size_t j = 0; j < adjacencyList.at(i).size(); j++)
         {
-            const auto firstIndex =
-                this->getNodeMap().convertIndexToNodeName(i);
+            const auto firstIndex = this->getNodeMap().convertIndexToNodeName(
+                static_cast<IndexType>(i));
             const auto secondIndex = this->getNodeMap().convertIndexToNodeName(
-                adjacencyList.at(i).at(j));
+                static_cast<IndexType>(adjacencyList.at(i).at(j)));
             if (firstIndex < secondIndex)
                 result.emplace_back(firstIndex, secondIndex);
         }
     }
-
     return result;
 }
 
@@ -263,7 +267,7 @@ template <typename T, typename IndexType>
 constexpr std::vector<IndexType> ListGraph<T, IndexType>::internal_getNeighbors(
     IndexType index) const
 {
-    return adjacencyList.at(index);
+    return adjacencyList.at(static_cast<size_t>(index));
 }
 
 template <typename T, typename IndexType>
@@ -274,8 +278,9 @@ constexpr bool ListGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
     const IndexType second =
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-    return std::ranges::find(adjacencyList.at(first), second) !=
-           adjacencyList.at(first).end();
+    return std::ranges::find(adjacencyList.at(static_cast<size_t>(first)),
+                             second) !=
+           adjacencyList.at(static_cast<size_t>(first)).end();
 }
 
 template <typename T, typename IndexType>
