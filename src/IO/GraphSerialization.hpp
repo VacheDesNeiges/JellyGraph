@@ -50,6 +50,8 @@ class GraphSerialization : public virtual GraphPrimitives<T, IndexType>
     constexpr void applyParsedWeights(internals::parsedGraph<T> &parsedData)
         requires internals::IsWeightedGraph<decltype(*this)>;
 
+    void writeDimacsFile(std::string_view fileName);
+
     [[nodiscard]] internals::parsedGraph<T> parseDimacsFile(
         std::ifstream &file);
     void parseDimacsHeader(const std::string &currentLine,
@@ -60,6 +62,43 @@ class GraphSerialization : public virtual GraphPrimitives<T, IndexType>
     void parseDotFile(std::ifstream &file);
     //  void parseEdgeListFile(std::ifstream &file);
 };
+
+template <typename T, typename IndexType>
+void GraphSerialization<T, IndexType>::saveToFile(std::string_view fileName,
+                                                  FileFormat format)
+{
+    switch (format)
+    {
+    case DIMACS:
+        writeDimacsFile(fileName);
+        break;
+    default:
+        break;
+    }
+}
+
+template <typename T, typename IndexType>
+void GraphSerialization<T, IndexType>::writeDimacsFile(
+    std::string_view fileName)
+{
+    std::ofstream outputFile((std::string(fileName)));
+    if (!outputFile.is_open())
+    {
+        throw Exception::JGraphIOException(
+            "Error while writting a graph : could not open the file " +
+            std::string(fileName));
+    }
+
+    const auto &edges = this->getEdges();
+    outputFile << "p edge " << this->getNumberOfNodes() << " " << edges.size()
+               << '\n';
+
+    for (const auto &edge : edges)
+    {
+        outputFile << "e " << edge.first << " " << edge.second << "\n";
+    }
+    outputFile.close();
+}
 
 template <typename T, typename IndexType>
 void GraphSerialization<T, IndexType>::loadFromFile(std::ifstream &file,
@@ -169,11 +208,11 @@ void GraphSerialization<T, IndexType>::parseDimacsHeader(
 {
     std::istringstream lineStream(currentLine);
     std::string lineStart;
-    std::string cnf;
+    std::string edge;
     size_t numNodes = 0;
     size_t numEdges = 0;
 
-    if (lineStream >> lineStart >> cnf >> numNodes >> numEdges)
+    if (lineStream >> lineStart >> edge >> numNodes >> numEdges)
     {
         result.edges.reserve(numEdges);
         result.weights.reserve(numEdges);

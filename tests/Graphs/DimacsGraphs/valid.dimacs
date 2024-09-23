@@ -1,5 +1,5 @@
 c a comment
-p cnf 5 6
+p edge 5 6
 c a second comment
 e 1 2
 e 2 3
