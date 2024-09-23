@@ -30,6 +30,7 @@ class GraphPrimitives
     GraphPrimitives &operator=(GraphPrimitives &&) = delete;
 
     constexpr virtual void clear() = 0;
+
     [[nodiscard]] virtual bool isDirected() const = 0;
 
     constexpr virtual void addNode(T) = 0;

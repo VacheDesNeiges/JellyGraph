@@ -3,6 +3,7 @@
 #include "GraphAlgorithms.hpp"
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
+#include "GraphSerialization.hpp"
 #include "UnderlyingIndexType.hpp"
 
 #include <cassert>
@@ -19,6 +20,7 @@ namespace jGraph
 template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
 class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
                     public GraphAlgorithms<T, IndexType>,
+                    public GraphSerialization<T, IndexType>,
                     public GraphMeasures<T, IndexType>
 {
   public:

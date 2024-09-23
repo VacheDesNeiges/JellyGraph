@@ -26,7 +26,7 @@ class NameIndexMap
 
     constexpr bool addByName(T name);
 
-    [[nodiscard]] constexpr size_t getSize() const;
+    [[nodiscard("message example")]] constexpr size_t getSize() const;
 
     [[nodiscard]] constexpr bool contains(T key) const;
 

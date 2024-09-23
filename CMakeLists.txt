@@ -32,12 +32,13 @@ add_library(jellyGraph INTERFACE)
 target_include_directories(jellyGraph
     INTERFACE
     ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_SOURCE_DIR}/src/GraphImpl
-    ${PROJECT_SOURCE_DIR}/src/Utils
-    ${PROJECT_SOURCE_DIR}/src/Measures
     ${PROJECT_SOURCE_DIR}/src/Algorithms
-    ${PROJECT_SOURCE_DIR}/src/Primitives
+    ${PROJECT_SOURCE_DIR}/src/Exceptions
+    ${PROJECT_SOURCE_DIR}/src/GraphImplementations
     ${PROJECT_SOURCE_DIR}/src/IO
+    ${PROJECT_SOURCE_DIR}/src/Measures
+    ${PROJECT_SOURCE_DIR}/src/Primitives
+    ${PROJECT_SOURCE_DIR}/src/Utils
 )
 
 install(TARGETS jellyGraph)
@@ -59,7 +60,8 @@ add_executable(test
 find_package(GTest REQUIRED)
 
 target_link_libraries(test PRIVATE
-    gtest
+    GTest::GTest
+    GTest::Main
     jellyGraph
 )
 

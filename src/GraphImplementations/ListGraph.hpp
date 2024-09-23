@@ -1,10 +1,12 @@
 #pragma once
+
 #include "GraphAlgorithms.hpp"
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
+#include "GraphSerialization.hpp"
 #include "UnderlyingIndexType.hpp"
+
 #include <algorithm>
-#include <climits>
 #include <concepts>
 #include <cstddef>
 #include <ranges>
@@ -18,6 +20,7 @@ namespace jGraph
 template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
 class ListGraph : public GraphAlgorithms<T, IndexType>,
                   public GraphMeasures<T, IndexType>,
+                  public GraphSerialization<T, IndexType>,
                   public virtual GraphPrimitives<T, IndexType>
 {
   public:
