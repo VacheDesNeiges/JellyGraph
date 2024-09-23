@@ -1,0 +1,11 @@
+c a comment
+p cnf 5 6
+c a second comment
+e 1 2
+e 2 3
+e 3 4
+e 4 5
+c a third comment
+e 1 5
+e 4 1
+c a fourth comment

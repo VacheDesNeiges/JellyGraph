@@ -1,20 +1,13 @@
 #pragma once
 
-#include <compare>
-#include <concepts>
+#include "Concepts.hpp"
+
 #include <cstddef>
-#include <functional>
 #include <unordered_map>
 #include <vector>
 
 namespace jGraph::internals
 {
-
-template <typename T>
-concept ValidKeyType = std::copyable<T> && requires(T keyType) {
-    { std::hash<T>{}(keyType) } -> std::convertible_to<std::size_t>;
-    { keyType <=> keyType } -> std::convertible_to<std::partial_ordering>;
-};
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>

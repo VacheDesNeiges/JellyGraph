@@ -32,6 +32,7 @@ class ListGraph : public GraphAlgorithms<T, IndexType>,
 
     constexpr void clear() override;
     [[nodiscard]] constexpr bool isDirected() const override;
+    [[nodiscard]] constexpr bool isWeighted() const override;
 
     constexpr void addNode(T nodeName) override;
     constexpr void addNode(std::span<T> nodes) override;
@@ -295,6 +296,12 @@ constexpr void ListGraph<T, IndexType>::clear()
 
 template <typename T, typename IndexType>
 constexpr bool ListGraph<T, IndexType>::isDirected() const
+{
+    return false;
+}
+
+template <typename T, typename IndexType>
+constexpr bool ListGraph<T, IndexType>::isWeighted() const
 {
     return false;
 }

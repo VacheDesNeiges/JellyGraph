@@ -55,6 +55,7 @@ add_executable(test
     tests/testGraphMeasures.cpp
     tests/testGraphAlgorithms.cpp
     tests/testGraphs.cpp
+    tests/testGraphIO.cpp
 )
 
 find_package(GTest REQUIRED)

@@ -1,23 +1,20 @@
 #pragma once
 
+#include "Concepts.hpp"
 #include "NameIndexMap.hpp"
 #include "UnderlyingIndexType.hpp"
 
 #include <cstddef>
 #include <initializer_list>
 #include <span>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 namespace jGraph
 {
 
-template <typename T>
-concept Integral = std::is_integral_v<T>;
-
 template <typename T, typename IndexType = internals::underlyingGraphIndex_t>
-    requires Integral<IndexType>
+    requires internals::Integral<IndexType>
 class GraphPrimitives
 {
   public:
@@ -31,7 +28,8 @@ class GraphPrimitives
 
     constexpr virtual void clear() = 0;
 
-    [[nodiscard]] virtual bool isDirected() const = 0;
+    [[nodiscard]] constexpr virtual bool isDirected() const = 0;
+    [[nodiscard]] constexpr virtual bool isWeighted() const = 0;
 
     constexpr virtual void addNode(T) = 0;
     constexpr virtual void addNode(std::initializer_list<T> nodes);
@@ -74,7 +72,7 @@ class GraphPrimitives
 };
 
 template <typename T, typename IndexType>
-    requires Integral<IndexType>
+    requires internals::Integral<IndexType>
 constexpr jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
     T, IndexType>::getNodeMap()
 {
@@ -82,7 +80,7 @@ constexpr jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
 }
 
 template <typename T, typename IndexType>
-    requires Integral<IndexType>
+    requires internals::Integral<IndexType>
 constexpr const jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
     T, IndexType>::getNodeMap() const
 {
@@ -90,7 +88,7 @@ constexpr const jGraph::internals::NameIndexMap<T, IndexType> &GraphPrimitives<
 }
 
 template <typename T, typename IndexType>
-    requires Integral<IndexType>
+    requires internals::Integral<IndexType>
 constexpr void GraphPrimitives<T, IndexType>::addNode(
     std::initializer_list<T> nodes)
 {
@@ -101,7 +99,7 @@ constexpr void GraphPrimitives<T, IndexType>::addNode(
 }
 
 template <typename T, typename IndexType>
-    requires Integral<IndexType>
+    requires internals::Integral<IndexType>
 constexpr void GraphPrimitives<T, IndexType>::addEdge(
     std::initializer_list<std::pair<T, T>> edges)
 {
@@ -112,7 +110,7 @@ constexpr void GraphPrimitives<T, IndexType>::addEdge(
 }
 
 template <typename T, typename IndexType>
-    requires Integral<IndexType>
+    requires internals::Integral<IndexType>
 constexpr double GraphPrimitives<T, IndexType>::getWeight(
     [[maybe_unused]] std::pair<T, T> edge) const
 {
