@@ -20,6 +20,11 @@ cd build
 
 cmake_options="-G Ninja -DCMAKE_INSTALL_PREFIX=${HOME}/libs/jellyGraph"
 
+if [ "$COVERAGE_REPORT" = true ]; then
+    cmake_options+=" -DCOVERAGE_REPORT=ON "
+fi
+
+
 cmake $cmake_options ..
 ninja
 ninja install
@@ -32,4 +37,7 @@ if [ "$COVERAGE_REPORT" = true ]; then
     llvm-cov-18 show ./test -instr-profile=coverage.profdata -format=html -output-dir=coverage-report
     rm default.profraw
     rm coverage.profdata
+    rm test
+    rm -rf build
+    echo "coverage report generated"
 fi

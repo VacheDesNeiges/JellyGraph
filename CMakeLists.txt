@@ -6,6 +6,11 @@ SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+if(COVERAGE_REPORT)
+    message(STATUS "Coverage report enabled")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
+endif()
+
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -Wall \
     -Wextra \
@@ -17,8 +22,6 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -Wold-style-cast \
     -Wnon-virtual-dtor \
     -O0 \
-    -fprofile-instr-generate \
-    -fcoverage-mapping \
     -g \
     -flto \
     -march=native"
@@ -34,6 +37,7 @@ target_include_directories(jellyGraph
     ${PROJECT_SOURCE_DIR}/src/Measures
     ${PROJECT_SOURCE_DIR}/src/Algorithms
     ${PROJECT_SOURCE_DIR}/src/Primitives
+    ${PROJECT_SOURCE_DIR}/src/IO
 )
 
 install(TARGETS jellyGraph)
