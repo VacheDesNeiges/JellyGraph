@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <initializer_list>
 #include <ranges>
+#include <set>
 #include <span>
 #include <utility>
 #include <vector>
@@ -123,13 +124,32 @@ template <typename T, typename IndexType>
 constexpr void DirectedMatrixGraph<T, IndexType>::addEdge(
     std::span<std::pair<T, T>> edges)
 {
+    std::set<T> nodesToAdd;
     for (const std::pair<T, T> &edge : edges)
     {
         for (const T &node : {edge.first, edge.second})
         {
             if (!this->getNodeMap().contains(node))
-                this->addNode(node);
+                nodesToAdd.emplace(node);
         }
+    }
+
+    for (const auto &node : nodesToAdd)
+    {
+        this->getNodeMap().addByName(node);
+    }
+
+    const auto newMatrixSize = this->getEdgeMatrix().size() + nodesToAdd.size();
+    for (auto &row : this->getEdgeMatrix())
+    {
+        row.resize(newMatrixSize, this->NOT_EDGE);
+    }
+    this->getEdgeMatrix().resize(
+        newMatrixSize, std::vector<IndexType>(newMatrixSize, this->NOT_EDGE));
+
+    for (const auto &edge : edges)
+    {
+
         const auto firstIndex = static_cast<size_t>(
             this->getNodeMap().convertNodeNameToIndex(edge.first));
         const auto secondIndex = static_cast<size_t>(

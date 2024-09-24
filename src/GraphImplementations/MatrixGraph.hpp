@@ -10,6 +10,7 @@
 #include <concepts>
 #include <cstddef>
 #include <ranges>
+#include <set>
 #include <span>
 #include <utility>
 #include <vector>
@@ -167,13 +168,31 @@ template <typename T, typename IndexType>
 constexpr void MatrixGraph<T, IndexType>::addEdge(
     std::span<std::pair<T, T>> edges)
 {
+    std::set<T> nodesToAdd;
     for (const std::pair<T, T> &edge : edges)
     {
         for (const T &node : {edge.first, edge.second})
         {
             if (!this->getNodeMap().contains(node))
-                addNode(node);
+                nodesToAdd.emplace(node);
         }
+    }
+
+    for (const auto &node : nodesToAdd)
+    {
+        this->getNodeMap().addByName(node);
+    }
+
+    const auto newMatrixSize = edgeMatrix.size() + nodesToAdd.size();
+    for (auto &row : edgeMatrix)
+    {
+        row.resize(newMatrixSize, NOT_EDGE);
+    }
+    edgeMatrix.resize(newMatrixSize,
+                      std::vector<IndexType>(newMatrixSize, NOT_EDGE));
+
+    for (const auto &edge : edges)
+    {
         const auto firstIndex = static_cast<size_t>(
             this->getNodeMap().convertNodeNameToIndex(edge.first));
         const auto secondIndex = static_cast<size_t>(
