@@ -218,9 +218,9 @@ TYPED_TEST(GraphPrimitivesTests, getNodes)
     this->graph.addEdge({4, 3});
     const auto vec = this->graph.getNodes();
     ASSERT_EQ(vec.size(), 3);
-    ASSERT_TRUE(std::ranges::find(vec, 1) != vec.end());
-    ASSERT_TRUE(std::ranges::find(vec, 3) != vec.end());
-    ASSERT_TRUE(std::ranges::find(vec, 4) != vec.end());
+    ASSERT_TRUE(std::ranges::contains(vec, 1));
+    ASSERT_TRUE(std::ranges::contains(vec, 3));
+    ASSERT_TRUE(std::ranges::contains(vec, 4));
 }
 
 TYPED_TEST(SimpleGraphPrimitivesTests, getEdges)
@@ -236,10 +236,10 @@ TYPED_TEST(SimpleGraphPrimitivesTests, getEdges)
 
     using EdgeType = typename decltype(vec)::value_type;
 
-    ASSERT_TRUE(std::ranges::find(vec, EdgeType{2, 4}) != vec.end());
-    ASSERT_TRUE(std::ranges::find(vec, EdgeType{1, 4}) != vec.end());
-    ASSERT_TRUE(std::ranges::find(vec, EdgeType{1, 3}) != vec.end());
-    ASSERT_FALSE(std::ranges::find(vec, EdgeType{3, 1}) != vec.end());
+    ASSERT_TRUE(std::ranges::contains(vec, EdgeType{2, 4}));
+    ASSERT_TRUE(std::ranges::contains(vec, EdgeType{1, 4}));
+    ASSERT_TRUE(std::ranges::contains(vec, EdgeType{1, 3}));
+    ASSERT_FALSE(std::ranges::contains(vec, EdgeType{3, 1}));
 }
 
 TYPED_TEST(DirectedGraphPrimitivesTests, getEdges)
@@ -253,10 +253,10 @@ TYPED_TEST(DirectedGraphPrimitivesTests, getEdges)
     ASSERT_EQ(edges.size(), 3);
 
     using EdgeType = typename decltype(edges)::value_type;
-    ASSERT_TRUE(std::ranges::find(edges, EdgeType{0, 1}) != edges.end());
-    ASSERT_TRUE(std::ranges::find(edges, EdgeType{1, 2}) != edges.end());
-    ASSERT_TRUE(std::ranges::find(edges, EdgeType{4, 3}) != edges.end());
-    ASSERT_FALSE(std::ranges::find(edges, EdgeType{3, 4}) != edges.end());
+    ASSERT_TRUE(std::ranges::contains(edges, EdgeType{0, 1}));
+    ASSERT_TRUE(std::ranges::contains(edges, EdgeType{1, 2}));
+    ASSERT_TRUE(std::ranges::contains(edges, EdgeType{4, 3}));
+    ASSERT_FALSE(std::ranges::contains(edges, EdgeType{3, 4}));
 }
 
 TYPED_TEST(GraphPrimitivesTests, clear)
@@ -283,11 +283,11 @@ TYPED_TEST(GraphPrimitivesTests, getNeighbors)
     ASSERT_EQ(neighborsOf4.size(), 2);
     ASSERT_EQ(neighborsOf2.size(), 1);
 
-    ASSERT_TRUE(std::ranges::find(neighborsOf4, 2) != neighborsOf4.end());
-    ASSERT_TRUE(std::ranges::find(neighborsOf4, 1) != neighborsOf4.end());
+    ASSERT_TRUE(std::ranges::contains(neighborsOf4, 2));
+    ASSERT_TRUE(std::ranges::contains(neighborsOf4, 1));
 
-    ASSERT_TRUE(std::ranges::find(neighborsOf2, 4) != neighborsOf2.end());
-    ASSERT_FALSE(std::ranges::find(neighborsOf2, 1) != neighborsOf2.end());
+    ASSERT_TRUE(std::ranges::contains(neighborsOf2, 4));
+    ASSERT_FALSE(std::ranges::contains(neighborsOf2, 1));
 }
 
 TYPED_TEST(DirectedGraphPrimitivesTests, IngoingNeighbors)

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "DefaultTypes.hpp"
 #include "DirectedGraphPrimitives.hpp"
 #include "ListGraph.hpp"
-#include "UnderlyingIndexType.hpp"
 
 #include <algorithm>
 #include <cstddef>
@@ -78,10 +78,9 @@ constexpr void DirectedListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
     const auto firstIndex = this->getNodeMap().convertNodeNameToIndex(first);
     const auto secondIndex = this->getNodeMap().convertNodeNameToIndex(second);
 
-    if (std::ranges::find(
+    if (!std::ranges::contains(
             this->getAdjacencyList().at(static_cast<size_t>(firstIndex)),
-            secondIndex) ==
-        this->getAdjacencyList().at(static_cast<size_t>(firstIndex)).end())
+            secondIndex))
     {
         this->getEdgeNumber()++;
         this->getAdjacencyList()
@@ -106,10 +105,9 @@ constexpr void DirectedListGraph<T, IndexType>::addEdge(
         const auto secondIndex =
             this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-        if (std::ranges::find(
+        if (!std::ranges::contains(
                 this->getAdjacencyList().at(static_cast<size_t>(firstIndex)),
-                secondIndex) ==
-            this->getAdjacencyList().at(static_cast<size_t>(firstIndex)).end())
+                secondIndex))
         {
             this->getEdgeNumber()++;
             this->getAdjacencyList()
@@ -176,7 +174,7 @@ constexpr std::vector<IndexType> DirectedListGraph<
         if (static_cast<IndexType>(i) == index)
             continue;
 
-        if (std::ranges::find(nodes.at(i), index) != nodes.at(i).end())
+        if (std::ranges::contains(nodes.at(i), index))
             resultSet.emplace(static_cast<IndexType>(i));
     }
 
@@ -227,7 +225,7 @@ constexpr std::vector<IndexType> DirectedListGraph<
         if (static_cast<IndexType>(i) == index)
             continue;
 
-        if (std::ranges::find(nodes.at(i), index) != nodes.at(i).end())
+        if (std::ranges::contains(nodes.at(i), index))
             result.emplace_back(static_cast<IndexType>(i));
     }
     result.shrink_to_fit();

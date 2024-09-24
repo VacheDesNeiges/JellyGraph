@@ -1,10 +1,10 @@
 #pragma once
 
+#include "DefaultTypes.hpp"
 #include "GraphAlgorithms.hpp"
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
 #include "GraphSerialization.hpp"
-#include "UnderlyingIndexType.hpp"
 
 #include <cassert>
 #include <concepts>

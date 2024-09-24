@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Concepts.hpp"
+#include "DefaultTypes.hpp"
 #include "Exceptions.hpp"
 #include "GraphPrimitives.hpp"
-#include "UnderlyingIndexType.hpp"
 
 #include <cstddef>
 

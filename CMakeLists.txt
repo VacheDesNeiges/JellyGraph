@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project (jellyGraph)
 
 SET(CMAKE_CXX_COMPILER "clang++")
-SET(CMAKE_CXX_STANDARD 20)
+SET(CMAKE_CXX_STANDARD 23)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -25,7 +25,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -g \
     -flto \
     -march=native"
-)
+    )
 
 add_library(jellyGraph INTERFACE)
 

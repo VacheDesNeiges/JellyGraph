@@ -1,8 +1,8 @@
 #pragma once
 
+#include "DefaultTypes.hpp"
 #include "DirectedGraphPrimitives.hpp"
 #include "MatrixGraph.hpp"
-#include "UnderlyingIndexType.hpp"
 
 #include <concepts>
 #include <cstddef>

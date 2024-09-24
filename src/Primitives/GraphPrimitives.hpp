@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Concepts.hpp"
+#include "DefaultTypes.hpp"
 #include "NameIndexMap.hpp"
-#include "UnderlyingIndexType.hpp"
 
 #include <cstddef>
 #include <initializer_list>

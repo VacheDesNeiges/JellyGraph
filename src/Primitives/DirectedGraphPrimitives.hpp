@@ -1,6 +1,7 @@
 #pragma once
 
-#include "UnderlyingIndexType.hpp"
+#include "DefaultTypes.hpp"
+
 #include <vector>
 
 namespace jGraph

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <compare>
 #include <concepts>
 #include <cstddef>
 #include <functional>
@@ -19,8 +18,8 @@ concept IsWeightedGraph =
     };
 
 template <typename T>
-concept ValidKeyType = std::copyable<T> && requires(T keyType) {
-    { std::hash<T>{}(keyType) } -> std::convertible_to<std::size_t>;
-    { keyType <=> keyType } -> std::convertible_to<std::partial_ordering>;
-};
+concept ValidKeyType =
+    std::copyable<T> && std::totally_ordered<T> && requires(T keyType) {
+        { std::hash<T>{}(keyType) } -> std::convertible_to<std::size_t>;
+    };
 } // namespace jGraph::internals

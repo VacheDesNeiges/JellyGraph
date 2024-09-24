@@ -1,7 +1,7 @@
 #pragma once
 
+#include "DefaultTypes.hpp"
 #include "GraphPrimitives.hpp"
-#include "UnderlyingIndexType.hpp"
 
 #include <algorithm>
 #include <cassert>

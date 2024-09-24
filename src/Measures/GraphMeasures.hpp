@@ -1,6 +1,6 @@
 #pragma once
+#include "DefaultTypes.hpp"
 #include "GraphPrimitives.hpp"
-#include "UnderlyingIndexType.hpp"
 #include <cstddef>
 
 namespace jGraph

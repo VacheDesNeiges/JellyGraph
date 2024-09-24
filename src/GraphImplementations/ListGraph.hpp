@@ -1,10 +1,10 @@
 #pragma once
 
+#include "DefaultTypes.hpp"
 #include "GraphAlgorithms.hpp"
 #include "GraphMeasures.hpp"
 #include "GraphPrimitives.hpp"
 #include "GraphSerialization.hpp"
-#include "UnderlyingIndexType.hpp"
 
 #include <algorithm>
 #include <concepts>
@@ -160,9 +160,9 @@ constexpr void ListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
     const auto firstIndex = this->getNodeMap().convertNodeNameToIndex(first);
     const auto secondIndex = this->getNodeMap().convertNodeNameToIndex(second);
 
-    if (std::ranges::find(adjacencyList.at(static_cast<size_t>(firstIndex)),
-                          secondIndex) ==
-        adjacencyList.at(static_cast<size_t>(firstIndex)).end())
+    if (!std::ranges::contains(
+            adjacencyList.at(static_cast<size_t>(firstIndex)), secondIndex))
+
     {
         adjacencyList.at(static_cast<size_t>(firstIndex))
             .push_back(secondIndex);
@@ -188,9 +188,8 @@ constexpr void ListGraph<T, IndexType>::addEdge(
         const auto &secondIndex =
             this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-        if (std::ranges::find(adjacencyList.at(static_cast<size_t>(firstIndex)),
-                              secondIndex) ==
-            adjacencyList.at(static_cast<size_t>(firstIndex)).end())
+        if (!std::ranges::contains(
+                adjacencyList.at(static_cast<size_t>(firstIndex)), secondIndex))
         {
             edgeNumber++;
             adjacencyList.at(static_cast<size_t>(firstIndex))
@@ -282,9 +281,8 @@ constexpr bool ListGraph<T, IndexType>::hasEdge(std::pair<T, T> edge) const
     const IndexType second =
         this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-    return std::ranges::find(adjacencyList.at(static_cast<size_t>(first)),
-                             second) !=
-           adjacencyList.at(static_cast<size_t>(first)).end();
+    return std::ranges::contains(adjacencyList.at(static_cast<size_t>(first)),
+                                 second);
 }
 
 template <typename T, typename IndexType>
