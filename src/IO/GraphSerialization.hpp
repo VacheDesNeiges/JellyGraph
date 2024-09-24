@@ -107,7 +107,7 @@ void GraphSerialization<T, IndexType>::loadFromFile(std::ifstream &file,
     if (!file.is_open())
     {
         throw Exception::JGraphIOException(
-            "std::ifstream passed to the loadFromFile method is not open");
+            "Could not open the std::ifstream passed to loadFromFile method");
     }
 
     internals::parsedGraph<T> parsingResult;
@@ -183,7 +183,7 @@ internals::parsedGraph<T> GraphSerialization<T, IndexType>::parseDimacsFile(
             continue;
         }
 
-        if (currentLine.at(0) == 'e')
+        if (currentLine.at(0) == 'e' || currentLine.at(0) == 'a')
         {
             if (!headerParsed)
             {
@@ -196,7 +196,7 @@ internals::parsedGraph<T> GraphSerialization<T, IndexType>::parseDimacsFile(
 
         throw Exception::internals::DimacsParsingException(
             "Unknown line start '" + std::string(1, currentLine.at(0)) +
-            "'. Valid line starts for this file format are p, c, or e.");
+            "'. Valid line starts for this file format are p, c, a, or e.");
     }
 
     return result;
@@ -233,7 +233,8 @@ void GraphSerialization<T, IndexType>::parseDimacsEdge(
     double weight{};
 
     std::string edgeIndicator;
-    if (!(lineStream >> edgeIndicator) || edgeIndicator != "e")
+    if (!(lineStream >> edgeIndicator) ||
+        (edgeIndicator != "e" && edgeIndicator != "a"))
     {
         throw Exception::internals::DimacsParsingException(
             "error while parsing edge indicator at the start of the edge line "
