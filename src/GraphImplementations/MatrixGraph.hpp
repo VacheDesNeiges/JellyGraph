@@ -10,8 +10,8 @@
 #include <concepts>
 #include <cstddef>
 #include <ranges>
-#include <set>
 #include <span>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -168,7 +168,7 @@ template <typename T, typename IndexType>
 constexpr void MatrixGraph<T, IndexType>::addEdge(
     std::span<std::pair<T, T>> edges)
 {
-    std::set<T> nodesToAdd;
+    std::unordered_set<T> nodesToAdd;
     for (const std::pair<T, T> &edge : edges)
     {
         for (const T &node : {edge.first, edge.second})
