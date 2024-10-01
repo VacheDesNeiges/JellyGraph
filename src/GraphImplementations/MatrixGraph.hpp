@@ -11,7 +11,6 @@
 #include <cstddef>
 #include <ranges>
 #include <span>
-#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -70,6 +69,9 @@ class MatrixGraph : public virtual GraphPrimitives<T, IndexType>,
     constexpr std::vector<IndexType> internal_getNodes() const override;
     constexpr std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
+
+    void internal_assignParsedData(
+        internals::parsedGraph<T> &parsedData) override;
 };
 
 template <typename T, typename IndexType>
@@ -168,22 +170,20 @@ template <typename T, typename IndexType>
 constexpr void MatrixGraph<T, IndexType>::addEdge(
     std::span<std::pair<T, T>> edges)
 {
-    std::unordered_set<T> nodesToAdd;
+    size_t addedNodesCount = 0;
+    this->getNodeMap().reserve(this->getNodeMap().getSize() +
+                               (2 * edges.size()));
     for (const std::pair<T, T> &edge : edges)
     {
         for (const T &node : {edge.first, edge.second})
         {
-            if (!this->getNodeMap().contains(node))
-                nodesToAdd.emplace(node);
+            if (this->getNodeMap().addByName(node))
+                addedNodesCount++;
         }
     }
+    this->getNodeMap().shrinkToFit();
 
-    for (const auto &node : nodesToAdd)
-    {
-        this->getNodeMap().addByName(node);
-    }
-
-    const auto newMatrixSize = edgeMatrix.size() + nodesToAdd.size();
+    const auto newMatrixSize = edgeMatrix.size() + addedNodesCount;
     for (auto &row : edgeMatrix)
     {
         row.resize(newMatrixSize, NOT_EDGE);
@@ -191,12 +191,13 @@ constexpr void MatrixGraph<T, IndexType>::addEdge(
     edgeMatrix.resize(newMatrixSize,
                       std::vector<IndexType>(newMatrixSize, NOT_EDGE));
 
-    for (const auto &edge : edges)
+    const auto edgesOfIndexes =
+        this->getNodeMap().convertNodeNameToIndex(edges);
+
+    for (const auto &[first, second] : edgesOfIndexes)
     {
-        const auto firstIndex = static_cast<size_t>(
-            this->getNodeMap().convertNodeNameToIndex(edge.first));
-        const auto secondIndex = static_cast<size_t>(
-            this->getNodeMap().convertNodeNameToIndex(edge.second));
+        const auto firstIndex = static_cast<size_t>(first);
+        const auto secondIndex = static_cast<size_t>(second);
 
         if (edgeMatrix.at(firstIndex).at(secondIndex) == NOT_EDGE)
         {
@@ -362,6 +363,13 @@ constexpr const std::vector<std::vector<IndexType>> &MatrixGraph<
 
 {
     return edgeMatrix;
+}
+
+template <typename T, typename IndexType>
+void MatrixGraph<T, IndexType>::internal_assignParsedData(
+    internals::parsedGraph<T> &parsedData)
+{
+    this->addEdge(parsedData.edges);
 }
 
 } // namespace jGraph

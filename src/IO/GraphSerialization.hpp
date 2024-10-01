@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Concepts.hpp"
 #include "DefaultTypes.hpp"
 #include "Exceptions.hpp"
 #include "GraphPrimitives.hpp"
@@ -10,6 +9,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <fstream>
+#include <ios>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -23,11 +23,11 @@ namespace jGraph
 namespace internals
 {
 
-template <typename T>
+template <typename T, typename WeightType = internals::underlyingGraphWeight_t>
 struct parsedGraph
 {
     std::vector<std::pair<T, T>> edges;
-    std::vector<double> weights;
+    std::vector<WeightType> weights;
 };
 } // namespace internals
 
@@ -46,17 +46,18 @@ class GraphSerialization : public virtual GraphPrimitives<T, IndexType>
 
     void saveToFile(std::string_view fileName, FileFormat format);
 
-  private:
-    constexpr void applyParsedWeights(internals::parsedGraph<T> &parsedData)
-        requires internals::IsWeightedGraph<decltype(*this)>;
+  protected:
+    virtual void internal_assignParsedData(
+        internals::parsedGraph<T> &parsedData) = 0;
 
+  private:
     void writeDimacsFile(std::string_view fileName);
 
     [[nodiscard]] internals::parsedGraph<T> parseDimacsFile(
         std::ifstream &file);
     void parseDimacsHeader(const std::string &currentLine,
                            internals::parsedGraph<T> &result);
-    void parseDimacsEdge(const std::string &currentLine,
+    void parseDimacsEdge(std::string &currentLine,
                          internals::parsedGraph<T> &result);
 
     void parseDotFile(std::ifstream &file);
@@ -129,32 +130,7 @@ void GraphSerialization<T, IndexType>::loadFromFile(std::ifstream &file,
     default:
         throw Exception::JGraphIOException("Unknown file format");
     }
-    this->addEdge(parsingResult.edges);
-    if constexpr (internals::IsWeightedGraph<decltype(*this)>)
-        this->applyParsedWeights(parsingResult);
-}
-
-template <typename T, typename IndexType>
-constexpr void GraphSerialization<T, IndexType>::applyParsedWeights(
-    internals::parsedGraph<T> &parsedData)
-    requires internals::IsWeightedGraph<decltype(*this)>
-{
-    if (parsedData.weights.size() == 0)
-    {
-        this->setWeight(std::vector(parsedData.edges.size(), 1));
-    }
-    else if (parsedData.weights.size() == parsedData.edges.size())
-    {
-        this->setWeight(parsedData.weights);
-    }
-    else
-    {
-        throw Exception::JGraphIOException(
-            "In parsed file, number of weights differ from number of edges "
-            ":" +
-            parsedData.edges.size() + " weights, " + parsedData.weights.size() +
-            " edges");
-    }
+    this->internal_assignParsedData(parsingResult);
 }
 
 template <typename T, typename IndexType>
@@ -163,10 +139,19 @@ internals::parsedGraph<T> GraphSerialization<T, IndexType>::parseDimacsFile(
 {
     internals::parsedGraph<T> result;
 
+    std::string fileContent;
+
+    file.seekg(0, std::ios::end);
+    fileContent.resize(static_cast<size_t>(file.tellg()));
+    file.seekg(0, std::ios::beg);
+    file.read(fileContent.data(),
+              static_cast<std::streamsize>(fileContent.size()));
+
+    std::stringstream stringStream(fileContent);
     std::string currentLine;
     bool headerParsed = false;
 
-    while (std::getline(file, currentLine))
+    while (std::getline(stringStream, currentLine))
     {
         if (currentLine.empty() || currentLine.at(0) == 'c')
             continue;
@@ -226,36 +211,24 @@ void GraphSerialization<T, IndexType>::parseDimacsHeader(
 
 template <typename T, typename IndexType>
 void GraphSerialization<T, IndexType>::parseDimacsEdge(
-    const std::string &currentLine, internals::parsedGraph<T> &result)
+    std::string &currentLine, internals::parsedGraph<T> &result)
 {
-    std::istringstream lineStream(currentLine);
-    std::pair<T, T> edge;
-    double weight{};
+    float weight = 0;
 
-    std::string edgeIndicator;
-    if (!(lineStream >> edgeIndicator) ||
-        (edgeIndicator != "e" && edgeIndicator != "a"))
-    {
-        throw Exception::internals::DimacsParsingException(
-            "error while parsing edge indicator at the start of the edge line "
-            ": " +
-            currentLine);
-    }
+    currentLine.erase(0, 2);
+    std::size_t pos = 0;
 
-    if (lineStream >> edge.first >> edge.second)
-    {
-        result.edges.push_back(edge);
-    }
-    else
-    {
-        std::cout << "Edge parsed :" << edge.first << " , " << edge.second
-                  << '\n';
-        throw Exception::internals::DimacsParsingException(
-            "Failed to read edge from line: " + currentLine);
-    }
+    auto fromNode = static_cast<T>(std::stoll(currentLine, &pos));
+    currentLine.erase(0, pos + 1);
 
-    if (lineStream >> weight)
+    auto toNode = static_cast<T>(std::stoll(currentLine, &pos));
+    currentLine.erase(0, pos + 1);
+
+    result.edges.emplace_back(fromNode, toNode);
+
+    if (!currentLine.empty())
     {
+        weight = std::stof(currentLine);
         result.weights.push_back(weight);
     }
 }

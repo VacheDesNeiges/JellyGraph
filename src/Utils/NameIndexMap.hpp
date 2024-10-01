@@ -3,7 +3,9 @@
 #include "Concepts.hpp"
 
 #include <cstddef>
+#include <span>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace jGraph::internals
@@ -17,7 +19,7 @@ class NameIndexMap
   public:
     constexpr NameIndexMap() = default;
 
-    constexpr bool addByName(T name);
+    constexpr bool addByName(const T &name);
 
     [[nodiscard("message example")]] constexpr size_t getSize() const;
 
@@ -31,10 +33,16 @@ class NameIndexMap
         const std::vector<IndexType> &indexes) const;
 
     [[nodiscard]] constexpr IndexType convertNodeNameToIndex(T name) const;
+    [[nodiscard]] constexpr std::pair<IndexType, IndexType>
+    convertNodeNameToIndex(std::pair<T, T> edge) const;
     [[nodiscard]] constexpr std::vector<IndexType> convertNodeNameToIndex(
         std::vector<T> names) const;
+    [[nodiscard]] constexpr std::vector<std::pair<IndexType, IndexType>>
+    convertNodeNameToIndex(
+        const std::span<std::pair<T, T>> &edgesOfNames) const;
 
     constexpr void reserve(size_t size);
+    constexpr void shrinkToFit();
 
   private:
     std::vector<T> indexToName;
@@ -43,14 +51,16 @@ class NameIndexMap
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
-constexpr bool NameIndexMap<T, IndexType>::addByName(T name)
+constexpr bool NameIndexMap<T, IndexType>::addByName(const T &name)
 {
-    if (nameToIndex.contains(name))
-        return false;
-
-    nameToIndex[name] = static_cast<IndexType>(indexToName.size());
-    indexToName.emplace_back(name);
-    return true;
+    if (nameToIndex
+            .try_emplace(name, static_cast<IndexType>(indexToName.size()))
+            .second)
+    {
+        indexToName.emplace_back(name);
+        return true;
+    }
+    return false;
 }
 
 template <typename T, typename IndexType>
@@ -125,6 +135,14 @@ constexpr IndexType NameIndexMap<T, IndexType>::convertNodeNameToIndex(
 
 template <typename T, typename IndexType>
     requires ValidKeyType<T>
+constexpr std::pair<IndexType, IndexType> NameIndexMap<
+    T, IndexType>::convertNodeNameToIndex(std::pair<T, T> edge) const
+{
+    return {nameToIndex.at(edge.first), nameToIndex.at(edge.second)};
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
 constexpr std::vector<IndexType> NameIndexMap<
     T, IndexType>::convertNodeNameToIndex(std::vector<T> names) const
 {
@@ -133,7 +151,23 @@ constexpr std::vector<IndexType> NameIndexMap<
 
     for (const auto name : names)
     {
-        result.emplace_back(nameToIndex(name));
+        result.emplace_back(nameToIndex.at(name));
+    }
+    return result;
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+constexpr std::vector<std::pair<IndexType, IndexType>> NameIndexMap<
+    T, IndexType>::convertNodeNameToIndex(const std::span<std::pair<T, T>>
+                                              &edgesOfNames) const
+{
+    std::vector<std::pair<IndexType, IndexType>> result;
+    result.reserve(edgesOfNames.size());
+
+    for (const auto &[from, to] : edgesOfNames)
+    {
+        result.emplace_back(nameToIndex.at(from), nameToIndex.at(to));
     }
     return result;
 }
@@ -144,6 +178,14 @@ constexpr void NameIndexMap<T, IndexType>::reserve(size_t size)
 {
     indexToName.reserve(size);
     nameToIndex.reserve(size);
+}
+
+template <typename T, typename IndexType>
+    requires ValidKeyType<T>
+constexpr void NameIndexMap<T, IndexType>::shrinkToFit()
+{
+    indexToName.shrink_to_fit();
+    nameToIndex.rehash(0);
 }
 
 } // namespace jGraph::internals

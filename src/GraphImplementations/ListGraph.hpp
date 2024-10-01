@@ -45,30 +45,30 @@ class ListGraph : public GraphAlgorithms<T, IndexType>,
     [[nodiscard]] constexpr size_t getNumberOfNodes() const override;
     [[nodiscard]] constexpr size_t getNumberOfEdges() const override;
 
-    [[nodiscard]] constexpr std::vector<T> getNodes() const override;
-    [[nodiscard]] constexpr std::vector<std::pair<T, T>> getEdges()
-        const override;
-    [[nodiscard]] constexpr std::vector<T> getNeighbors(T key) const override;
+    constexpr std::vector<T> getNodes() const override;
+    constexpr std::vector<std::pair<T, T>> getEdges() const override;
+    constexpr std::vector<T> getNeighbors(T key) const override;
 
-    [[nodiscard]] constexpr bool hasEdge(std::pair<T, T> edge) const override;
+    constexpr bool hasEdge(std::pair<T, T> edge) const override;
 
   protected:
-    [[nodiscard]] constexpr std::vector<std::vector<IndexType>> &
-    getAdjacencyList();
-    [[nodiscard]] constexpr const std::vector<std::vector<IndexType>> &
-    getAdjacencyList() const;
+    constexpr std::vector<std::vector<IndexType>> &getAdjacencyList();
+    constexpr const std::vector<std::vector<IndexType>> &getAdjacencyList()
+        const;
 
-    [[nodiscard]] constexpr size_t &getEdgeNumber();
+    constexpr size_t &getEdgeNumber();
     [[nodiscard]] constexpr size_t getEdgeNumber() const;
 
   private:
     size_t edgeNumber = 0;
     std::vector<std::vector<IndexType>> adjacencyList;
 
-    [[nodiscard]] constexpr std::vector<IndexType> internal_getNodes()
-        const override;
-    [[nodiscard]] constexpr std::vector<IndexType> internal_getNeighbors(
+    constexpr std::vector<IndexType> internal_getNodes() const override;
+    constexpr std::vector<IndexType> internal_getNeighbors(
         IndexType index) const override;
+
+    void internal_assignParsedData(
+        internals::parsedGraph<T> &parsedData) override;
 };
 
 template <typename T, typename IndexType>
@@ -140,9 +140,7 @@ constexpr void ListGraph<T, IndexType>::removeNode(T nodeName)
         for (auto &edge : node)
         {
             if (edge > index)
-            {
                 edge--;
-            }
         }
     }
 }
@@ -165,9 +163,9 @@ constexpr void ListGraph<T, IndexType>::addEdge(std::pair<T, T> edge)
 
     {
         adjacencyList.at(static_cast<size_t>(firstIndex))
-            .push_back(secondIndex);
+            .emplace_back(secondIndex);
         adjacencyList.at(static_cast<size_t>(secondIndex))
-            .push_back(firstIndex);
+            .emplace_back(firstIndex);
         edgeNumber++;
     }
 }
@@ -176,13 +174,23 @@ template <typename T, typename IndexType>
 constexpr void ListGraph<T, IndexType>::addEdge(
     std::span<std::pair<T, T>> edges)
 {
+    size_t addedNodesCount = 0;
+    this->getNodeMap().reserve(this->getNodeMap().getSize() +
+                               (2 * edges.size()));
     for (const std::pair<T, T> &edge : edges)
     {
         for (const T &node : {edge.first, edge.second})
         {
-            if (!this->getNodeMap().contains(node))
-                addNode(node);
+            if (this->getNodeMap().addByName(node))
+                addedNodesCount++;
         }
+    }
+    this->getNodeMap().shrinkToFit();
+
+    adjacencyList.resize(adjacencyList.size() + addedNodesCount);
+
+    for (const auto &edge : edges)
+    {
         const auto &firstIndex =
             this->getNodeMap().convertNodeNameToIndex(edge.first);
         const auto &secondIndex =
@@ -301,7 +309,7 @@ constexpr bool ListGraph<T, IndexType>::isDirected() const
 template <typename T, typename IndexType>
 constexpr bool ListGraph<T, IndexType>::isWeighted() const
 {
-    return false;
+    return true;
 }
 
 template <typename T, typename IndexType>
@@ -328,6 +336,13 @@ constexpr std::vector<std::vector<IndexType>> &ListGraph<
     T, IndexType>::getAdjacencyList()
 {
     return adjacencyList;
+}
+
+template <typename T, typename IndexType>
+void ListGraph<T, IndexType>::internal_assignParsedData(
+    internals::parsedGraph<T> &parsedData)
+{
+    this->addEdge(parsedData.edges);
 }
 
 } // namespace jGraph

@@ -9,7 +9,6 @@
 #include <initializer_list>
 #include <ranges>
 #include <span>
-#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -124,22 +123,20 @@ template <typename T, typename IndexType>
 constexpr void DirectedMatrixGraph<T, IndexType>::addEdge(
     std::span<std::pair<T, T>> edges)
 {
-    std::unordered_set<T> nodesToAdd;
+    size_t addedNodesCount = 0;
+    this->getNodeMap().reserve(this->getNodeMap().getSize() +
+                               (2 * edges.size()));
     for (const std::pair<T, T> &edge : edges)
     {
         for (const T &node : {edge.first, edge.second})
         {
-            if (!this->getNodeMap().contains(node))
-                nodesToAdd.emplace(node);
+            if (this->getNodeMap().addByName(node))
+                addedNodesCount++;
         }
     }
+    this->getNodeMap().shrinkToFit();
 
-    for (const auto &node : nodesToAdd)
-    {
-        this->getNodeMap().addByName(node);
-    }
-
-    const auto newMatrixSize = this->getEdgeMatrix().size() + nodesToAdd.size();
+    const auto newMatrixSize = this->getEdgeMatrix().size() + addedNodesCount;
     for (auto &row : this->getEdgeMatrix())
     {
         row.resize(newMatrixSize, this->NOT_EDGE);
@@ -147,13 +144,13 @@ constexpr void DirectedMatrixGraph<T, IndexType>::addEdge(
     this->getEdgeMatrix().resize(
         newMatrixSize, std::vector<IndexType>(newMatrixSize, this->NOT_EDGE));
 
-    for (const auto &edge : edges)
-    {
+    const auto edgesOfIndexes =
+        this->getNodeMap().convertNodeNameToIndex(edges);
 
-        const auto firstIndex = static_cast<size_t>(
-            this->getNodeMap().convertNodeNameToIndex(edge.first));
-        const auto secondIndex = static_cast<size_t>(
-            this->getNodeMap().convertNodeNameToIndex(edge.second));
+    for (const auto &[first, second] : edgesOfIndexes)
+    {
+        const auto firstIndex = static_cast<size_t>(first);
+        const auto secondIndex = static_cast<size_t>(second);
 
         if (this->getEdgeMatrix().at(firstIndex).at(secondIndex) ==
             this->NOT_EDGE)

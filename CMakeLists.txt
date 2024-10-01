@@ -21,8 +21,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}\
     -Wunused-value \
     -Wold-style-cast \
     -Wnon-virtual-dtor \
-    -O0 \
-    -g \
+    -O3 \
     -flto \
     -march=native"
     )

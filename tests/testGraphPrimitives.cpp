@@ -2,6 +2,7 @@
 #include "DirectedMatrixGraph.hpp"
 #include "ListGraph.hpp"
 #include "MatrixGraph.hpp"
+#include "WeightedListGraph.hpp"
 
 #include "gtest/gtest.h"
 
@@ -22,7 +23,8 @@ using AllGraphs = ::testing::Types<
     jGraph::DirectedMatrixGraph<unsigned>,
     jGraph::DirectedMatrixGraph<long long, short>,
     jGraph::DirectedListGraph<unsigned>,
-    jGraph::DirectedListGraph<long long, short>>;
+    jGraph::DirectedListGraph<long long, short>,
+    jGraph::WeightedListGraph<unsigned>>;
 TYPED_TEST_SUITE(GraphPrimitivesTests, AllGraphs);
 
 template <typename T>

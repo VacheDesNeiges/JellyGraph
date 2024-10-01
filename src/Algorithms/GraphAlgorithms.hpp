@@ -77,7 +77,7 @@ constexpr std::vector<IndexType> GraphAlgorithms<
             continue;
 
         visited.at(currentNode) = true;
-        result.push_back(currentNode);
+        result.emplace_back(currentNode);
         for (const auto neighbor : this->internal_getNeighbors(currentNode))
         {
             if (!visited.at(neighbor))
@@ -132,14 +132,14 @@ constexpr std::vector<std::vector<IndexType>> GraphAlgorithms<
                 continue;
 
             visited.at(node) = true;
-            currentComponent.push_back(node);
+            currentComponent.emplace_back(node);
             for (const auto neighbor : this->internal_getNeighbors(node))
             {
                 if (!visited.at(neighbor))
                     stack.push(neighbor);
             }
         }
-        components.push_back(currentComponent);
+        components.emplace_back(std::move(currentComponent));
     }
     return components;
 }

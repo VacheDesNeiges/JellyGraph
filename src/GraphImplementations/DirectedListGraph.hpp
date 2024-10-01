@@ -93,26 +93,34 @@ template <typename T, typename IndexType>
 constexpr void DirectedListGraph<T, IndexType>::addEdge(
     std::span<std::pair<T, T>> edges)
 {
+    size_t addedNodesCount = 0;
+    this->getNodeMap().reserve(this->getNodeMap().getSize() +
+                               (2 * edges.size()));
     for (const std::pair<T, T> &edge : edges)
     {
         for (const T &node : {edge.first, edge.second})
         {
-            if (!this->getNodeMap().contains(node))
-                this->addNode(node);
+            if (this->getNodeMap().addByName(node))
+                addedNodesCount++;
         }
+    }
+    this->getNodeMap().shrinkToFit();
+
+    auto &adjaList = this->getAdjacencyList();
+    adjaList.resize(adjaList.size() + addedNodesCount);
+    for (const auto &edge : edges)
+    {
+
         const auto firstIndex =
             this->getNodeMap().convertNodeNameToIndex(edge.first);
         const auto secondIndex =
             this->getNodeMap().convertNodeNameToIndex(edge.second);
 
-        if (!std::ranges::contains(
-                this->getAdjacencyList().at(static_cast<size_t>(firstIndex)),
-                secondIndex))
+        if (!std::ranges::contains(adjaList.at(static_cast<size_t>(firstIndex)),
+                                   secondIndex))
         {
             this->getEdgeNumber()++;
-            this->getAdjacencyList()
-                .at(static_cast<size_t>(firstIndex))
-                .push_back(secondIndex);
+            adjaList.at(static_cast<size_t>(firstIndex)).push_back(secondIndex);
         }
     }
 }

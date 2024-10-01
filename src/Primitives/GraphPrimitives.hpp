@@ -50,8 +50,6 @@ class GraphPrimitives
     [[nodiscard]] constexpr virtual std::vector<T> getNodes() const = 0;
     [[nodiscard]] constexpr virtual std::vector<std::pair<T, T>> getEdges()
         const = 0;
-    [[nodiscard]] constexpr virtual double getWeight(
-        std::pair<T, T> edge) const;
     [[nodiscard]] constexpr virtual std::vector<T> getNeighbors(T) const = 0;
 
     [[nodiscard]] constexpr virtual bool hasEdge(std::pair<T, T>) const = 0;
@@ -107,14 +105,6 @@ constexpr void GraphPrimitives<T, IndexType>::addEdge(
     {
         addEdge(edge);
     }
-}
-
-template <typename T, typename IndexType>
-    requires internals::Integral<IndexType>
-constexpr double GraphPrimitives<T, IndexType>::getWeight(
-    [[maybe_unused]] std::pair<T, T> edge) const
-{
-    return 1;
 }
 
 } // namespace jGraph
