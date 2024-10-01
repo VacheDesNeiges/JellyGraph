@@ -2,7 +2,6 @@
 
 #include "DefaultTypes.hpp"
 #include "GraphPrimitives.hpp"
-#include <expected>
 #include <optional>
 #include <span>
 #include <tuple>
